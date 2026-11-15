@@ -95,9 +95,10 @@ function SeriesSwitch({ view, setView, peek, setPeek, disabled, compact, hintOK 
 // v6 (B3): the compact zone button shortens the name instead of cutting it with an ellipsis.
 const shortZone = (n) => n.replace(/^All of /, '').replace(/^Custom zone, .*/, 'Custom zone');
 // v6.2 (P3): first-visit guide on the Dashboard: one dismissible line, three steps; hovering or focusing a step outlines
-// its target. Dismissed for the rest of the session (module memory, no storage). Hidden with anim=0 unless guide=1;
-// guide=0 hides it.
-let guideGone = (() => { try { const h = window.location.hash; return /(^#|&)guide=0(&|$)/.test(h) || (/(^#|&)anim=0(&|$)/.test(h) && !/(^#|&)guide=1(&|$)/.test(h)); } catch (e) { return false; } })();
+// its target. Dismissed for the rest of the session (module memory, no storage).
+// v6.3 (Option A): hidden by default; guide=1 in the hash shows it (with or without anim=0); guide=0 and anim=0 keep it
+// hidden. When hidden, no row is reserved for it (has-guide is not set).
+let guideGone = (() => { try { const h = window.location.hash; return !/(^#|&)guide=1(&|$)/.test(h); } catch (e) { return true; } })();
 function Guide({ onClose }) {
   const mark = (k) => { const a = document.querySelector('.fb-app'); if (a) { if (k) a.setAttribute('data-guide', k); else a.removeAttribute('data-guide'); } };
   const steps = [['map', 'Pick a place on the map'], ['answer', 'Read the answer at the top'], ['cal', 'See each month in the calendar']];

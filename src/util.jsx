@@ -16,20 +16,15 @@ export function useHeight() {
   useEffect(() => { const on = () => setH(window.innerHeight); window.addEventListener('resize', on); return () => window.removeEventListener('resize', on); }, []);
   return h;
 }
-// Light/dark: follows the system unless the visitor chose one (localStorage "fb-theme"; memory if storage is unavailable). Never in the URL.
+// Light/dark: light unless the visitor chose dark (localStorage "fb-theme"; memory if storage is unavailable). Never in
+// the URL. v6.3 (owner): the first open is light whatever the system preference, and a system change never switches it;
+// the boot script in build.mjs applies the same rule before the first paint (no dark flash).
 let memTheme = null;
 const readStored = () => { try { const v = window.localStorage.getItem('fb-theme'); return v === 'light' || v === 'dark' ? v : memTheme; } catch (e) { return memTheme; } };
 const writeStored = (v) => { memTheme = v; try { window.localStorage.setItem('fb-theme', v); } catch (e) { /* memory only */ } };
 export function useTheme() {
-  const sys = () => (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
-  const [t, setT] = useState(() => readStored() || document.documentElement.getAttribute('data-theme') || sys());
+  const [t, setT] = useState(() => readStored() || document.documentElement.getAttribute('data-theme') || 'light');
   useEffect(() => { document.documentElement.setAttribute('data-theme', t); }, [t]);
-  useEffect(() => {
-    const mq = window.matchMedia ? window.matchMedia('(prefers-color-scheme: light)') : null;
-    const on = () => { if (!readStored()) { const v = sys(); document.documentElement.setAttribute('data-theme', v); setT(v); } };
-    if (mq && mq.addEventListener) { mq.addEventListener('change', on); return () => mq.removeEventListener('change', on); }
-    return undefined;
-  }, []);
   // Set the attribute synchronously so canvases redrawing in child effects read the new token colours.
   const toggle = () => { const v = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark'; writeStored(v); document.documentElement.setAttribute('data-theme', v); setT(v); };
   return [t, toggle];

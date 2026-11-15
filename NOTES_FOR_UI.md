@@ -1,7 +1,8 @@
 # Notes for the interface team (data hand-off, 15 November 2026)
 
-Written while adding the real 2026 data (record now ends October 2026) and two real hotspot files. Only item 1 was
-changed in `src/`; everything else is reported here and left as it is. Screenshots are in `shots/verify-2026/`
+Written while adding the real 2026 data (record now ends October 2026) and two real hotspot files. Items 1 and 14 were
+changed in this folder (`src/`, and three lines of `build.mjs`), at the owner's request; everything else is reported here
+and left as it is. Screenshots are in `shots/verify-2026/`
 (not committed) and can be regenerated with the scripts named below.
 
 ## 1. Calendar: the "typical month" margin is drawn over the grid when the last year is partial — FIXED LOCALLY, please carry into 6.2.1
@@ -139,3 +140,21 @@ changed in `src/`; everything else is reported here and left as it is. Screensho
   is now "Record ends 2026-10". The 2003–2025 table is unchanged (see the hand-off report).
 - The tools build paths from `new URL('..', import.meta.url).pathname`, which is percent-encoded: a checkout path
   with spaces or accents breaks them (on any system).
+
+## 14. Changes made in this folder at the owner's request on 15 November (to carry into 6.2.1, or they are lost)
+
+- **Calendar first** (`src/v5.css`): in the strip layout (≥ 1280) map | calendar is 1 : 2 at every width (was 5 : 7,
+  5.6 : 6.4 from 1440, 1 : 1 from 1680). The layer control may use the full width of the map column, "Draw area" sits
+  on a second row under it, the year chip moves below that row, and the map footer is sized for 6 sentence lines
+  (5 from 1680). Effect: calendar cells 26 × 23 at 1280 up to 49 × 48 at 2560, the "typical month" margin shows from
+  1366 instead of 1920, and the Canada map is 20–33 % smaller (Argentina 3–8 %).
+- **First-visit guide hidden by default** (`src/App.jsx`): the numbered line shows only with `guide=1` in the hash.
+  `tools/interact.mjs` line 128 ("guide shown on the dashboard (no anim=0)") now fails and line 129 throws, which stops
+  the script after 40 checks; with `guide=1` added to that one page it gives 91 PASS / 0 FAIL.
+- **Light theme by default** (`build.mjs`: `data-theme`, `color-scheme` meta and the inline bootstrap script;
+  `src/util.jsx`: initial theme): a first open is light whatever the system preference; a stored choice still wins.
+  `tools/axe.mjs` selects the theme through `prefers-color-scheme` only, so its "dark" passes now run in light: it
+  still reports 0 violations but no longer covers the dark theme (a copy that also stores `fb-theme` gives 0
+  violations in 34 dark and 34 light runs).
+- The verdict strip was left as it is: it has 2 px of spare height, so a row cannot be removed without clipping.
+- `CLAUDE.md` mentions a narrower map column for Argentina (`.fb-dashb.is-argentina`); no such rule exists in the CSS.

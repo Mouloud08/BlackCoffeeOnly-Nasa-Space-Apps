@@ -48,15 +48,15 @@ const hotspots = {};
 if (fs.existsSync(hsDir)) for (const f of fs.readdirSync(hsDir)) if (f.endsWith('.csv')) hotspots[f.replace(/\.csv$/, '')] = fs.readFileSync(hsDir + '/' + f, 'utf8');
 const official = fs.readFileSync(here + '/data/official/canada_area_burned.json', 'utf8').replace(/</g, '\\u003c');
 const html = `<!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en" data-theme="light">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="color-scheme" content="dark light">
+<meta name="color-scheme" content="light">
 <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data: blob:; font-src data:; connect-src 'none'; base-uri 'none'; form-action 'none'">
 <title>FireBridge · Is the rise in fire activity real, or is it the satellite?</title>
 <meta name="description" content="FireBridge joins NASA MODIS and VIIRS fire detections on one scale, 2001–2025, for any box in Canada or Argentina. Every figure is computed in the browser from NASA FIRMS 0.5° monthly tiles. Offline prototype.">
-<script>(function(){var t=null;try{t=localStorage.getItem('fb-theme')}catch(e){}if(t!=='light'&&t!=='dark'){try{t=window.matchMedia('(prefers-color-scheme: light)').matches?'light':'dark'}catch(e){t='dark'}}document.documentElement.setAttribute('data-theme',t)})()</script>
+<script>(function(){var t=null;try{t=localStorage.getItem('fb-theme')}catch(e){}if(t!=='light'&&t!=='dark')t='light';document.documentElement.setAttribute('data-theme',t);if(t==='dark'){var m=document.querySelector('meta[name="color-scheme"]');if(m)m.setAttribute('content','dark')}})()</script>
 <style>${css}</style>
 </head>
 <body>

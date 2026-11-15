@@ -112,7 +112,7 @@ body { overflow: hidden; }
 
 /* ── Dashboard ── */
 .fb-dashb { height: 100%; display: grid; gap: var(--gap-panel); min-height: 0; }
-.fb-dashb.is-strip { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); grid-template-rows: auto minmax(0, 1fr); }
+.fb-dashb.is-strip { grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); grid-template-rows: auto minmax(0, 1fr); } /* v6.3 Option A: calendar first (see below) */
 .fb-dashb.is-strip > .fb-verdict2 { grid-column: 1 / -1; }
 .fb-dashb.is-rail { grid-template-columns: clamp(22.5rem, 19vw, 26rem) minmax(0, 1.1fr) minmax(0, 1fr); grid-template-rows: minmax(0, 1fr); }
 .fb-dashb.is-tablet, .fb-dashb.is-phone { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto auto minmax(0, 1fr); }
@@ -726,9 +726,9 @@ html.fb-noanim .fb-tabin, html.fb-noanim .fb-step2 { animation: none; }
 .fb-verdict2.is-strip.is-wide .fb-vrow-checks { flex-wrap: wrap; row-gap: 0.25rem; }
 .fb-verdict2.is-strip.is-wide .fb-vrow-hero { flex-wrap: wrap; row-gap: 0.25rem; }
 .fb-verdict2.is-strip.is-wide .fb-vrow-checks .fb-pill, .fb-verdict2.is-strip.is-wide .fb-evbtn { min-height: 1.6rem; }
-/* v5.2: map and calendar share the width; from 1440 the map gets half, so Canada's wide data fills a wide map */
-@media (min-width: 1440px) { .fb-dashb.is-strip { grid-template-columns: minmax(0, 5.6fr) minmax(0, 6.4fr); } }
-@media (min-width: 1680px) { .fb-dashb.is-strip { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); } }
+/* v6.3 (Option A, calendar first): the calendar takes two thirds of the strip at every width ≥ 1280; the map is the
+   selection column (map | calendar = 1 : 2; was 5 : 7, 5.6 : 6.4 from 1440 and 1 : 1 from 1680). See the end of the file
+   for the map tools that make room for it. The columns are set once, with the strip's grid above. */
 .fb-monthslot { position: relative; }
 .fb-chipprobe { position: absolute; visibility: hidden; pointer-events: none; right: 0; top: 0; }
 .fb-chipx { display: inline-block; width: 1.5rem; height: 1.5rem; }
@@ -936,6 +936,18 @@ html.fb-noanim .fb-ov-chart * { animation: none !important; }
 /* v6.2: the hint line keeps one height with or without its inline button (selecting a month moves nothing). */
 .fb-mappanel .fb-maphint { min-height: 1.375rem; box-sizing: border-box; display: flex; align-items: center; }
 .fb-calhead:not(.is-wrap) > .fb-monthslot { height: 1.75rem; align-items: center; }
+/* v6.3 (Option A): in the narrower map column the layer control keeps its one row (it may use the full width) and
+   Draw area moves under it, left-aligned (the tools stack top-left, over the empty band above Canada's data and over
+   the Pacific west of Argentina); the year chip (calendar hover, Record years) moves below that second row. */
+.fb-dashb.is-strip .fb-layerctl { max-width: calc(100% - 2 * var(--pad-panel)); }
+.fb-dashb.is-strip .fb-drawtop { left: var(--pad-panel); right: auto; top: calc(var(--pad-panel) + (var(--head-h) - 2rem) / 2 + 2rem + var(--sp-2)); }
+.fb-dashb.is-strip .fb-hlchip { top: calc(var(--pad-panel) + (var(--head-h) - 2rem) / 2 + 4rem + var(--sp-2) * 2); }
+/* The narrower column needs up to six lines for the longest map sentence (Record years, a box in Argentina): the footer
+   keeps one fixed height for every layer (nothing moves on a layer change), sized for six lines instead of four
+   (five from 1680, where the column is wider; measured on every layer, both views, both countries and a small box). */
+.fb-dashb.is-strip .fb-mapfoot { height: calc(var(--fs-2) * 1.4 * 6 + var(--fs-1) * 1.6 * 2 + 1.5rem); }
+.fb-dashb.is-strip .fb-mapsentence { -webkit-line-clamp: 6; }
+@media (min-width: 1680px) { .fb-dashb.is-strip .fb-mapfoot { height: calc(var(--fs-2) * 1.4 * 5 + var(--fs-1) * 1.6 * 2 + 1.5rem); } .fb-dashb.is-strip .fb-mapsentence { -webkit-line-clamp: 5; } }
 /* v6.2: the longer headline ("Simply joining the two satellite records says…") holds on two lines at 1366, 1920, 2560. */
 @media (min-width: 1100px) { .fb-ov-h { max-width: none; font-size: clamp(1.45rem, 0.2rem + 1vw + 1.25vh, 2.9rem); text-wrap: pretty; } }
 .fb-verdict2.is-card .fb-vsent { -webkit-line-clamp: 4; }
