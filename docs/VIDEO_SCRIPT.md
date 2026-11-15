@@ -1,5 +1,6 @@
 # FireBridge — 30-second demo script
-n> The rendered video (`video/out/firebridge-demo.mp4`, 28.5 s) uses the captions in `video/captions.json`, tightened so that every number matches what the screen shows in that shot. This file is the planning script.
+
+> The rendered video (`video/out/firebridge-demo.mp4`, 28.5 s) uses the captions in `video/captions.json`, tightened so that every number matches what the screen shows in that shot. This file is the planning script.
 
 Screen recording of the live app at 1440 × 900, light theme. Base URL:
 `https://mouloud08.github.io/BlackCoffeeOnly-Nasa-Space-Apps/` followed by the hash below. Add `&anim=0` when a screen
