@@ -38,7 +38,7 @@ function OverviewChart({ Z, raw, country, animate, phone }) {
               </span>
             );
           })}
-          <i className="fb-ov-seam" style={{ left: seamX + '%' }}><em>sensor change</em></i>
+          <i className="fb-ov-seam" style={{ left: seamX + '%' }}><em>satellite change</em></i>
           <i className="fb-ov-level is-before" style={{ left: col(STATS_FROM - FIRST) + '%', width: (seamX - col(STATS_FROM - FIRST)) + '%', bottom: P(L[solid].before) + '%' }}><em>{NUM(L[solid].before)}</em></i>
           <i className="fb-ov-level is-ghost" style={{ left: col(STATS_FROM - FIRST) + '%', width: (seamX - col(STATS_FROM - FIRST)) + '%', bottom: P(L[raw ? 'harmonized' : 'raw'].before) + '%' }}><em>{raw ? 'harmonized ' : 'raw '}{NUM(L[raw ? 'harmonized' : 'raw'].before)}</em></i>
           <i className="fb-ov-level is-after" style={{ left: seamX + '%', width: (100 - seamX) + '%', bottom: P(L[solid].after) + '%' }}><em>{NUM(L[solid].after)}</em></i>
@@ -49,13 +49,43 @@ function OverviewChart({ Z, raw, country, animate, phone }) {
   );
 }
 
+// Two labels in one grid cell (only the one for the current state visible): the key keeps its width when the view
+// changes, so a click on the raw button never re-wraps the row under the chart.
+const Two = ({ on, a, b }) => <span className="fb-ov-holdlab is-l"><span className={cx(!on && 'is-on')}>{a}</span><span className={cx(on && 'is-on')}>{b}</span></span>;
+
+// The raw-record button behaves like the top-bar Raw/Harmonized switch: a short press (click, tap, Enter or Space)
+// switches the record shown everywhere; a press held 260 ms or more from the harmonized record only peeks at the raw
+// one while held (mouse, pen, keyboard; touch toggles). Both labels sit in one grid cell, so the width never changes.
+function RawButton({ raw, peek, phone, onPeek, onToggleView }) {
+  const viewRaw = raw && !peek; // the raw record chosen (not a peek)
+  const down = useRef(false), t0 = useRef(0); // t0: start of a press that peeks (0: a press that does not peek)
+  const start = (canPeek) => { down.current = true; t0.current = 0; if (canPeek && !viewRaw) { t0.current = performance.now(); onPeek(true); } };
+  const finish = (cancel) => {
+    if (!down.current) return;
+    down.current = false;
+    const t = t0.current; t0.current = 0;
+    if (t) { if (!cancel && performance.now() - t < 260) onToggleView(); onPeek(false); } // same order as the top-bar switch
+    else if (!cancel) onToggleView();
+  };
+  useEffect(() => { const b = () => finish(true); window.addEventListener('blur', b); return () => window.removeEventListener('blur', b); });
+  // Short desktop labels: a longer button pushed the chart key onto a second row in one state only (a layout shift).
+  const labels = phone ? ['Tap to see the raw record', 'Tap for the harmonized record'] : ['Show the raw record', 'Back to harmonized'];
+  return (
+    <button type="button" className="fb-ov-holdbtn" aria-pressed={raw} title={phone ? undefined : viewRaw ? 'Click to go back to the harmonized record (or press H)' : 'Click to switch to the raw record; hold to peek at it (or hold R)'}
+      onPointerDown={(e) => { if (e.button !== 0) return; if (e.pointerType !== 'touch') e.currentTarget.setPointerCapture(e.pointerId); start(e.pointerType !== 'touch'); }}
+      onPointerUp={() => finish(false)} onPointerCancel={() => finish(true)} onLostPointerCapture={() => finish(true)}
+      onKeyDown={(e) => { if ((e.key === ' ' || e.key === 'Enter') && !e.repeat) { e.preventDefault(); start(true); } }}
+      onKeyUp={(e) => { if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); finish(false); } }}>
+      <Icon d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12zM12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" />
+      <span className="fb-ov-holdlab">{labels.map((l, i) => <span key={i} className={cx((i === 1) === viewRaw && 'is-on')}>{l}</span>)}</span>
+    </button>
+  );
+}
+
 export const Overview = memo(function Overview({ Z, country, official, raw, peek, onCountry, onPeek, onToggleView, onOpen, onHow, onMethod, phone }) {
   // Load animation: once per mount, never under reduced motion or anim=0.
   const [anim, setAnim] = useState(() => !reduced());
   useEffect(() => { const t = setTimeout(() => setAnim(false), 900); return () => clearTimeout(t); }, []);
-  const held = useRef(false);
-  const end = () => { if (held.current) { held.current = false; onPeek(false); } };
-  useEffect(() => { window.addEventListener('blur', end); return () => window.removeEventListener('blur', end); });
   const name = NAME[country];
   if (!Z) return <div className="fb-ov is-skel" aria-hidden="true"><div className="fb-ov-chart" /></div>;
   const head = overviewHeadline(name, Z.riseH, Z.riseRaw);
@@ -63,7 +93,7 @@ export const Overview = memo(function Overview({ Z, country, official, raw, peek
   return (
     <div className="fb-ov">
       <div className="fb-ov-top">
-        <p className="fb-ov-eyebrow">MODIS → VIIRS · the 2012 sensor change</p>
+        <p className="fb-ov-eyebrow">NASA fire satellites · the 2012 change</p>
         <div className="fb-seg2 fb-ov-country" role="radiogroup" aria-label="Country">
           {['canada', 'argentina'].map((c) => <button key={c} type="button" role="radio" aria-checked={country === c} className={cx('fb-seg2-i', country === c && 'is-on')} onClick={() => onCountry(c)}>All of {NAME[c]}</button>)}
         </div>
@@ -74,12 +104,12 @@ export const Overview = memo(function Overview({ Z, country, official, raw, peek
       <div className="fb-ov-head">
         <div>
           <h1 className="fb-ov-h">{head.text}</h1>
-          <p className="fb-ov-sub">Mean year 2012–{LAST} vs 2003–2011, in detected fire activity (1 km cells with fire, per day).</p>
+          <p className="fb-ov-sub">Average year 2012–{LAST} vs 2003–2011, counting 1 km squares with fire, day by day.</p>
         </div>
       </div>
       <div className="fb-ov-figs" key={'f-' + country}>
         <dl className="fb-ov-pair">
-          <div><dt>harmonized <span className="fb-ov-gl">(both on the same scale)</span></dt><dd className="fb-ov-v">{X(Z.riseH)}</dd><dd className="fb-ov-s">{T && T.lo != null ? '90% range ' + bootRange(T) + ' · ' + xr(T.without) + ' without ' + T.bigYear : ''}</dd></div>
+          <div><dt>harmonized <span className="fb-ov-gl">(both on the same scale)</span></dt><dd className="fb-ov-v">{X(Z.riseH)}</dd><dd className="fb-ov-s" title={T && T.lo != null ? '90% range: where the result falls when the years are resampled at random; wide means less certain.' : undefined}>{T && T.lo != null ? '90% range ' + bootRange(T) + ' · ' + xr(T.without) + ' without ' + T.bigYear + (phone ? '' : ', its largest year') : ''}</dd></div>
           <div><dt>raw</dt><dd className="fb-ov-v is-raw">{X(Z.riseRaw)}</dd><dd className="fb-ov-s">the two records simply joined</dd></div>
         </dl>
         <p className="fb-ov-check">{official
@@ -94,27 +124,20 @@ export const Overview = memo(function Overview({ Z, country, official, raw, peek
       {/* keyed by country (v6, CLS): a country change replaces the bars and figures instead of moving them */}
       <OverviewChart key={'c-' + country} Z={Z} raw={raw} country={country} animate={anim} phone={phone} />
       <div className="fb-ov-hold">
-        <button type="button" className="fb-ov-holdbtn" aria-pressed={raw}
-          onPointerDown={(e) => { if (e.pointerType === 'touch') return; e.currentTarget.setPointerCapture(e.pointerId); held.current = true; onPeek(true); }}
-          onPointerUp={(e) => { if (e.pointerType === 'touch') { onToggleView(); return; } end(); }} onPointerCancel={end} onLostPointerCapture={end}
-          onKeyDown={(e) => { if ((e.key === ' ' || e.key === 'Enter') && !e.repeat) { e.preventDefault(); held.current = true; onPeek(true); } }}
-          onKeyUp={(e) => { if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); end(); } }}>
-          <Icon d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12zM12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" />{phone ? (raw ? 'Showing the raw record · tap for harmonized' : 'Tap to see the raw record') : raw && !peek ? 'Raw record shown (top-bar switch) · hold to compare' : 'Hold to see the raw record'}
-        </button>
-        <span className="fb-muted">{phone ? '' : 'or hold R'}</span>
+        <RawButton raw={raw} peek={peek} phone={phone} onPeek={onPeek} onToggleView={onToggleView} />
+        {phone ? <span className="fb-muted" /> : <span className="fb-muted fb-ov-holdlab"><span className={cx(!(raw && !peek) && 'is-on')}>or hold R</span><span className={cx(raw && !peek && 'is-on')}>or press H</span></span>}
         <div className="fb-ov-key" aria-hidden="true">
-      <span><i className="fb-ov-k is-solid" />{raw ? 'raw record (shown)' : 'harmonized record'}</span>
-      <span><i className="fb-ov-k is-ghost" />{raw ? 'harmonized' : 'raw'}, before 2012</span>
-      <span><i className="fb-ov-k is-level" />mean per year</span>
-      {phone && <span><i className="fb-ov-k is-level is-dash" />{raw ? 'harmonized' : 'raw'} mean, before 2012</span>}
+      <span><i className="fb-ov-k is-solid" /><Two on={raw} a="harmonized record" b="raw record (shown)" /></span>
+      <span><i className="fb-ov-k is-ghost" /><Two on={raw} a="raw, before 2012" b="harmonized, before 2012" /></span>
+      <span title="January 2012 is a partial VIIRS month: the harmonized record computes it from MODIS, so its mean after 2012 differs slightly from the raw one."><i className="fb-ov-k is-level" />mean per year</span>
+      {phone && <span><i className="fb-ov-k is-level is-dash" /><Two on={raw} a="raw mean, before 2012" b="harmonized mean, before 2012" /></span>}
       <span className="fb-muted">fire detections a year</span>
-      <span className="fb-muted" title="January 2012 is a partial VIIRS month: the harmonized record computes it from MODIS, so its mean after 2012 differs slightly from the raw one.">Jan 2012 estimated from MODIS</span>
         </div>
       </div>
       <div className="fb-ov-head is-lede">
         <div>
-          <p className="fb-ov-lede">In 2012 a sharper satellite sensor (VIIRS) took over from MODIS and sees {ratioWords(Z.ratio)} fire detections. FireBridge puts both records on one scale, so a trend is a trend.</p>
-          <p className="fb-ov-honest">For a single before/after number, harmonizing equals reading MODIS alone. The bridge matters for the calendar, the monthly ranks and the years after MODIS ends.</p>
+          <p className="fb-ov-lede">In 2012 NASA’s fire record moved to VIIRS, a sharper sensor that sees {ratioWords(Z.ratio)} fire detections as MODIS. Both flew from 2012 on, so FireBridge measures the gap and corrects for it.</p>
+          <p className="fb-ov-honest">The correction matters month by month (calendar, ranks) and after MODIS ends. For this one before/after figure, MODIS alone gives the same answer, by construction.</p>
         </div>
       </div>
       <div className="fb-ov-act is-foot">
@@ -124,36 +147,29 @@ export const Overview = memo(function Overview({ Z, country, official, raw, peek
       <div className="fb-ov-head">
         <div>
           <h1 className="fb-ov-h">{head.text}</h1>
-          <p className="fb-ov-sub">Mean year 2012–{LAST} vs 2003–2011, in detected fire activity (1 km cells with fire, per day).</p>
+          <p className="fb-ov-sub">Average year 2012–{LAST} vs 2003–2011, counting 1 km squares with fire, day by day.</p>
         </div>
         <div>
-          <p className="fb-ov-lede">In 2012 a sharper satellite sensor (VIIRS) took over from MODIS and sees {ratioWords(Z.ratio)} fire detections. FireBridge puts both records on one scale, so a trend is a trend.</p>
-          <p className="fb-ov-honest">For a single before/after number, harmonizing equals reading MODIS alone. The bridge matters for the calendar, the monthly ranks and the years after MODIS ends.</p>
+          <p className="fb-ov-lede">In 2012 NASA’s fire record moved to VIIRS, a sharper sensor that sees {ratioWords(Z.ratio)} fire detections as MODIS. Both flew from 2012 on, so FireBridge measures the gap and corrects for it.</p>
+          <p className="fb-ov-honest">The correction matters month by month (calendar, ranks) and after MODIS ends. For this one before/after figure, MODIS alone gives the same answer, by construction.</p>
         </div>
       </div>
       {/* keyed by country (v6, CLS): a country change replaces the bars and figures instead of moving them */}
       <OverviewChart key={'c-' + country} Z={Z} raw={raw} country={country} animate={anim} phone={phone} />
       <div className="fb-ov-hold">
-        <button type="button" className="fb-ov-holdbtn" aria-pressed={raw}
-          onPointerDown={(e) => { if (e.pointerType === 'touch') return; e.currentTarget.setPointerCapture(e.pointerId); held.current = true; onPeek(true); }}
-          onPointerUp={(e) => { if (e.pointerType === 'touch') { onToggleView(); return; } end(); }} onPointerCancel={end} onLostPointerCapture={end}
-          onKeyDown={(e) => { if ((e.key === ' ' || e.key === 'Enter') && !e.repeat) { e.preventDefault(); held.current = true; onPeek(true); } }}
-          onKeyUp={(e) => { if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); end(); } }}>
-          <Icon d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12zM12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" />{phone ? (raw ? 'Showing the raw record · tap for harmonized' : 'Tap to see the raw record') : raw && !peek ? 'Raw record shown (top-bar switch) · hold to compare' : 'Hold to see the raw record'}
-        </button>
-        <span className="fb-muted">{phone ? '' : 'or hold R'}</span>
+        <RawButton raw={raw} peek={peek} phone={phone} onPeek={onPeek} onToggleView={onToggleView} />
+        {phone ? <span className="fb-muted" /> : <span className="fb-muted fb-ov-holdlab"><span className={cx(!(raw && !peek) && 'is-on')}>or hold R</span><span className={cx(raw && !peek && 'is-on')}>or press H</span></span>}
         <div className="fb-ov-key" aria-hidden="true">
-      <span><i className="fb-ov-k is-solid" />{raw ? 'raw record (shown)' : 'harmonized record'}</span>
-      <span><i className="fb-ov-k is-ghost" />{raw ? 'harmonized' : 'raw'}, before 2012</span>
-      <span><i className="fb-ov-k is-level" />mean per year</span>
-      {phone && <span><i className="fb-ov-k is-level is-dash" />{raw ? 'harmonized' : 'raw'} mean, before 2012</span>}
+      <span><i className="fb-ov-k is-solid" /><Two on={raw} a="harmonized record" b="raw record (shown)" /></span>
+      <span><i className="fb-ov-k is-ghost" /><Two on={raw} a="raw, before 2012" b="harmonized, before 2012" /></span>
+      <span title="January 2012 is a partial VIIRS month: the harmonized record computes it from MODIS, so its mean after 2012 differs slightly from the raw one."><i className="fb-ov-k is-level" />mean per year</span>
+      {phone && <span><i className="fb-ov-k is-level is-dash" /><Two on={raw} a="raw mean, before 2012" b="harmonized mean, before 2012" /></span>}
       <span className="fb-muted">fire detections a year</span>
-      <span className="fb-muted" title="January 2012 is a partial VIIRS month: the harmonized record computes it from MODIS, so its mean after 2012 differs slightly from the raw one.">Jan 2012 estimated from MODIS</span>
         </div>
       </div>
       <div className="fb-ov-figs" key={'f-' + country}>
         <dl className="fb-ov-pair">
-          <div><dt>harmonized <span className="fb-ov-gl">(both on the same scale)</span></dt><dd className="fb-ov-v">{X(Z.riseH)}</dd><dd className="fb-ov-s">{T && T.lo != null ? '90% range ' + bootRange(T) + ' · ' + xr(T.without) + ' without ' + T.bigYear : ''}</dd></div>
+          <div><dt>harmonized <span className="fb-ov-gl">(both on the same scale)</span></dt><dd className="fb-ov-v">{X(Z.riseH)}</dd><dd className="fb-ov-s" title={T && T.lo != null ? '90% range: where the result falls when the years are resampled at random; wide means less certain.' : undefined}>{T && T.lo != null ? '90% range ' + bootRange(T) + ' · ' + xr(T.without) + ' without ' + T.bigYear + (phone ? '' : ', its largest year') : ''}</dd></div>
           <div><dt>raw</dt><dd className="fb-ov-v is-raw">{X(Z.riseRaw)}</dd><dd className="fb-ov-s">the two records simply joined</dd></div>
         </dl>
         <p className="fb-ov-check">{official

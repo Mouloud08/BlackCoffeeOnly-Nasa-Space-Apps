@@ -3,7 +3,7 @@ import { memo, useState } from 'react';
 import { Info } from './ui.jsx';
 import { ProvenanceLine } from '../ds/components/src/components.jsx';
 import { LAST, SW, STATS_FROM, cellSummary, versus } from './metrics.js';
-import { X, F2, PCT, xr, bootRange, proofHeading, looHeading, recordsHeading, chanceShort } from './copy.js';
+import { X, F2, PCT, xr, bootRange, proofHeading, looHeading, recordsHeading, chanceShort, baseRate } from './copy.js';
 import { RiseBars } from './Verdict.jsx';
 import { IndexChart } from './Method.jsx';
 import { ErrorStrip } from './Strips.jsx';
@@ -33,7 +33,7 @@ export function ChanceChart({ s, label }) {
         );
       })}
       </div>
-      <p className="fb-note">Band: what chance alone gives (5th–95th percentile of {'2,000'} reshuffles of the year labels, the same for every place). {s.n.toLocaleString('en')} places; {s.excludedHigh} not harmonized (ratio above 4×). A record is one year, not a trend.</p>
+      <p className="fb-note">Band: what chance alone gives (5th–95th percentile of {'2,000'} reshuffles of the year labels, the same for every place). {baseRate(s)} {s.n.toLocaleString('en')} places; {s.excludedHigh} not harmonized (local correction factor above 4×). A record is one year, not a trend.</p>
     </div>
   );
 }
@@ -55,28 +55,28 @@ export const Evidence = memo(function Evidence({ Z, S, official, country, zoneNa
       <section className="fb-panel fb-evpanel" aria-labelledby="ev1">
         <div className="fb-evtop"><h2 className="fb-evh" id="ev1">{proofHeading(Z, official)}</h2>
           <Info id="fb-ev1-i" label="About these bars">
-            <p>Fire activity after 2012 ÷ before (mean year 2012–{LAST} ÷ 2003–2011), one log scale around 1×{official ? '; the official series is independent of both sensors' : ''}.</p>
+            <p>Fire detections after 2012 ÷ before (mean year 2012–{LAST} ÷ 2003–2011), one log scale around 1×{official ? '; the official series is independent of both sensors' : ''}.</p>
             {Z.harmOK && Z.guard && <p>No rise is given for this zone: {Z.guard}.</p>}
-            {Z.harmOK && Z.trend && !Z.guard && <p>{Z.trend.status === 'robust' ? 'The change holds when years are resampled (90% range ' + bootRange(Z.trend) + ') and without ' + Z.trend.bigYear + ' (' + xr(Z.trend.without) + ').' : 'The trend is uncertain: ' + xr(Z.trend.without) + ' without ' + Z.trend.bigYear + ', 90% range ' + bootRange(Z.trend) + '. The correction factor (' + F2(Z.ratio) + ') is not.'}</p>}
+            {Z.harmOK && Z.trend && !Z.guard && <p>{Z.trend.status === 'robust' ? 'The change holds when years are resampled (90% range ' + bootRange(Z.trend) + ') and without ' + Z.trend.bigYear + ' (' + xr(Z.trend.without) + ').' : 'The trend is uncertain: ' + xr(Z.trend.without) + ' without ' + Z.trend.bigYear + ', 90% range ' + bootRange(Z.trend) + '. The correction factor (' + F2(Z.ratio) + ') itself is robust.'}</p>}
             <p>Aqua alone does not change sensor in 2012: a consistency check, not a validation.</p>
           </Info></div>
         <div className="fb-evfill"><RiseBars Z={Z} official={official} big={!phone} /></div>
         {Z.harmOK && Z.guard && <p className="fb-evnote">No rise is given for this zone: {Z.guard}.</p>}
-        {Z.harmOK && Z.trend && !Z.guard && <p className="fb-evnote">{Z.trend.status === 'robust' ? 'Without ' + Z.trend.bigYear + ', its largest year: ' + xr(Z.trend.without) + '.' : 'Trend uncertain: ' + xr(Z.trend.without) + ' without ' + Z.trend.bigYear + ', 90% range ' + bootRange(Z.trend) + '; the correction factor is not.'}</p>}
+        {Z.harmOK && Z.trend && !Z.guard && <p className="fb-evnote">{Z.trend.status === 'robust' ? 'Without ' + Z.trend.bigYear + ', its largest year: ' + xr(Z.trend.without) + '.' : 'Trend uncertain: ' + xr(Z.trend.without) + ' without ' + Z.trend.bigYear + ', 90% range ' + bootRange(Z.trend) + '; the correction factor itself is robust.'}</p>}
         <ProvenanceLine status={Z.harmOK ? 'computed' : 'real'} source="NASA FIRMS" period={'2003–' + LAST}>
-          {!reference && <span>counts not re-checked against the raw NASA points here (done for the Québec reference zones)</span>}
+          {!reference && <span>counts not re-checked against the original FIRMS points here (done for the three Québec reference zones)</span>}
         </ProvenanceLine>
       </section>
       <section className="fb-panel fb-evpanel" aria-labelledby="ev2">
         <div className="fb-evtop"><h2 className="fb-evh" id="ev2">{looHeading(Z)}</h2>
-          <Info id="fb-ev2-i" label="About this test"><p>Each usable overlap year is left out and predicted from the others: MODIS of that year × the ratio of the other years, against what VIIRS measured{borrowed ? ' (wider area: the ratio is borrowed)' : ''}. Cell-days per year, log scale; the label is the error of the prediction.</p></Info></div>
+          <Info id="fb-ev2-i" label="About this test"><p>Each usable overlap year is left out and predicted from the others: MODIS of that year × the correction factor of the other years, against what VIIRS measured{borrowed ? ' (wider area: the factor is borrowed)' : ''}. Cell-days per year, log scale; the label is the error of the prediction.</p></Info></div>
         <div className="fb-evfill"><ErrorStrip Z={Z} /></div>
-        {Z.loo && Z.loo.length > 0 && <p className="fb-evnote">Median error {PCT(Z.medErr)}{Z.holdout ? ' · trained 2012–2018, predicting 2019–' + LAST + ': ' + PCT(Z.holdout.medErr) : ''}{Z.monthly ? ' · month by month (' + Z.monthly.n + ' months, each with 30 or more fire detections in both records): ' + PCT(Z.monthly.medErr) : ''}.</p>}
+        {Z.loo && Z.loo.length > 0 && <p className="fb-evnote">Median error {PCT(Z.medErr)}{Z.holdout ? ' · factor from 2012–2018 tested on 2019–' + LAST + ': ' + PCT(Z.holdout.medErr) : ''}{Z.monthly ? ' · month by month (' + Z.monthly.n + ' months, each with 30 or more fire detections in both records): ' + PCT(Z.monthly.medErr) : ''}.</p>}
         <ProvenanceLine status="computed" source="NASA FIRMS" period={SW + '–' + LAST} />
       </section>
       <MonthRow cls="fb-panel fb-evpanel fb-evmonth" phone={phone} fellBack={fellBack} Z={Z} sel={sel} onSelect={onSelect} from={from} to={to} />
       <section className="fb-panel fb-evpanel" aria-labelledby="ev4">
-        <div className="fb-evtop"><h2 className="fb-evh" id="ev4">{p4 === 'chance' ? recordsHeading(recS, versus) : p4 === 'official' ? 'Year by year against official area burned' : 'The ratio by month'}</h2>
+        <div className="fb-evtop"><h2 className="fb-evh" id="ev4">{p4 === 'chance' ? recordsHeading(recS, versus) : p4 === 'official' ? 'Year by year against official area burned' : 'The correction factor by month'}</h2>
           {alt4 && <div className="fb-seg2 is-sm" role="radiogroup" aria-label="Fourth panel">{opts4.map(([v, l]) => <button key={v} type="button" role="radio" aria-checked={p4 === v} className={cx('fb-seg2-i', p4 === v && 'is-on')} onClick={() => setP4(v)}>{l}</button>)}</div>}
         </div>
         {p4 === 'chance' ? (
@@ -88,11 +88,11 @@ export const Evidence = memo(function Evidence({ Z, S, official, country, zoneNa
           <div className="fb-evfill"><IndexChart off={official} /></div>
         ) : (
           <div className="fb-evfill">
-            <p className="fb-evsub">VIIRS ÷ MODIS by calendar month; residual against the pooled {F2(Z.ratio)}.</p>
+            <p className="fb-evsub">VIIRS ÷ MODIS for each calendar month, against the single factor {F2(Z.ratio)} used for all months.</p>
             <div className="fb-bmstrip" role="img" aria-label={'VIIRS ÷ MODIS by calendar month: ' + Z.byMonth.map((x) => ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][x.m] + ' ' + (x.ratio == null ? 'no data' : F2(x.ratio))).join(', ')}>
               {Z.byMonth.map((x) => <span key={x.m} className={cx(!x.active && 'is-quiet', x.active && x.resid != null && (x.resid > 1.3 || x.resid < 1 / 1.3) && 'is-off')}><b>{['J', 'F', 'M', 'A', 'M', 'J', 'J', 'A', 'S', 'O', 'N', 'D'][x.m]}</b>{x.ratio == null ? '—' : F2(x.ratio)}</span>)}
             </div>
-            <p className="fb-note">Exact in annual totals by construction; outlined months are off the pooled ratio by more than 1.3×. Grey: too few detections.</p>
+            <p className="fb-note">Exact in annual totals by construction; outlined months are off the single factor by more than 1.3×. Grey: too few detections.</p>
           </div>
         )}
       </section>

@@ -2,7 +2,8 @@
 //   tools-win/*.mjs   (from tools/*.mjs)   and   build-win.mjs   (from build.mjs)
 // The copies are functionally identical; only platform plumbing changes (each patch is a no-op on Linux), plus two
 // test expectations that follow the record end instead of assuming December 2025 (identical for that record), and
-// perf.mjs writing its JSON next to itself (tools-win/) so that tools/ stays untouched.
+// perf.mjs writing its JSON next to itself (tools-win/) so that tools/ stays untouched, and (patches 11–13) three test
+// expectations that follow the 15 November UI (guide hidden by default, "One month" layer label, "× more seen" legend).
 // Re-run after tools/ or build.mjs are replaced (e.g. version 6.2.1):  node scripts/winport.mjs
 // Then use:  node build-win.mjs   and   node tools-win/<check>.mjs   (FB_HTML=C:/path/file.html to target a file).
 // A patch that matches nothing, or Linux-only plumbing left in a generated file, is reported (the latter: exit 1).
@@ -40,6 +41,16 @@ const PATCHES = [
   ['perf-output', "here + 'tools/perf.'", "here + 'tools-win/perf.'"],
   // 10. scdiff.sh runs the self-check: run the Windows copy.
   ['scdiff-selfcheck', 'node tools/selfcheck.mjs', 'node tools-win/selfcheck.mjs'],
+  // 11–13. Test expectations tied to the 15 November UI (labels and defaults changed in src/, not in tools/):
+  // 11. the first-visit guide is hidden by default since 6.3: the page that tests it opens with guide=1 from the start
+  //     (a fresh page). Setting location.hash on the live page and reloading does not work: the app answers the
+  //     hashchange by rewriting its canonical hash (guide is not part of the state), so guide=1 is gone before the reload.
+  ['guide-default-hidden', "page('z=canada');\n  ok(!!(await p.$('.fb-guide')), 'guide shown on the dashboard (no anim=0)');",
+    "page('z=canada&guide=1');\n  ok(!!(await p.$('.fb-guide')), 'guide shown on the dashboard with guide=1 (hidden by default since 6.3)');"],
+  // 12. map layer "This month" is labelled "One month" (id l=month unchanged).
+  ['layer-label-one-month', "=== 'This month' &&", "=== 'One month' &&"],
+  // 13. the Sensor effect legend ends "× more seen" (was "× too high"): coherence matches the legend to the layer by it.
+  ['coherence-ratio-legend', "ratio: 'too high'", "ratio: 'more seen'"],
 ];
 // Linux-only plumbing that must not survive in a generated file (a pattern above stopped matching in that file).
 const LEFT = [
@@ -52,6 +63,7 @@ const LEFT = [
   ['record-2025 expectation', (l) => l.includes("'f=2021-01'") || l.includes('setSel(3, 2025)')],
   ['write into tools/', (l) => l.includes("here + 'tools/")],
   ['runs tools/ selfcheck', (l) => l.includes('node tools/selfcheck.mjs')],
+  ['old UI label in a test', (l) => l.includes("=== 'This month'") || l.includes("ratio: 'too high'") || l.includes("'guide shown on the dashboard (no anim=0)'")],
 ];
 fs.rmSync(dst, { recursive: true, force: true }); fs.mkdirSync(dst, { recursive: true });
 const counts = Object.fromEntries(PATCHES.map((p) => [p[0], 0]));

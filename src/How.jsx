@@ -42,7 +42,7 @@ export const How = memo(function How({ Z, cells, ex, setEx, showThis, zoneName, 
   let title, answer, body, chart, prov;
   if (step === 1) {
     title = s.q; answer = s.a;
-    body = <p className="fb-step-b">In 2012 the record switched from the older satellite sensor (MODIS) to a sharper one (VIIRS), which sees {ratioWords(Z.ratio || 2)} fires. Simply joined without correction, the record jumps in 2012 even where fires did not.</p>;
+    body = <p className="fb-step-b">In 2012 the record switched from the older satellite sensor (MODIS) to a sharper one (VIIRS), which sees {ratioWords(Z.ratio || 2)} fires. Simply joined without correction, the record jumps in 2012 even where fires did not. VIIRS looks at 375 m squares, MODIS at 1 km, so VIIRS catches smaller fires that MODIS misses.</p>;
     chart = <><p className="fb-figcap">Fire detections per year, raw, log scale · means 2003–2011 ({NUM(Z.levels.raw.before)}) and 2012–{LAST} ({NUM(Z.levels.raw.after)}): raw {X(Z.riseRaw)}</p><RawBars Z={Z} seen={seen} /><div className="st-frieze"><SensorFrieze locale="en" from={SPAN[0]} to={SPAN[1]} covered={[FIRST, LAST]} compact={phone} /></div></>;
     prov = <ProvenanceLine status="real" source="NASA FIRMS" period={'2001–' + LAST}>{zoneTag}</ProvenanceLine>;
   } else if (step === 2) {
@@ -53,13 +53,13 @@ export const How = memo(function How({ Z, cells, ex, setEx, showThis, zoneName, 
     prov = <ProvenanceLine status="real" source="NASA FIRMS" period={'2012–' + LAST}>{borrowed ? <span>wider area · <span className="at-mono">{boxText(Z.borrowed.box)}</span></span> : zoneTag}</ProvenanceLine>;
   } else if (step === 3) {
     title = 'Once corrected, did fire activity change?'; answer = s.p;
-    body = Z.harmOK ? <p className="fb-step-b">{Z.guard ? plainSentence(Z) : Z.trend && Z.trend.status === 'robust' ? 'The answer holds without the biggest fire year (' + Z.trend.bigYear + ': ' + xr(Z.trend.without) + ') and when the years are reshuffled (' + bootRange(Z.trend) + ').' : Z.trend ? 'The trend is uncertain: ' + xr(Z.trend.without) + ' without ' + Z.trend.bigYear + ', range ' + bootRange(Z.trend) + ' when years are reshuffled. The correction factor is not.' : ''}{Z.riseAqua != null && isFinite(Z.riseAqua) ? ' One older satellite alone (Aqua) points ' + ((Z.riseAqua - 1) * (Z.riseH - 1) >= 0 ? 'the same way' : 'the other way') + ' (' + X(Z.riseAqua) + ').' : ''} More checks in Evidence.</p> : <p className="fb-step-b">{plainSentence(Z)} Only the change with the two records simply joined is shown, and it mixes two satellites.</p>;
+    body = Z.harmOK ? <p className="fb-step-b">{Z.guard ? plainSentence(Z) : Z.trend && Z.trend.status === 'robust' ? 'The answer holds without the biggest fire year (' + Z.trend.bigYear + ': ' + xr(Z.trend.without) + ') and when the years are resampled (90% range ' + bootRange(Z.trend) + ').' : Z.trend ? 'The trend is uncertain: ' + xr(Z.trend.without) + ' without ' + Z.trend.bigYear + ', 90% range ' + bootRange(Z.trend) + ' when the years are resampled. The correction factor itself is robust.' : ''}{Z.riseAqua != null && isFinite(Z.riseAqua) ? ' One older satellite alone (Aqua) points ' + ((Z.riseAqua - 1) * (Z.riseH - 1) >= 0 ? 'the same way' : 'the other way') + ' (' + X(Z.riseAqua) + ').' : ''} More checks in Evidence.</p> : <p className="fb-step-b">{plainSentence(Z)} Only the change with the two records simply joined is shown, and it mixes two satellites.</p>;
     chart = <RiseBars Z={Z} big={!phone} seen={seen} official={official} />;
     prov = <ProvenanceLine status={Z.harmOK ? 'computed' : 'real'} source="NASA FIRMS" period={'2003–2011 vs 2012–' + LAST}>{reference ? <span>Québec reference zone</span> : null}</ProvenanceLine>;
   } else {
     title = 'Did the satellite change create false record years?';
     answer = rs ? rs.verdict : null;
-    body = rs && <p className="fb-step-b">{rs.head} One big fire season sets many records at once, so we compare with what chance gives. A record is one year, not a trend.</p>;
+    body = rs && <p className="fb-step-b">{rs.head} {rs.base} A record is one year, not a trend.</p>;
     const P1 = (x) => Math.round(x * 100) + '%';
     chart = S ? (
       <>

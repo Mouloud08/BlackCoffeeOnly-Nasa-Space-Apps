@@ -158,3 +158,40 @@ and left as it is. Screenshots are in `shots/verify-2026/`
   violations in 34 dark and 34 light runs).
 - The verdict strip was left as it is: it has 2 px of spare height, so a row cannot be removed without clipping.
 - `CLAUDE.md` mentions a narrower map column for Argentina (`.fb-dashb.is-argentina`); no such rule exists in the CSS.
+
+## 15. Wording and small fixes made in this folder on the evening of 15 November (owner's request; carry into 6.2.1)
+
+Items 2 and 11 above are now fixed here; items 3 (reload readout) and 4 ("to Oct" label) are unchanged.
+Figures are untouched: `tools/selfcheck.mjs` gives the same output before and after.
+
+- **Hotspot files** (`src/App.jsx`): the embedded FIRMS extracts are listed in the Download menu as well as in ⋯, with
+  readable labels ("FIRMS hotspots (CSV) · La Rioja, Aug 2024", "· Boreal Québec, Jun 2023"); the request item is
+  "Hotspots for this box (FIRMS request)…" and its dialog no longer says that no such file exists.
+- **Overview** (`src/Overview.jsx`): a click on the raw button toggles the view ("Show the raw record" / "Back to
+  harmonized"); a long press still peeks. Lede rewritten: MODIS did not stop in 2012, both sensors flew from 2012 on
+  ("In 2012 NASA's fire record moved to VIIRS, a sharper sensor that sees about twice as many fire detections as
+  MODIS. Both flew from 2012 on, so FireBridge measures the gap and corrects for it."). Eyebrow "NASA fire satellites ·
+  the 2012 change"; note with "by construction" kept; "Jan 2012 estimated from MODIS" moved to a tooltip.
+  Picking a zone that is not a whole country from the Overview opens the Calendar tab.
+- **Labels**: tab "Dashboard" → "Calendar" (id and hash unchanged); "Words" → "Glossary"; "Type a box" → "Enter
+  coordinates…"; map layer "This month" → "One month"; pill "Quality A · reliable" → "Correction A · reliable" (it
+  grades the correction, not the trend); check pill "Holds / Flips without Y" → "Still up / Still down / Reverses /
+  Without Y"; eyebrow "sensor effect" → "correction factor"; "Aqua only" → "Aqua alone".
+- **Legends** (`src/CalPanel.jsx`, `src/MapPanel.jsx`): wording follows the theme (lighter/darker); Anomaly legend
+  "blue = quieter than typical, orange–red = busier"; margin "typical month (median 2003–25)"; sensor-effect legend
+  "× more seen"; Terra and Aqua glossed ("one MODIS satellite only", "Aqua satellite alone (a check)").
+- **Generated sentences** (`src/copy.js`, `src/guard.js`, `src/MonthRow.jsx`): one verb table (`changeVerb`) for the
+  Overview, the verdict and How step 1 ("Fire detections roughly doubled. Simply joining the two satellite records
+  says they quadrupled"); "normal" → "typical"; guarded zones name the correction factor; Evidence headings answer
+  the question (Yes / No / Partly / Unclear); the 90% range is "resampled", the chance test "reshuffled"; an uncertain
+  zone no longer shows a rise in How step 3; the NOAA-20 caveat reads "S-NPP data are missing this month, or well
+  below NOAA-20 country-wide".
+- **Glitches**: overlapping ratio labels (`src/Strips.jsx`), clipped map keyboard hint, missing spaces in the map hint
+  line, double colon in the calendar readout.
+- **Glossary**: the VIIRS entry said "about twice as many small fires"; it is about twice as many fire detections.
+- **Tests that encode the previous texts** (`tools/` is untouched; `scripts/winport.mjs` patches the generated
+  `tools-win/` copies): `interact.mjs` (guide shown by default, layer label "This month"), `coherence.mjs`
+  (`LAYER_WORD` "too high"), `axe.mjs` (theme chosen through `prefers-color-scheme` only).
+- **Left for the interface team**: the provenance badge "Real" on the raw chart of How step 1 (in `ds/`); a visible
+  colour-vision mention next to the Counts legend (no room without resizing the calendar); "bars before 2012:
+  estimated" in the Overview key (true only in the harmonized view, and no room at 1366).

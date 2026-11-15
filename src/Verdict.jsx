@@ -18,7 +18,7 @@ export function RiseBars({ Z, intro = false, big = false, seen = true, official 
   if (!C && Z.guard) rows.push({ k: 'harm', label: 'Harmonized', sub: 'not given: ' + Z.guard, v: null, val: '—', note: 'not given for this zone' });
   else if (!C) {
     rows.push({ k: 'harm', label: 'Harmonized', sub: 'on one scale (older satellite × ' + F2(Z.ratio) + (borrowed ? ', wider area)' : ')'), v: Z.riseH, val: X(Z.riseH), range: Z.trend ? '(90% range ' + bootRange(Z.trend) + ')' : null, rangeLabel: 'year-resampling 90% range' });
-    if (!noAqua) rows.push({ k: 'aqua', label: 'Aqua only', sub: 'one older satellite alone: a consistency check', v: Z.riseAqua, val: X(Z.riseAqua) });
+    if (!noAqua) rows.push({ k: 'aqua', label: 'Aqua alone', sub: 'one older satellite alone: a consistency check', v: Z.riseAqua, val: X(Z.riseAqua) });
     if (official) rows.push({ k: 'off', label: 'Official area burned', sub: 'National Forestry Database, ' + official.after[0] + '–' + official.after[1] + ' · independent of both sensors', v: official.rise, val: X(official.rise), range: 'ours on the same years: ' + X(official.harm), rangeLabel: 'our harmonized change on the same years' });
   }
   // One common log scale; the longest bar on each side of 1× reaches ~80% of that side; 1× is placed by the data.
@@ -81,7 +81,8 @@ export function Pill({ tone = 'neutral', children, title }) {
   return <span className={cx('fb-pill', 'is-' + tone)} title={title}><Icon d={ST_ICON[tone]} />{children}</span>;
 }
 const gradeTone = (Z) => (Z.notHarm ? 'neutral' : Z.grade === 'A' ? 'success' : Z.grade === 'B' ? 'warning' : 'neutral');
-const gradeWords = (Z) => (Z.notHarm ? 'Not harmonized · ratio above 4×' : Z.grade === 'A' ? 'Quality A · reliable' : Z.grade === 'B' ? 'Quality B · ' + (Z.gradeWhy === 'borrowed' ? 'ratio borrowed' : 'fair') : 'Not harmonized');
+const r1 = (x) => Math.round(x * 10) / 10; // the one-decimal rounding of copy.js (verdict cases: rise ≥ 1.15, decline ≤ 0.9)
+const gradeWords = (Z) => (Z.notHarm ? 'Not harmonized · ratio above 4×' : Z.grade === 'A' ? 'Correction A · reliable' : Z.grade === 'B' ? 'Correction B · ' + (Z.gradeWhy === 'borrowed' ? 'borrowed' : 'fair') : 'Not harmonized');
 
 // The quality pill; its popover gives the rule in plain language.
 export function GradeMark({ Z, onMethod }) {
@@ -104,7 +105,7 @@ export function GradeMark({ Z, onMethod }) {
 // Rail ladder: one compact chart, label left, value right, one shared log axis around a labelled 1× line; 28–32 px rows,
 // no secondary text (ranges and definitions are in each row's tooltip and in Evidence).
 function Ladder({ Z, official }) {
-  const rows = [['Raw', Z.riseRaw, 'is-raw', 'MODIS, then VIIRS, uncorrected'], ['Harmonized', Z.riseH, 'is-harm', 'MODIS × ' + F2(Z.ratio) + ' before 2012' + (Z.trend ? '; resampled years, 90% range ' + bootRange(Z.trend) : '')], ['Aqua only', Z.riseAqua, 'is-aqua', 'One MODIS satellite that does not change sensor in 2012 (same sensor family as MODIS: a consistency check, not proof that the bridge is right)']];
+  const rows = [['Raw', Z.riseRaw, 'is-raw', 'MODIS, then VIIRS, raw'], ['Harmonized', Z.riseH, 'is-harm', 'MODIS × ' + F2(Z.ratio) + ' before 2012' + (Z.trend ? '; resampled years, 90% range ' + bootRange(Z.trend) : '')], ['Aqua alone', Z.riseAqua, 'is-aqua', 'One MODIS satellite that does not change sensor in 2012 (same sensor family as MODIS: a consistency check, not proof that the bridge is right)']];
   if (official) rows.push(['Area burned, ' + official.after[0] + '–' + String(official.after[1]).slice(2), official.rise, 'is-off', 'Official area burned, National Forestry Database ' + official.after[0] + '–' + official.after[1] + '; ours on the same years: ' + X(official.harm)]);
   const vs = rows.map((r) => r[1]).filter((v) => v > 0 && isFinite(v));
   const lo = Math.min(1, ...vs) / 1.15, hi = Math.max(1, ...vs) * 1.15;
@@ -180,7 +181,7 @@ export function Verdict({ variant = 'strip', wide = false, Z, box, zoneName, off
           {!Z ? <div className="fb-answer is-skel" aria-hidden="true"><i className="fb-skel-num" /></div> : (
             <>
               <p className="fb-empty-t">{outside ? 'No data here: this box is outside ' + country + '.' : 'No detections in this box, 2001–' + CAL_LAST + '.'}</p>
-              <p className="fb-vsent">{outside ? 'The records cover Canada and Argentina only.' : 'None of its ' + (cover ? cover.inside : Math.round((box.n - box.s) * 2) * Math.round((box.e - box.w) * 2)) + ' tiles of 0.5° recorded a fire by MODIS or VIIRS.'}</p>
+              <p className="fb-vsent">{outside ? 'The records cover Canada and Argentina only.' : 'None of its ' + (cover ? cover.inside : Math.round((box.n - box.s) * 2) * Math.round((box.e - box.w) * 2)) + ' places (0.5° squares) had a fire seen by either satellite.'}</p>
             </>
           )}
         </div>
@@ -206,14 +207,14 @@ export function Verdict({ variant = 'strip', wide = false, Z, box, zoneName, off
   else if (harm && T) {
     const flips = (Z.riseH - 1) * (T.without - 1) < 0 && Math.abs(Math.log(T.without)) > Math.log(1.02);
     const tone = flips ? 'warning' : T.status === 'robust' ? 'success' : 'neutral';
-    checks.push(<Pill key="wo" tone={tone} title={'The change recomputed without ' + T.bigYear + ', the largest year' + (flips ? ': the direction changes.' : ': the direction holds.') + ' Resampled years: 90% range ' + bootRange(T) + '.'}>{flips ? 'Flips' : 'Holds'} without {T.bigYear}: {xr(T.without)}</Pill>);
+    checks.push(<Pill key="wo" tone={tone} title={'The change recomputed without ' + T.bigYear + ', the largest year' + (flips ? ': the direction changes.' : ': the direction holds.') + ' Resampled years: 90% range ' + bootRange(T) + '.'}>{flips ? 'Reverses without' : T.status === 'robust' && r1(Z.riseH) >= 1.15 && T.without > 1 ? 'Still up without' : T.status === 'robust' && r1(Z.riseH) <= 0.9 && T.without < 1 ? 'Still down without' : 'Without'} {T.bigYear}: {xr(T.without)}</Pill>);
   }
   let answer, label;
   if (uncertain) {
-    label = 'sensor effect';
+    label = 'correction factor';
     answer = (
       <div className="fb-vrow-hero">
-        <span className="fb-num is-factor" title="Sensor effect: VIIRS records this many times what MODIS would"><span className="fb-div" aria-hidden="true">÷</span>{formatDecimal(Z.ratio, 1, 'en')}</span>
+        <span className="fb-num is-factor" title={'÷ ' + formatDecimal(Z.ratio, 1, 'en') + ': simply joining the two records reads ' + formatDecimal(Z.ratio, 1, 'en') + '× too high here. The trend itself is too uncertain to print a rise.'}><span className="fb-div" aria-hidden="true">÷</span>{formatDecimal(Z.ratio, 1, 'en')}</span>{/* no visible "correction" label: with the guard pill it wrapped the hero onto two rows (strip overflow at 1366–1440); the eyebrow says "correction factor" */}
         <span className="fb-ba"><span className="fb-pill is-hollow">Raw reads {corrFactor(Z)} too high</span><Pill tone="warning" title={uncertainSentence(Z)}>{Z.guard ? (Z.guardPill || 'No trend: too little data') : 'Trend uncertain'}</Pill></span>
       </div>
     );
@@ -238,7 +239,7 @@ export function Verdict({ variant = 'strip', wide = false, Z, box, zoneName, off
   } else {
     answer = <p className="fb-answer is-c">{Z.notHarm ? 'Not harmonized here: sensor ratio above 4×.' : 'Too few detections here to harmonize the two sensors.'}</p>;
   }
-  const live = uncertain ? 'Sensor effect: raw data read ' + corrFactor(Z) + ' too high; trend uncertain.' : harm ? 'Harmonized: ' + X(Z.riseH) + '; raw ' + X(Z.riseRaw) + '.' : 'Not harmonized.';
+  const live = uncertain ? 'Correction factor: raw data read ' + corrFactor(Z) + ' too high; trend uncertain.' : harm ? 'Harmonized: ' + X(Z.riseH) + '; raw ' + X(Z.riseRaw) + '.' : 'Not harmonized.';
   return (
     <section ref={root} className={cx('fb-verdict2', 'is-' + variant, wide && 'is-wide', uncertain && 'is-uncertain', !harm && 'is-c', rawView && 'is-rawview')} aria-labelledby="fb-vq">
       {zone}

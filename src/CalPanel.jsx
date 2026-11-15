@@ -76,27 +76,27 @@ function CalReadout({ reg, Z, sel, y0, y1, raw, harm, anomaly, isDef }) {
   const [hov, setHov] = useState(null);
   reg.current = setHov;
   const ri = hov != null ? hov : sel;
-  const pre = hov == null && isDef ? 'Peak month of ' + Math.floor(sel / 12 + FIRST) + ': ' : '';
+  const pre = hov == null && isDef ? ' (peak month of ' + Math.floor(sel / 12 + FIRST) + ')' : ''; // after the month: "July 2025 (peak month of 2025): …"
   const q = monthReading(Z, ri, y0, y1), nm = monthLong(q.m), lab = nm + ' ' + q.y;
-  const src = q.computed ? (raw ? 'older satellite (MODIS), as recorded' : 'estimated from the older satellite (MODIS × ' + F2(Z.ratio) + ')') : (Z.contSet && Z.contSet.has(ri) ? 'NOAA-20 rescaled' : 'newer satellite (VIIRS)');
+  const src = q.computed ? (raw ? 'older satellite (MODIS), as recorded' : 'estimated from the older satellite (MODIS × ' + F2(Z.ratio) + ')') : (Z.contSet && Z.contSet.has(ri) ? 'NOAA-20 rescaled' : 'measured by the newer satellite (VIIRS)');
   const val = NUM(raw ? q.raw : q.v) + ' fire detections';
   const prov = Z.provSet && Z.provSet.has(ri);
   // v6 (judge C5): a computed month whose calendar month sits off the pooled ratio by more than 1.3× is flagged.
   const bm = Z.byMonth && Z.byMonth[q.m], offFit = !raw && q.computed && bm && bm.active && bm.resid != null && (bm.resid > 1.3 || bm.resid < 1 / 1.3);
   const flag = offFit ? <>{' '}<span className="fb-offfit" title="Off-season month: the annual ratio fits it poorly (its own ratio is off the pooled one by more than 1.3×)">off-season month: ratio fits poorly</span></> : null;
   const an = q.partial ? 'partial MODIS coverage (' + q.y + '): not used in statistics'
-    : !harm ? 'raw: not comparable across 2012' : q.low ? 'too few fires in a normal ' + nm + ' to compare' : anomalyWords(q.anomaly, nm);
+    : !harm ? 'raw: not comparable across 2012' : q.low ? 'too few fires in a typical ' + nm + ' to compare' : anomalyWords(q.anomaly, nm);
   const mm = String(q.m + 1).padStart(2, '0');
   const cross = hov != null ? '.fb-calpanel .at-cal-cells [data-key^="' + q.y + '-"], .fb-calpanel .at-cal-cells [data-key$="-' + mm + '"] { box-shadow: inset 0 0 0 100px color-mix(in oklab, var(--surface) 26%, transparent); } .fb-calpanel .at-cal-cells [data-key="' + q.y + '-' + mm + '"] { box-shadow: inset 0 0 0 2px var(--ink), inset 0 0 0 3px var(--surface); }' : '';
   return (
     <>
       {cross && <style>{cross}</style>}
-      {/* v6.2 (P2): a sentence: "July 2025: 81,333 fire detections, 3.9 times a normal July." */}{anomaly && harm && !q.low && !q.partial ? <>{pre}<b>{lab}: {an}</b>.{offFit ? null : ' ' + cap1(src) + '.'}{prov ? ' Provisional.' : ''}{flag}</> : <>{pre}<b>{lab}</b>: {val}, {an}.{offFit ? null : ' ' + cap1(src) + '.'}{prov ? ' Provisional (near-real-time).' : ''}{flag}</>}
+      {/* v6.2 (P2): a sentence: "July 2025: 81,333 fire detections, 3.9 times a normal July." */}{anomaly && harm && !q.low && !q.partial ? <>{pre ? <><b>{lab}</b>{pre}: <b>{an}</b></> : <b>{lab}: {an}</b>}.{offFit ? null : ' ' + cap1(src) + '.'}{prov ? <>{' '}<span title="Provisional: fast-release data, not yet filtered for non-fire sources.">Provisional.</span></> : ''}{flag}</> : <><b>{lab}</b>{pre}: {val}, {an}.{offFit ? null : ' ' + cap1(src) + '.'}{prov ? <>{' '}<span title="Provisional: fast-release data, not yet filtered for non-fire sources.">Provisional (near-real-time).</span></> : ''}{flag}</>}
     </>
   );
 }
 
-export const CalPanel = memo(function CalPanel({ Z, cd, empty: empty0, outside, onLarger, onNearest, onMethod, mPicked, onClear, series, cv, setCv, from, to, setRange, sel, defSel, defIsPeak, onSelect, onHoverYear, markYear, phone }) {
+export const CalPanel = memo(function CalPanel({ Z, cd, empty: empty0, outside, onLarger, onNearest, onMethod, mPicked, onClear, series, cv, setCv, from, to, setRange, sel, defSel, defIsPeak, onSelect, onHoverYear, markYear, phone, theme }) {
   const harm = Z && Z.harmOK;
   // Data-poor: under 30 cell-days in 25 years is not drawn as a calendar (an empty grid reads as data).
   const total = Z && !Z.empty ? Z.raw.reduce((a, b) => a + b, 0) : 0;
@@ -219,16 +219,16 @@ export const CalPanel = memo(function CalPanel({ Z, cd, empty: empty0, outside, 
   const marker = markYear && !anomaly ? <style>{'.fb-calpanel .at-cal-cells [data-key^="' + markYear + '-"]{box-shadow:inset 0 0 0 2px var(--ink),inset 0 0 0 3px var(--surface)}'}</style> : null;
   const notes = [];
   if (Z && !Z.empty) {
-    notes.push(<><b>Cell-day</b>: a ~1 km cell with at least one fire detection that day, summed per month.</>);
+    notes.push(<><b>Cell-day</b>: a 1 km square with at least one fire detection that day, summed per month.</>);
     notes.push(raw ? <><b>Raw</b>: MODIS to January 2012, then VIIRS, not corrected.</> : <><b>Harmonized</b>: MODIS × {F2(Z.ratio)} before February 2012 (computed), VIIRS after (measured).</>);
     if (anomaly) notes.push(<><b>Anomaly</b>: each month ÷ the median of the same month, 2003–{LAST}. A dot: too few detections.</>);
     else notes.push(<><b>Colours</b>: fitted to this zone (log); harmonizing changes {cd.changed} of {cd.preMonths} months before 2012.</>);
     notes.push(<><b>Faded</b>: 2001–2002, partial MODIS coverage, not used.</>);
     if (harm && Z.seamWarn && !raw) notes.push('Off-season months are less well harmonized (one ratio per year).');
     if (Z.emptyNote) notes.push('Empty months before 2012 can be fires too small for MODIS.');
-    if (Z.gaps && Z.gaps.length) notes.push('S-NPP outage months use NOAA-20: ' + Z.gaps.map((g) => g.key).join(', ') + '.');
+    if (Z.gaps && Z.gaps.length) notes.push('S-NPP (main VIIRS satellite) outage months use its twin NOAA-20: ' + Z.gaps.map((g) => g.key).join(', ') + '.');
     if (partialLabel()) notes.push(partialLabel() + ': shown, not used in annual statistics.');
-    notes.push('A fire detection is counted as a cell-day: a 1 km cell with at least one fire on one day (NASA FIRMS).');
+    if (NM % 12) notes.push('Blank cells after ' + endLabel() + ': the record ends there.');
     notes.push('Bars: annual totals on a log scale (hollow MODIS, filled VIIRS); dotted line: Aqua alone, a consistency check; level lines: mean before / after 2012.');
     notes.push('The colour ramp keeps adjacent classes apart in lightness under simulated deuteranopia, protanopia and tritanopia.');
   }
@@ -241,7 +241,7 @@ export const CalPanel = memo(function CalPanel({ Z, cd, empty: empty0, outside, 
             harmonized, Anomaly is disabled with its reason. */}
         {!empty && (
           <div className="fb-seg2" role="radiogroup" aria-label="Calendar colours">
-            {[['counts', 'Counts'], ['anomaly', 'Anomaly']].map(([v, l]) => { const an = harm && anomaly; return <button key={v} type="button" role="radio" aria-checked={(v === 'anomaly') === an} disabled={v === 'anomaly' && (raw || !harm)} title={v === 'anomaly' ? (!harm ? 'Anomaly needs the two satellites on one scale, which is not possible in this area' : raw ? 'Anomaly uses the harmonized record' : 'Anomaly: each month compared with a normal month of the same name') : 'Counts: fire detections per month (a ~1 km cell with at least one fire on one day)'} className={cx('fb-seg2-i', (v === 'anomaly') === an && 'is-on')} onClick={() => setCv(v)}>{l}</button>; })}
+            {[['counts', 'Counts'], ['anomaly', 'Anomaly']].map(([v, l]) => { const an = harm && anomaly; return <button key={v} type="button" role="radio" aria-checked={(v === 'anomaly') === an} disabled={v === 'anomaly' && (raw || !harm)} title={v === 'anomaly' ? (!harm ? 'Anomaly needs the two satellites on one scale, which is not possible in this area' : raw ? 'Anomaly uses the harmonized record' : 'Anomaly: each month compared with a typical month of the same name') : 'Counts: fire detections per month (a 1 km square with at least one fire on one day)'} className={cx('fb-seg2-i', (v === 'anomaly') === an && 'is-on')} onClick={() => setCv(v)}>{l}</button>; })}
           </div>
         )}
         <span className="fb-hprobes" aria-hidden="true"><span className="fb-paneltitle is-t-l">Burning calendar</span><span className="fb-paneltitle is-t-s">Calendar</span><span className="fb-chipprobe is-c-l">September 2019<i className="fb-chipx" /></span><span className="fb-chipprobe is-c-s">Sep 2019<i className="fb-chipx" /></span><span className="at-btn at-btn-sm fb-rangeprobe is-r-l">{rangeLabel(from, to, false)}<Icon d={IC.down} /></span><span className="at-btn at-btn-sm fb-rangeprobe is-r-s">{rangeLabel(from, to, true)}<Icon d={IC.down} /></span><span className="fb-provchip is-comp is-pill">Before 2012: estimated</span></span>
@@ -274,19 +274,19 @@ export const CalPanel = memo(function CalPanel({ Z, cd, empty: empty0, outside, 
           </div>
         )}
         {!empty && cd && geo && geo.x01 != null && !phone && (
-          <p className="fb-terranote" ref={noteRef} style={{ left: geo.x01 + 'px', top: geo.top + 'px', visibility: noteForm === 'none' ? 'hidden' : undefined }} aria-hidden={noteForm === 'none' ? true : undefined}>{noteForm === 'long' ? <>{FIRST}–{FIRST + 1}: Terra only to mid-{FIRST + 1},<br />not in the statistics</> : noteForm === 'short' ? <>{FIRST}–{String(FIRST + 1).slice(2)}: Terra only,<br />not in statistics</> : <>{FIRST}–{String(FIRST + 1).slice(2)}:<br />Terra only</>}</p>
+          <p className="fb-terranote" ref={noteRef} style={{ left: geo.x01 + 'px', top: geo.top + 'px', visibility: noteForm === 'none' ? 'hidden' : undefined }} aria-hidden={noteForm === 'none' ? true : undefined}>{noteForm === 'long' ? <>{FIRST}–{String(FIRST + 1).slice(2)}: one MODIS satellite only,<br />not in the statistics</> : noteForm === 'short' ? <>{FIRST}–{String(FIRST + 1).slice(2)}: one satellite,<br />not in statistics</> : <>{FIRST}–{String(FIRST + 1).slice(2)}:<br />partial</>}</p>
         )}
         {!empty && cd && geo && geo.right > 0 && margin && Z.harmOK && (
-          <div className="fb-margin" aria-label={'Typical month (median, 2003–' + LAST + '): ' + Z.typical.map((v, m) => monthLong(m).slice(0, 3) + ' ' + NUM(v)).join(', ')} role="img" style={{ left: geo.right + 'px' }}>
-            <span className="fb-margin-t" style={{ top: geo.rows[0].y + 'px' }}>typical month,<br />{STATS_FROM}–{LAST}</span>
-            {geo.rows.map((r, m) => { const t = Z.typical[m], mx = Math.max(...Z.typical, 1), f = t > 0 ? Math.max(0.04, Math.log10(1 + t) / Math.log10(1 + mx)) : 0; return <i key={m} title={monthLong(m) + ': typical ' + NUM(t) + ' cell-days'} style={{ top: r.y + 'px', height: r.h + 'px', width: (f * 100) + '%' }} />; })}
+          <div className="fb-margin" title="Compare each row with its typical month." aria-label={'Typical month (median ' + STATS_FROM + '–' + LAST + '): ' + Z.typical.map((v, m) => monthLong(m).slice(0, 3) + ' ' + NUM(v)).join(', ')} role="img" style={{ left: geo.right + 'px' }}>
+            <span className="fb-margin-t" style={{ top: geo.rows[0].y + 'px' }}>typical month<br />(median {STATS_FROM}–{String(LAST).slice(2)})</span>
+            {geo.rows.map((r, m) => { const t = Z.typical[m], mx = Math.max(...Z.typical, 1), f = t > 0 ? Math.max(0.04, Math.log10(1 + t) / Math.log10(1 + mx)) : 0; return <i key={m} title={monthLong(m) + ': typical ' + NUM(t) + ' cell-days (median ' + STATS_FROM + '–' + LAST + ')'} style={{ top: r.y + 'px', height: r.h + 'px', width: (f * 100) + '%' }} />; })}
           </div>
         )}
         {!empty && cd && !phone && <p className="fb-calread" ref={readRef}><span key={(Z ? [Z.box.s, Z.box.n, Z.box.w, Z.box.e].join(',') : '') + ':' + sel}>{readout}</span></p>}
   {!empty && (
           <div className="fb-calfoot" ref={footRef}>
-            <span title={anomaly ? 'Each month divided by a typical month of the same name' : 'Fire detections per month, counted as cell-days: a ~1 km cell with at least one fire that day'}><ColorLegend view={anomaly ? 'anomaly' : 'counts'} compact locale="en" steps={cd ? cd.breaks : undefined} unit={anomaly ? 'lighter = quieter than normal, darker = busier' : 'fire detections a month: lighter = fewer, darker = more'} /></span>
-            <span className="fb-keys" aria-hidden="true"><span title="Aqua: one MODIS satellite alone, which does not change sensor in 2012 (a consistency check)"><i className="at-aqua-swatch fb-aquakey" />Aqua alone (consistency check)</span></span>
+            <span title={anomaly ? 'Each month divided by a typical month of the same name' : 'Fire detections per month, counted as cell-days: a 1 km square with at least one fire that day'}><ColorLegend view={anomaly ? 'anomaly' : 'counts'} compact locale="en" steps={cd ? cd.breaks : undefined} unit={anomaly ? 'blue = quieter than typical, orange–red = busier' : theme === 'dark' ? 'fire detections a month: darker = fewer, lighter = more' : 'fire detections a month: lighter = fewer, darker = more'} /></span>
+            <span className="fb-keys" aria-hidden="true"><span title="Aqua: one MODIS satellite alone, which does not change sensor in 2012 (a consistency check)"><i className="at-aqua-swatch fb-aquakey" />Aqua satellite alone (a check)</span></span>
 
           </div>
         )}

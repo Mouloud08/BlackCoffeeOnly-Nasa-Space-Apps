@@ -18,7 +18,7 @@ export const LAYERS = [
   { value: 'det', label: 'Detections', short: 'Detections', tip: 'Where the newer satellite (VIIRS) sees fire: fire detections per year' },
   { value: 'rec', label: 'Record years', short: 'Records', tip: 'The year with the most fire in each place: before or since the 2012 sensor change' },
   { value: 'ratio', label: 'Sensor effect', short: 'Sensor', tip: 'How many times more fire the newer satellite (VIIRS) records than the older one (MODIS) in each place' },
-  { value: 'month', label: 'This month', short: 'Month', tip: 'The selected month ranked against the same month of every year' },
+  { value: 'month', label: 'One month', short: 'Month', tip: 'The selected month ranked against the same month of every year' },
 ];
 const snapDown = (v) => Math.floor(v * 2 + 1e-9) / 2, snapUp = (v) => Math.ceil(v * 2 - 1e-9) / 2;
 export const RATIO_BREAKS = [1.5, 2, 2.5, 3, 4];
@@ -108,18 +108,18 @@ export const MapPanel = memo(function MapPanel({ C, S, country, box, onBox, harm
       const hs = <span className={cx(harm && 'is-on')}>On one scale: {P1(R.sinceHarm)}, {says(vh, R.sinceHarm, R.chanceHarm)}.</span>;
       const rs = <span className={cx(!harm && 'is-on')}>With the two records simply joined, {P1(R.sinceRaw)} of places have their busiest year in 2012 or later, {says(vr, R.sinceRaw, R.chanceRaw)}.</span>;
       // v6.2 (P2): first what the colours mean, in everyday words; then the finding.
-      sentence = <><span className="fb-plain">Blue: the busiest fire year here came in 2012 or later. Sand: before 2012.</span> {scope !== cname + ':' ? scope + ' ' : ''}{rs} {hs}</>;
+      sentence = <><span className="fb-plain">Blue: the busiest fire year here came in 2012 or later. Gold: before 2012.</span> {scope !== cname + ':' ? scope + ' ' : ''}{rs} {hs}</>;
       info = (
         <>
-          <p><b>Record year</b>: the year with the most fire in a 0.5° place (at least 200 cell-days, {STATS_FROM}–{LAST}). <b>Chance</b>: the share that reshuffling the years {S.perms.length.toLocaleString('en')} times gives: {band(R.chanceHarm)} harmonized, {band(R.chanceRaw)} raw ({B ? 'this box' : cname}). <b>Grey</b>: local ratio above 4×, not harmonized ({s.excludedHigh} places).</p>
+          <p><b>Place</b>: one 0.5° map square. <b>Record year</b>: the year with the most fire in a place (at least 200 cell-days, {STATS_FROM}–{LAST}). {LAST - SW + 1} of the {LAST - STATS_FROM + 1} years are {SW} or later, so chance alone puts many records there. <b>Chance</b>: the share that reshuffling the years {S.perms.length.toLocaleString('en')} times gives: {band(R.chanceHarm)} harmonized, {band(R.chanceRaw)} raw ({B ? 'this box' : cname}). <b>Grey</b>: local ratio above 4×, not harmonized ({s.excludedHigh} places).</p>
           {boxSum && boxSum.n > 0 && boxSum.n < 30 && <p><b>This box</b>: {boxSum.n} places, too few to count records; the sentence gives the whole country.</p>}
           {onMethod && <button type="button" className="at-link" onClick={onMethod}>Method <Icon d="M5 12h14M13 6l6 6-6 6" /></button>}
         </>
       );
     } else if (layer === 'ratio') {
       legend = (
-        <span className="fb-lg fb-ramp is-steps" role="img" aria-label={'Raw reads N times too high: under 1.5, then ' + RATIO_BREAKS.join(', ') + ', and 4 or more'}>
-          {RATIO_TOK.map((t, k) => <span key={t}><i style={{ background: 'var(--civ-' + t + ')' }} />{k < RATIO_BREAKS.length && <em>{RATIO_BREAKS[k]}</em>}</span>)}<em>× too high</em>
+        <span className="fb-lg fb-ramp is-steps" role="img" aria-label={'VIIRS sees N times more fire than MODIS: under 1.5, then ' + RATIO_BREAKS.join(', ') + ', and 4 or more'}>
+          {RATIO_TOK.map((t, k) => <span key={t}><i style={{ background: 'var(--civ-' + t + ')' }} />{k < RATIO_BREAKS.length && <em>{RATIO_BREAKS[k]}</em>}</span>)}<em>× more seen</em>
         </span>
       );
       sentence = <><span className="fb-plain">Colour: how many times more fire the newer satellite sees than the older one, place by place.</span> Typical place: {fx(pc.p50).replace('×', ' times')}; most places between {fx(pc.p5).replace('×', '')} and {fx(pc.p95).replace('×', ' times')}. <span className="fb-muted">{s.excludedHigh} places above 4 times: not put on one scale.</span></>;
@@ -141,7 +141,7 @@ export const MapPanel = memo(function MapPanel({ C, S, country, box, onBox, harm
       sentence = sel < (STATS_FROM - 2001) * 12 ? <><b>{mName}</b> is in 2001–2002 (partial MODIS coverage), which is not ranked. <span className="fb-muted">Pick a month from 2003 in the calendar.</span></> : ML && <><b>{mName}:</b> a record in {formatNumber(ML.counts.rec, 'en')} {ML.counts.rec === 1 ? 'place' : 'places'}, top 3 in {formatNumber(ML.counts.top3, 'en')}. <span className="fb-muted">Pick a month in the calendar.</span></>;
       info = ML && (
         <>
-          <p><b>This month.</b> Each place’s {mName} (harmonized) ranked among the same month of {STATS_FROM}–{ML.years.length ? ML.years[ML.years.length - 1] : LAST}: record, top 3, active but not unusual, or no detection ({formatNumber(ML.counts.none, 'en')} places). Active, not unusual: {formatNumber(ML.counts.act, 'en')}.</p>
+          <p><b>One month.</b> Each place’s {mName} (harmonized) ranked among the same month of {STATS_FROM}–{ML.years.length ? ML.years[ML.years.length - 1] : LAST}: record, top 3, active but not unusual, or no detection ({formatNumber(ML.counts.none, 'en')} places). Active, not unusual: {formatNumber(ML.counts.act, 'en')}.</p>
           <p>Ranked, not compared with a typical month: counts per place are too small for that.</p>
         </>
       );
@@ -151,7 +151,7 @@ export const MapPanel = memo(function MapPanel({ C, S, country, box, onBox, harm
           <em>{formatNumber(detBreaks[0], 'en')}</em>{Array.from({ length: 9 }, (_, k) => <span key={k}><i style={{ background: 'var(--det-' + k + ')' }} /></span>)}<em>{formatNumber(detBreaks[8], 'en')}+ a year</em>
         </span>
       );
-      sentence = <><span className="fb-plain">Darker = more fires seen each year by the newer satellite (VIIRS), 2012–{LAST}.</span> <span className="fb-muted">Grey scale, fire detections per year (not the calendar’s colours).</span></>;
+      sentence = <><span className="fb-plain">{theme === 'dark' ? 'Lighter' : 'Darker'} = more fires seen each year by the newer satellite (VIIRS), 2012–{LAST}.</span> <span className="fb-muted">Grey scale, fire detections per year (not the calendar’s colours).</span></>;
       info = <p><b>Detections.</b> Mean annual VIIRS cell-days per 0.5° place, February 2012–{LAST}; {formatNumber(S.cells.filter((c) => c.det > 0).length, 'en')} places with at least one detection. The other layers show what harmonizing changes.</p>;
     }
   }
@@ -177,8 +177,8 @@ export const MapPanel = memo(function MapPanel({ C, S, country, box, onBox, harm
   const wholeBox = (PRESETS.find((p) => p.whole && p.country === country) || {}).box;
   const hintLine = mode === 'draw' ? 'Drag to draw an area · Esc to cancel'
     : msg ? msg
-    : undo ? <>Zone changed. <button type="button" className="at-link" onClick={doUndo}>Back to {undo.name}</button></>
-    : monthPicked && layer !== 'month' ? <>{mName} is selected in the calendar. <button type="button" className="at-link" onClick={() => setLayer('month')}>Show it on the map</button></>
+    : undo ? <>Zone changed.{' '}<button type="button" className="at-link" onClick={doUndo}>Back to {undo.name}</button></> // no-break space: the hint line is a flex box, which drops a plain trailing space
+    : monthPicked && layer !== 'month' ? <>{mName} is selected in the calendar.{' '}<button type="button" className="at-link" onClick={() => setLayer('month')}>Show it on the map</button></>
     : (phone ? 'Tap a place to analyse it · drag to move · pinch to zoom' : 'Click a place to analyse it · drag to move · scroll to zoom');
   const hlCount = useMemo(() => (S && hlYear && layer === 'rec' ? S.cells.filter((c) => c.claim && (harm ? c.recHarm : c.recRaw) === hlYear).length : null), [S, hlYear, harm, layer]);
 
@@ -662,7 +662,7 @@ function MapView({ C, S, ML, detBreaks, country, box, whole, onBox: onBox0, noFl
           })()}
         </svg>
         <span id="fb-map-help" className="sr-only">Click a place to select the 2° box around it; the view does not move. Drag to pan, scroll or double-click to zoom. Draw area button (or Shift-drag) draws a box. Drag inside the selection to move it, its edges or corners to resize it. With the map focused: arrow keys move the box by 0.5°, Shift with arrows resizes it, plus and minus zoom, 0 fits the country, Ctrl or Command Z undoes the last zone change.</span>
-        {kbd && <span className="fb-map-kbd" aria-hidden="true">Map focused · arrows move the box · Shift+arrows resize · + − zoom</span>}
+        {kbd && <span className="fb-map-kbd" aria-hidden="true">Arrows move · Shift+arrows resize · + − zoom</span>}
         {showLabel && (live
           ? <span className="fb-sel-label is-live" style={{ transform: 'translate(' + labelLeft + 'px,' + labelTop + 'px)' }} aria-hidden="true">{label}</span>
           : <span className="fb-selchip" style={{ transform: 'translate(' + labelLeft + 'px,' + labelTop + 'px)' }}>
@@ -686,7 +686,7 @@ function MapView({ C, S, ML, detBreaks, country, box, whole, onBox: onBox0, noFl
               <>
                 {layer === 'month' && <div className="fb-maptip-v">{mName}: {ml === 'record' ? 'a record' : ml === 'top3' ? 'top 3' : ml === 'active' ? 'active, not unusual' : 'no detection'}</div>}
                 {tipCell.high ? <div className="fb-maptip-v">Ratio above 4×: not harmonized</div> : <div className={layer === 'rec' ? 'fb-maptip-v' : 'fb-maptip-m'}>Record year: raw {tipCell.recRaw}, harmonized {tipCell.recHarm}, MODIS alone {tipCell.recModis}{tipCell.depends ? ' (depends on the ratio)' : ''}</div>}
-                <div className={layer === 'ratio' ? 'fb-maptip-v' : 'fb-maptip-m'}>Local ratio {formatDecimal(tipCell.ratio, 2, 'en')}× <span>({tipCell.rcase === 'own3' ? '3 × 3 places' : tipCell.rcase === 'own5' ? '5 × 5 places' : 'country ratio'})</span></div>
+                <div className={layer === 'ratio' ? 'fb-maptip-v' : 'fb-maptip-m'}>Local factor {formatDecimal(tipCell.ratio, 2, 'en')}× <span>({tipCell.rcase === 'own3' ? '3 × 3 places' : tipCell.rcase === 'own5' ? '5 × 5 places' : 'country ratio'})</span></div>
                 <div className="fb-maptip-m">{formatNumber(tipCell.cum, 'en')} fire detections {STATS_FROM}–{LAST}, harmonized</div>
               </>
             ) : <div className="fb-maptip-m">Too few fires here ({formatNumber(tipCell.cum, 'en')} detections, {STATS_FROM}–{LAST}): no claim</div>}

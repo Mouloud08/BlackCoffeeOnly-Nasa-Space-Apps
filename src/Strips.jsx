@@ -52,7 +52,7 @@ export function RatioStrip({ Z }) {
       <div className="fb-err-plot">
         <div className="fb-err-axis" aria-hidden="true">{ticks.map((t) => <span key={t} style={{ top: Y(t) + '%' }}>{t}×</span>)}</div>
         <div className="fb-err-area">
-          <i className="fb-err-zero is-ratio" style={{ top: Y(Z.ratio) + '%' }}><em>all years {F2(Z.ratio)}×</em></i>
+          <i className="fb-err-zero is-ratio" style={{ top: Y(Z.ratio) + '%' }} />{/* its value is in the key below: a label on the line overlapped the dots' labels */}
           {rows.map((r, i) => (
             <span key={r.year} className="fb-err-pt" style={{ left: ((i + 0.5) / n) * 100 + '%', top: Y(rs[i]) + '%' }} title={r.year + ': VIIRS ' + formatShort(r.viirs, 'en') + ' ÷ MODIS ' + formatShort(r.modis, 'en') + ' = ' + F2(rs[i])}>
               <i /><b>{F2(rs[i])}</b>
@@ -61,7 +61,7 @@ export function RatioStrip({ Z }) {
         </div>
       </div>
       <div className="fb-err-years" aria-hidden="true"><span /><div>{rows.map((r, i) => <span key={r.year} style={{ left: ((i + 0.5) / n) * 100 + '%' }}>{(n <= 10 || i % 2 === 0 || i === n - 1) ? yl(r.year, n) : ''}</span>)}</div></div>
-      <p className="fb-err-key">Each dot: how many times more fire the newer satellite saw than the older one, in one year when both flew. Line: the factor from all years together, used for the correction.</p>
+      <p className="fb-err-key">Each dot: how many times more fire the newer satellite saw than the older one, in one year when both flew. Line: the factor from all years together ({F2(Z.ratio)}×), used for the correction.</p>
     </div>
   );
 }

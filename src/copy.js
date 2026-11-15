@@ -1,6 +1,6 @@
 // FireBridge — every generated sentence, from the numbers. Pure (no DOM) so tools/copycheck.mjs can test all zones.
 import { formatDecimal, formatStep, formatNumber, ordinal, MONTHS_LONG } from '../ds/components/src/scale.js';
-import { GRADE_RULES, BORROW, MIN_MODIS, LOW } from './metrics.js';
+import { GRADE_RULES, BORROW, MIN_MODIS, LOW, SW, LAST, STATS_FROM } from './metrics.js';
 
 export const X = (r) => formatStep(r, 'en'); // rises: always one decimal, "1.6×"
 export const F2 = (r) => formatDecimal(r, 2, 'en');
@@ -102,10 +102,12 @@ export function gradeRule(Z) {
   if (Z.empty) return 'No detections in this box.';
   if (Z.gradeWhy === 'borrowed') {
     const b = Z.borrowed.stats;
-    return 'B: this box has ' + Z.own.usable.length + ' usable overlap ' + (Z.own.usable.length === 1 ? 'year' : 'years') + ' (fewer than ' + BORROW.below + '), so the ratio is borrowed from the wider area, which meets ' + Z.borrowed.grade + ' (' + b.usable.length + ' usable years, median error ' + PCT(b.medErr) + ', ratio range ' + PCT(b.spread) + ' of the ratio).';
+    return 'B: this zone has ' + Z.own.usable.length + ' ' + (Z.own.usable.length === 1 ? 'year' : 'years') + ' seen well by both satellites (fewer than ' + BORROW.below + '), so the factor is borrowed from the wider area, which meets ' + Z.borrowed.grade + ': factor measured on ' + b.usable.length + ' such years; a typical year left out is predicted within ' + PCT(b.medErr) + '; leaving years out one at a time, the factor varies by ' + PCT(b.spread) + '.';
   }
-  if (Z.grade === 'A') return 'A: own ratio, ' + Z.usable.length + ' usable years (' + G.A.years + '+ needed), median error ' + PCT(Z.medErr) + ' (≤ ' + PCT(G.A.err) + '), ratio range ' + PCT(Z.spread) + ' of the ratio (≤ ' + PCT(G.A.spread) + ').';
-  if (Z.grade === 'B') return 'B: own ratio, ' + Z.usable.length + ' usable years (' + G.B.years + '+ needed), median error ' + PCT(Z.medErr) + ' (≤ ' + PCT(G.B.err) + '), ratio range ' + PCT(Z.spread) + ' of the ratio (≤ ' + PCT(G.B.spread) + ').';
+  // v6.2: plain words for the quality rule; "a typical year" names the median error, "varies by" the leave-one-out range.
+  const own = (g, R) => g + ': factor measured in this zone on ' + Z.usable.length + ' years seen well by both satellites (' + R.years + '+ needed); a typical year left out is predicted within ' + PCT(Z.medErr) + ' (≤ ' + PCT(R.err) + ' allowed); leaving years out one at a time, the factor varies by ' + PCT(Z.spread) + ' (≤ ' + PCT(R.spread) + ').';
+  if (Z.grade === 'A') return own('A', G.A);
+  if (Z.grade === 'B') return own('B', G.B);
   return 'C: ' + whyC(Z);
 }
 // Plain reason for grade C, with the real counts.
@@ -127,11 +129,9 @@ export function whyC(Z) {
 }
 
 /* ───────── how it works (§8) ───────── */
-const RISE_WORDS = [
-  [1.15, 1.22, 'rise by a fifth'], [1.22, 1.3, 'rise by a quarter'], [1.3, 1.42, 'rise by a third'], [1.42, 1.62, 'rise by half'],
-  [1.62, 1.95, 'almost double'], [1.95, 2.1, 'double'], [2.1, 2.85, 'more than double'], [2.85, 2.95, 'almost triple'],
-  [2.95, 3.15, 'triple'], [3.15, 3.75, 'more than triple'], [3.75, 3.95, 'almost quadruple'], [3.95, 4.15, 'quadruple'], [4.15, 4.6, 'more than quadruple'],
-];
+// v6.2: the question takes its verb from changeVerb (the one verb table), in the base form: "quadrupled" → "quadruple".
+const BASE = { doubled: 'double', tripled: 'triple', quadrupled: 'quadruple' };
+const askVerb = (v) => { const w = changeVerb(v); return BASE[w] || w.replace(/^rose\b/, 'rise').replace(/^fell\b/, 'fall'); };
 // Category of one rise value, the same thresholds as the verdict (1 decimal).
 const cat = (x) => (x >= 1.15 ? 'up' : x <= 0.9 ? 'down' : 'flat');
 export function story(Z, place) {
@@ -142,24 +142,24 @@ export function story(Z, place) {
   const vc = C ? null : verdictCase(Z);
   let q, a;
   // 1. The question the raw record asks (from the raw rise only; same thresholds as the clause).
-  if (Rr >= 1.15) { const w = RISE_WORDS.find(([lo, hi]) => Rr >= lo && Rr < hi); q = 'Did fire activity' + (place ? ' in ' + place : '') + ' ' + (w ? w[2] : 'rise ' + fold(R)) + ' after 2012?'; }
-  else if (Rr > 0.9) q = 'Raw data say fire activity' + (place ? ' in ' + place : '') + ' barely changed.';
-  else q = 'Raw data say fire activity' + (place ? ' in ' + place : '') + ' fell after 2012.';
+  if (Rr >= 1.15) q = 'Did fire activity' + (place ? ' in ' + place : '') + ' ' + askVerb(R) + ' after 2012?';
+  else if (Rr > 0.9) q = 'Raw data say fire detections' + (place ? ' in ' + place : '') + ' barely changed.';
+  else q = 'Raw data say fire detections' + (place ? ' in ' + place : '') + ' fell after 2012.';
   // 2. The answer, from the verdict case so it never contradicts the clause.
   const asked = Rr >= 1.15;
   if (C) a = asked ? 'We cannot tell: too few detections here to harmonize the two sensors.' : 'Too few detections here to harmonize the two sensors reliably.';
-  else if (Z.trend && Z.trend.status === 'uncertain') a = asked ? 'No: raw data overstate it ' + corrFactor(Z) + '. The corrected trend itself is uncertain.' : 'The sensor effect is ' + corrFactor(Z) + '; the corrected trend itself is uncertain.';
+  else if (Z.trend && Z.trend.status === 'uncertain') a = asked ? 'Not as raw data say: they overstate it ' + corrFactor(Z) + '. Whether it rose at all is uncertain.' : 'The correction factor is ' + corrFactor(Z) + '; the harmonized trend itself is uncertain.';
   else if (vc === 'rise-smaller') { const sh = R > 1 && H >= 1 ? (R - H) / (R - 1) : null; a = 'Partly. The satellite changed, and that explains ' + (sh != null ? shareWords(sh) : 'part') + ' of it.'; }
-  else if (vc === 'rise-false') a = Hr <= 0.9 ? 'No: once harmonized, activity fell.' : 'No: once harmonized, activity barely moved.';
+  else if (vc === 'rise-false') a = Hr <= 0.9 ? 'No: once harmonized, detections fell.' : 'No: once harmonized, detections barely moved.';
   else if (vc === 'hidden-decline') a = 'They hide a decline.';
   else if (vc === 'steeper') a = 'The decline is steeper once harmonized.';
-  else if (vc === 'agree') a = asked ? (cat(Hr) === 'up' ? 'Yes. The rise holds once the sensors are harmonized.' : 'Hardly. Harmonized, ' + X(H) + '.') : (cat(Hr) === cat(Rr) ? 'Harmonized, the picture holds.' : 'Bridged, ' + X(H) + ': close to the raw figure.');
+  else if (vc === 'agree') a = asked ? (cat(Hr) === 'up' ? 'Yes. The rise holds once the sensors are harmonized.' : 'Hardly. Harmonized, ' + X(H) + '.') : (cat(Hr) === cat(Rr) ? 'Harmonized, the picture holds.' : 'Harmonized, ' + X(H) + ': close to the raw figure.');
   else a = Hr > Rr ? (asked ? 'It was larger: harmonized, ' + X(H) + '.' : 'They hide a rise.') : 'Harmonized, ' + X(H) + '.';
   // 3. The proof headline.
   let p;
   if (C) p = 'Raw ' + X(R) + ', and no reliable harmonization.';
   else if (Z.guard) p = 'No rise is given here: ' + Z.guard + '.';
-  else if (Z.trend && Z.trend.status === 'uncertain') p = X(R) + ' becomes ' + X(H) + ', but ' + xr(Z.trend.without) + ' without ' + Z.trend.bigYear + '.';
+  else if (Z.trend && Z.trend.status === 'uncertain') p = 'Raw ' + X(R) + ' reads ' + corrFactor(Z) + ' too high; once corrected, the trend is uncertain.';
   else {
     const base = X(R) + ' becomes ' + X(H);
     if (vc === 'rise-smaller') p = base + '.';
@@ -173,21 +173,21 @@ export function story(Z, place) {
 }
 
 /* ───────── the month row (§7) ───────── */
-// v6.2 (P2, P6): plain words: "3.9 times a normal July", "about a normal July", "about half a normal July".
+// v6.2 (P2, P6): plain words: "3.9 times a typical July", "about a typical July", "about half a typical July".
 export function anomalyWords(a, mName) {
   if (a == null) return '';
-  if (a >= 100) return 'over 100 times a normal ' + mName;
-  if (a >= 1.05) return formatDecimal(a, a >= 10 ? 0 : 1, 'en') + ' times a normal ' + mName;
-  if (a >= 0.95) return 'about a normal ' + mName;
-  if (a >= 0.45 && a <= 0.55) return 'about half a normal ' + mName;
-  return Math.round(a * 100) + '% of a normal ' + mName;
+  if (a >= 100) return 'over 100 times a typical ' + mName;
+  if (a >= 1.05) return formatDecimal(a, a >= 10 ? 0 : 1, 'en') + ' times a typical ' + mName;
+  if (a >= 0.95) return 'about a typical ' + mName;
+  if (a >= 0.45 && a <= 0.55) return 'about half a typical ' + mName;
+  return Math.round(a * 100) + '% of a typical ' + mName;
 }
 export function rankWords(rank, of, mName) {
   return (rank === 1 ? 'Most active ' : ORD(rank) + ' most active ') + mName + ' of ' + of;
 }
 export function payoff(p, name) {
   const k = p.rankV != null ? p.rankV : p.rankM, of = p.rankV != null ? p.ofV : p.ofM, who = p.rankV != null ? 'VIIRS' : 'MODIS';
-  const head = 'Unharmonized, ' + (name || 'this month') + ' ranks ' + ORD(k) + ' of only ' + of + ' ' + who + ' years. ';
+  const head = 'On ' + who + ' alone, ' + (name || 'this month') + ' ranks ' + ORD(k) + ' of only ' + of + ' years. ';
   if (k === p.rank) return head + 'Harmonized: still ' + ORD(p.rank) + ', but of ' + p.of + ' years instead of ' + of + ', a longer record to judge it by.';
   return head + 'On the harmonized record: ' + ORD(p.rank) + ' of ' + p.of + '.';
 }
@@ -216,7 +216,7 @@ export function bootRange(T) {
 export const xr = (r) => formatDecimal(r, r < 0.095 ? 2 : 1, 'en') + '×';
 export const corrFactor = (Z) => formatDecimal(Z.ratio, 1, 'en') + '×';
 export function uncertainSentence(Z) {
-  if (Z.guard) return 'No rise is given for this zone: ' + Z.guard + '. Only the sensor factor (' + corrFactor(Z) + ') is shown.';
+  if (Z.guard) return 'No rise is given for this zone: ' + Z.guard + '. Only the correction factor (' + corrFactor(Z) + ') is shown.';
   const T = Z.trend;
   return 'The trend itself is uncertain here: ' + X(T.rise) + ' on the harmonized record, ' + xr(T.without) + ' without ' + T.bigYear + ' (90% range ' + bootRange(T) + ').';
 }
@@ -242,17 +242,22 @@ export function chanceWords(x, c) {
   return 'within what chance alone gives';
 }
 export const chanceShort = (x, c) => (!c ? '' : x > c.hi ? 'above chance' : x < c.lo ? 'below chance' : c.hi - x <= 0.02 ? 'at the top of chance' : x - c.lo <= 0.02 ? 'at the bottom of chance' : 'within chance');
+// v6.2: the base rate in words, from the record period: "With 14 of the 23 years in 2012 or later, and one big season
+// setting many records at once, chance alone gives 45–74%." (the harmonized chance range, as everywhere).
+export const baseRate = (s) => (s && s.chanceHarm ? 'With ' + (LAST - SW + 1) + ' of the ' + (LAST - STATS_FROM + 1) + ' years in 2012 or later, and one big season setting many records at once, chance alone gives ' + chanceRange(s.chanceHarm) + '.' : '');
+// One phrase per series, from versus() and the same 2-point edge rule as recordsHeading.
+const recWords = (x, c, versus) => { const v = versus(x, c); return v === 'above' ? 'more records after 2012 than chance gives' : v === 'below' ? 'fewer records after 2012 than chance gives' : c.hi - x <= 0.02 ? 'within chance, at its top edge' : x - c.lo <= 0.02 ? 'within chance, at its bottom edge' : 'within chance'; };
 export function recordSentence(s, versus) {
   if (!s || !s.n) return null;
   const parts = [['raw', s.sinceRaw, s.chanceRaw], ['harmonized', s.sinceHarm, s.chanceHarm], ['MODIS alone', s.sinceModis, s.chanceModis]];
-  const head = 'Record since 2012: ' + parts.map(([k, x]) => k + ' ' + P0(x)).join(', ') + '.';
+  const head = 'Places whose busiest year is 2012 or later: ' + parts.map(([k, x]) => k + ' ' + P0(x)).join(', ') + '.';
   const ch = s.chanceHarm;
-  const groups = {};
-  parts.forEach(([k, x, c]) => { const v = versus(x, c); (groups[v] = groups[v] || []).push(k); });
-  const word = { above: 'above its chance range', inside: 'inside its chance range', below: 'below its chance range' }, words = { above: 'above their chance ranges', inside: 'inside their chance ranges', below: 'below their chance ranges' };
+  // "Raw: more records after 2012 than chance gives. Harmonized and MODIS alone: within chance, at its top edge."
+  const groups = [];
+  parts.forEach(([k, x, c]) => { const w = recWords(x, c, versus), g = groups.find((q) => q.w === w); if (g) g.k.push(k); else groups.push({ w, k: [k] }); });
   const list = (a) => (a.length === 1 ? a[0] : a.slice(0, -1).join(', ') + ' and ' + a[a.length - 1]);
-  const verdict = ['above', 'inside', 'below'].filter((v) => groups[v]).map((v) => list(groups[v]) + (groups[v].length === 1 ? ' is ' + word[v] : ' are ' + words[v])).join('; ');
-  return { head, chance: 'Chance alone gives ' + chanceRange(ch) + ' for the harmonized record (raw ' + chanceRange(s.chanceRaw) + ', MODIS alone ' + chanceRange(s.chanceModis) + '): one big fire season sets many records at once', verdict: verdict.charAt(0).toUpperCase() + verdict.slice(1) + '.' };
+  const verdict = groups.map((g) => cap(list(g.k)) + ': ' + g.w + '.').join(' ');
+  return { head, base: baseRate(s), chance: 'Chance alone gives ' + chanceRange(ch) + ' for the harmonized record (raw ' + chanceRange(s.chanceRaw) + ', MODIS alone ' + chanceRange(s.chanceModis) + '): one big fire season sets many records at once', verdict };
 }
 
 /* ───────── version 5: the one sentence beside the number (never a restatement of it) ───────── */
@@ -267,21 +272,26 @@ export function times(v) {
 export function plainSentence(Z) {
   if (!Z || Z.empty) return 'No fires seen in this area.';
   if (!Z.harmOK) return Z.notHarm ? 'The two satellites differ too much here (' + times(Z.ratio) + ') to be put on one scale.' : 'Too few fires here to put the two satellites on one scale.';
+  // v6.2: the guarded sentences carry the correction factor too (the clause of the uncertain case), then the reason.
+  const over = 'Simply joining the two satellite records overstates fire here ' + times(Z.ratio) + '; ';
   if (Z.guard) {
     const g = Z.guard;
     if (g.startsWith('no detections')) return 'No fires seen here before 2012, so no change can be measured.';
-    if (g.startsWith('only')) return 'Too few fires here before 2012 to say whether activity rose.';
-    if (g.startsWith('Aqua')) return 'The older satellites disagree here, so we do not say whether activity rose.';
-    return 'Fire varies too much from year to year here to tell whether it rose.';
+    if (g.startsWith('only')) return over + 'too few fires before 2012 to tell whether it rose.';
+    if (g.startsWith('Aqua')) return over + 'the older satellites disagree on whether it rose.';
+    return over + 'years vary too much to tell whether it rose.';
   }
   const R = Z.riseRaw, H = Z.riseH;
-  if (Z.trend && Z.trend.status === 'uncertain') return 'Simply joining the two satellite records overstates fire here ' + times(Z.ratio) + '; whether activity really rose is uncertain.';
+  // A named verb (doubled, tripled, quadrupled) only inside changeVerb's bands, the same rule as the Overview headline
+  // ("roughly" for the harmonized figure, plain for the raw one); otherwise the multiplier.
+  const named = (v) => /^(doubled|tripled|quadrupled)$/.test(changeVerb(v));
+  if (Z.trend && Z.trend.status === 'uncertain') return over + 'whether it really rose is uncertain.';
   switch (verdictCase(Z)) {
-    case 'rise-smaller': return 'Fire activity really rose, ' + times(H) + '. Simply joining the two satellite records shows ' + times(R) + ': the difference is the 2012 satellite change.';
-    case 'rise-false': return (H <= 0.95 ? 'Fire activity fell.' : 'Fire activity barely changed.') + ' Simply joining the two satellite records shows a rise: that rise is the 2012 satellite change.';
-    case 'agree': return 'The 2012 satellite change hardly matters here: fire activity ' + (H > 1.05 ? 'rose ' + times(H) : H < 0.95 ? 'fell' : 'barely changed') + ' either way.';
-    case 'hidden-decline': return 'Fire activity fell. Simply joining the two satellite records shows almost no change: the 2012 satellite change hid the decline.';
-    case 'steeper': return 'Fire activity fell more than simply joining the two satellite records shows.';
+    case 'rise-smaller': return (named(H) ? 'Fire detections roughly ' + changeVerb(H) + '.' : 'Fire detections really rose, ' + times(H) + '.') + ' Simply joining the two satellite records ' + (named(R) ? 'says they ' + changeVerb(R) : 'shows ' + times(R)) + ': the difference is the 2012 satellite change.';
+    case 'rise-false': return (H <= 0.95 ? 'Fire detections fell.' : 'Fire detections barely changed.') + ' Simply joining the two satellite records shows a rise: that rise is the 2012 satellite change.';
+    case 'agree': return 'The 2012 satellite change hardly matters here: fire detections ' + (H > 1.05 ? (named(H) ? 'roughly ' + changeVerb(H) : 'rose ' + times(H)) : H < 0.95 ? 'fell' : 'barely changed') + ' either way.';
+    case 'hidden-decline': return 'Fire detections fell. Simply joining the two satellite records shows almost no change: the 2012 satellite change hid the decline.';
+    case 'steeper': return 'Fire detections fell more than simply joining the two satellite records shows.';
     default: return 'Simply joining the two satellite records shows ' + times(R) + '.';
   }
 }
@@ -306,12 +316,16 @@ export const factorClause = (Z) => 'raw reads ' + corrFactor(Z) + ' too high';
 // v6.2 (P2): each Evidence title is a plain question with its short answer, generated from the metrics.
 export function proofHeading(Z, official) {
   if (!Z || !Z.harmOK) return 'Is the rise real? This area cannot be put on one scale, so there is no answer here';
-  if (Z.guard) return 'Is the rise real? Too little data here to say';
+  if (Z.guard) return 'Is the rise real? Unclear: ' + factorClause(Z) + ' and no trend is given here';
   if (official) {
     const d = Math.abs(official.harm - official.rise) / official.rise;
     return d <= 0.1 ? 'Does it match official figures? Yes: ' + X(official.harm) + ' vs ' + X(official.rise) : 'Does it match official figures? Not closely: ours ' + X(official.harm) + ', official ' + X(official.rise);
   }
-  return 'Is the rise real? Once on one scale: ' + X(Z.riseH) + ' (records simply joined: ' + X(Z.riseRaw) + ')';
+  // v6.2: a yes/no answer from the states the verdict already has: uncertain → Unclear (the factor, no rise);
+  // rise-smaller → Partly; otherwise Yes when the harmonized figure is a rise (same 1.15 threshold), No when it is not.
+  if (Z.trend && Z.trend.status === 'uncertain') return 'Is the rise real? Unclear: ' + factorClause(Z) + ' and the trend is uncertain';
+  const yn = verdictCase(Z) === 'rise-smaller' ? 'Partly' : cat(r1(Z.riseH)) === 'up' ? 'Yes' : 'No';
+  return 'Is the rise real? ' + yn + ': once on one scale, ' + X(Z.riseH) + ' (records simply joined: ' + X(Z.riseRaw) + ')';
 }
 export const looCount = (Z) => { const r = (Z.loo || []).filter((x) => x.signed != null); return { k: r.filter((x) => Math.round(Math.abs(x.signed) * 100) <= 10).length, n: r.length }; };
 export function looHeading(Z) {
@@ -323,8 +337,8 @@ export function recordsHeading(s, versus) {
   if (!s || !s.n) return 'Did the satellite create false records? Too few places here to tell';
   const vr = versus(s.sinceRaw, s.chanceRaw), vh = versus(s.sinceHarm, s.chanceHarm);
   const edge = vh === 'inside' && (s.chanceHarm.hi - s.sinceHarm <= 0.02 || s.sinceHarm - s.chanceHarm.lo <= 0.02);
-  const h = vh === 'inside' ? (edge ? 'at the edge of chance' : 'within chance') : vh === 'below' ? 'below chance' : 'still above chance';
-  return 'Did the satellite create false records? Raw: ' + (vr === 'above' ? 'yes' : 'no, within chance') + '. Corrected: ' + h;
+  const h = vh === 'inside' ? (edge ? 'within chance, at its edge' : 'within chance') : vh === 'below' ? 'fewer than chance (recent years quieter)' : 'still above chance';
+  return 'Did the satellite create false records? Raw: ' + (vr === 'above' ? 'yes' : 'no, within chance') + '. Harmonized: ' + h;
 }
 
 /* ───────── Overview (v6): headline rule table, generated from the metrics; tested in tools/copycheck.mjs ───────── */

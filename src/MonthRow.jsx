@@ -29,7 +29,7 @@ function Strip({ Z, p, onSelect, raw, phone }) {
           <div className="fb-strip-marks" style={{ gridTemplateColumns: 'repeat(' + n + ', minmax(0, 1fr))' }} role={phone ? 'img' : 'group'} aria-label={'Every ' + mName + ', 2001 to ' + lastY + ', log scale.' + (phone ? ' Selected: ' + selY + '. Select months in the calendar.' : ' Arrow keys move between years.')}>
             {p.all.map((x) => {
               const on = x.year === selY;
-              const lab = mName + ' ' + x.year + ': ' + NUM(x.v) + ' fire detections' + (x.computed ? (raw ? ', raw MODIS' : ', computed from MODIS') : x.cont ? ', computed: NOAA-20 rescaled to S-NPP' : ', VIIRS') + (x.partial ? ', before 2003: not used in statistics' : '');
+              const lab = mName + ' ' + x.year + ': ' + NUM(x.v) + ' fire detections' + (x.computed ? (raw ? ', raw MODIS' : ', computed from MODIS') : x.cont ? ', computed: NOAA-20 (twin VIIRS satellite), adjusted to S-NPP' : ', VIIRS') + (x.partial ? ', before 2003: not used in statistics' : '');
               if (phone) return <span key={x.year} style={{ gridColumn: x.year - FIRST + 1 }} className={cx('fb-mk', x.computed ? 'is-modis' : 'is-viirs', on && 'is-on', x.v === 0 && 'is-zero', x.partial && 'is-era')} title={lab}><i style={{ height: (frac(x.v) * 100).toFixed(2) + '%' }} /></span>;
               return (
                 <button key={x.year} type="button" style={{ gridColumn: x.year - FIRST + 1 }} className={cx('fb-mk', x.computed ? 'is-modis' : 'is-viirs', on && 'is-on', x.v === 0 && 'is-zero', x.partial && 'is-era')} aria-pressed={on}
@@ -61,7 +61,7 @@ function Strip({ Z, p, onSelect, raw, phone }) {
       <figcaption className="fb-strip-key">
         <span><i className="fb-k is-modis" aria-hidden="true" />{raw ? 'MODIS, raw' : 'computed from MODIS'}</span>
         <span><i className="fb-k is-modis is-era" aria-hidden="true" />2001–02: partial, not used</span>
-        <span><i className="fb-k is-viirs" aria-hidden="true" />VIIRS, measured{p.all.some((x) => x.cont) ? '; NOAA-20 rescaled from ' + p.all.find((x) => x.cont).year : ''}</span>
+        <span><i className="fb-k is-viirs" aria-hidden="true" />VIIRS, measured{p.all.some((x) => x.cont) ? '; from ' + p.all.find((x) => x.cont).year + ', NOAA-20 (twin VIIRS satellite), adjusted to S-NPP' : ''}</span>
         {typ != null && <span><i className="fb-k is-typ" aria-hidden="true" />typical {mName} (median, 2003–{LAST})</span>}
         <span className="fb-k-log">fire detections, log</span>
       </figcaption>
@@ -95,7 +95,7 @@ export function MonthRow({ Z, sel, onSelect, phone, fellBack, from = '2001-01', 
         {p.low ? (
           <>
             <p className="fb-mhead fb-lowline"><i className="at-cell at-cell-low fb-lowdot" aria-hidden="true" />Too few detections in a typical {mName} to compare.</p>
-            <p className="fb-mread">{label(sel)}: {NUM(p.v)} fire detections; a normal {mName} has {NUM(p.typ)}.</p>
+            <p className="fb-mread">{label(sel)}: {NUM(p.v)} fire detections; a typical {mName} has {NUM(p.typ)}.</p>
             {q ? (
               <p className="fb-mread">Most recent comparable month: <b>{label(alt)}</b>, {anomalyWords(q.anomaly, qName)}, {ORD(q.rank)} of {q.of}. <button type="button" className="at-link" onClick={() => onSelect(alt)}>Select it</button></p>
             ) : <p className="fb-mread">No month of the year has a typical value of {LOW} fire detections or more here, so no month can be ranked.</p>}
@@ -108,13 +108,13 @@ export function MonthRow({ Z, sel, onSelect, phone, fellBack, from = '2001-01', 
         ) : (
           <>
             <p className="fb-mhead">{label(sel)}: {anomalyWords(q.anomaly, mName)}.</p>
-            <p className="fb-mread">{NUM(q.v)} fire detections; a normal {mName} has {NUM(q.typ)}. {rankWords(q.rank, q.of, mName)}.</p>
+            <p className="fb-mread">{NUM(q.v)} fire detections; a typical {mName} has {NUM(q.typ)}. {rankWords(q.rank, q.of, mName)}.</p>
           </>
         )}
         {q && <p className="fb-payoff">{payoff(q, p.low ? label(alt) : null)}</p>}
         {q && q.depends && <p className="fb-caveat">This rank depends on computed years (±{PCT(Z.medErr)}).</p>}
-        {q && q.computed && Z.harmOK && Z.byMonth && Z.byMonth[q.m] && Z.byMonth[q.m].active && Z.byMonth[q.m].resid != null && (Z.byMonth[q.m].resid > 1.3 || Z.byMonth[q.m].resid < 1 / 1.3) && <p className="fb-caveat">Off-season month: the annual ratio fits {monthLong(q.m)} poorly (its own ratio is {F2(Z.byMonth[q.m].ratio)}, {Z.byMonth[q.m].resid > 1 ? 'above' : 'below'} the pooled {F2(Z.ratio)} by more than 1.3×).</p>}
-        {Z.contSet && Z.contSet.has(sel) && <p className="fb-caveat">Computed: NOAA-20 rescaled to S-NPP (÷ {Z.contFactor.toFixed(2)}, {Z.contFactorFrom === 'box' ? 'this box' : 'country-wide'}); S-NPP has no data this month.</p>}
+        {q && q.computed && Z.harmOK && Z.byMonth && Z.byMonth[q.m] && Z.byMonth[q.m].active && Z.byMonth[q.m].resid != null && (Z.byMonth[q.m].resid > 1.3 || Z.byMonth[q.m].resid < 1 / 1.3) && <p className="fb-caveat">Off-season month: the single correction factor fits {monthLong(q.m)} poorly ({monthLong(q.m)} alone gives {F2(Z.byMonth[q.m].ratio)}, {Z.byMonth[q.m].resid > 1 ? 'above' : 'below'} the {F2(Z.ratio)} used for all months by more than 1.3×).</p>}
+        {Z.contSet && Z.contSet.has(sel) && <p className="fb-caveat">Computed: NOAA-20 (twin VIIRS satellite), adjusted to S-NPP (÷ {Z.contFactor.toFixed(2)}, {Z.contFactorFrom === 'box' ? 'this box' : 'country-wide'}); S-NPP data are missing this month, or well below NOAA-20 country-wide.</p>}
         {Z.provSet && Z.provSet.has(sel) && <p className="fb-caveat">Provisional: near-real-time data, not filtered for non-fire sources.</p>}
       </>
     );
@@ -137,7 +137,7 @@ export function MonthRow({ Z, sel, onSelect, phone, fellBack, from = '2001-01', 
         {narrowed && <p className="fb-caveat">Date range {from} to {to}: ranks among these years only; the typical month and the ratio use the full period.</p>}
         <ProvenanceLine status={Z.harmOK ? 'computed' : 'real'} source="NASA FIRMS" period={'every ' + mName + ', 2003–' + p.all[p.all.length - 1].year}>
           {Z.harmOK ? <span>2003–2011 computed (MODIS × {Z.ratio.toFixed(2)})</span> : <span>raw, not comparable across 2012</span>}
-          {p.all.some((x) => x.cont) && <span>{p.all.filter((x) => x.cont).map((x) => x.year).join(', ')}: NOAA-20 rescaled to S-NPP</span>}
+          {p.all.some((x) => x.cont) && <span>{p.all.filter((x) => x.cont).map((x) => x.year).join(', ')}: NOAA-20 (twin VIIRS satellite), adjusted to S-NPP</span>}
         </ProvenanceLine>
       </div>
     </section>

@@ -1,0 +1,7 @@
+node_modules/
+captures/
+tmp/
+public/captures/
+out/*
+!out/firebridge-demo.mp4
+!out/firebridge-slides.pdf

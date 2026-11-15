@@ -6,9 +6,17 @@
   is unchanged. Months continued on NOAA-20: Canada 2026-03, 2026-07; Argentina 2026-04, 2026-07. Provisional
   (near-real-time): VIIRS August–October, MODIS September–October. Raw files: `data/raw/2026/` (git-ignored).
 - Real hotspot files: `data/hotspots/quebec-boreal-2023-06.csv` (whole month) and `la-rioja-2024-08.csv`, built with
-  `scripts/assemble_hotspots.mjs`. They appear in the ⋯ menu only (not in the Download menu).
-- `dist/firebridge.html` = 6.2 source + these data + one change in `src/CalPanel.jsx` (calendar overlay geometry with a
-  partial last year; NOTES_FOR_UI.md item 1). `dist/firebridge-2025-backup.html` = the original 6.2 build.
+  `scripts/assemble_hotspots.mjs`. They are offered in the Download menu and in the ⋯ menu.
+- `dist/firebridge.html` = 6.2 source + these data + the changes of 15 November listed in NOTES_FOR_UI.md items 1, 14
+  and 15 (calendar geometry with a partial last year; calendar-first layout 1 : 2; light theme by default; first-visit
+  guide only with `guide=1`; plain-language wording; hotspot files in Download). Vocabulary now on screen: tab
+  "Calendar" (hash still `tab=dash`), "Glossary", "Enter coordinates…", layer "One month", "Correction A · reliable",
+  "Still up / Still down / Reverses / Without YEAR", "correction factor", "typical month (median …)".
+  `dist/firebridge-2025-backup.html` = the original 6.2 build.
+- Published: repository https://github.com/Mouloud08/BlackCoffeeOnly-Nasa-Space-Apps (branch `main`); the app is
+  served from branch `gh-pages` (`index.html` = `dist/firebridge.html`, plus `demo.mp4` and `slides.pdf`) at
+  https://mouloud08.github.io/BlackCoffeeOnly-Nasa-Space-Apps/ . Submission texts: `docs/PROJECT_PAGE.md`,
+  `docs/VIDEO_SCRIPT.md`. Video: `video/` (Remotion; `node video/render.mjs <html>` re-captures and re-renders).
 - Rule from the owner: `src/`, `tools/`, `build.mjs`, `ds/`, `vendor/` belong to the interface team (a 6.2.1 will
   replace them). Interface or text bugs go to `NOTES_FOR_UI.md`, not into the code. Keep `data/` and rebuild.
 - Toolchain that reproduces the original build byte for byte: esbuild 0.28.2, @fontsource-variable/radio-canada 5.3.0,

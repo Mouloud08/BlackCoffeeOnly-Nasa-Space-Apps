@@ -1,0 +1,106 @@
+{
+  "_readme": "All on-screen text of the demo video. Times are seconds on the final video timeline (30 fps). Shots are the captured clips (the actions inside each clip are scripted in capture.mjs, relative to the shot start). *text* = emphasised. Every number in a caption (1.4×, ±10%, 13 of 14, …) must appear in the app text captured for that shot, or render.mjs stops; the optional check strings are looked for too, but only warned about. To add a voice track later, put voice.mp3 (or .wav/.m4a) in video/public/ and re-run render.mjs: Remotion lays it under the whole video.",
+  "fps": 30,
+  "duration": 28.5,
+  "shots": [
+    {
+      "id": "argentina",
+      "start": 0,
+      "end": 6
+    },
+    {
+      "id": "canada",
+      "start": 6,
+      "end": 11
+    },
+    {
+      "id": "calendar",
+      "start": 11,
+      "end": 17.5
+    },
+    {
+      "id": "place",
+      "start": 17.5,
+      "end": 22.8
+    },
+    {
+      "id": "evidence",
+      "start": 22.8,
+      "end": 26
+    },
+    {
+      "id": "end",
+      "start": 26,
+      "end": 28.5
+    }
+  ],
+  "captions": [
+    {
+      "shot": "argentina",
+      "start": 0.15,
+      "end": 2.6,
+      "text": "Argentina's fires seem to rise *1.4×* since 2012…",
+      "check": [
+        "raw"
+      ]
+    },
+    {
+      "shot": "argentina",
+      "start": 2.7,
+      "end": 5.95,
+      "text": "…on one scale, they fell: *0.7×*. The rise was the satellite.",
+      "check": [
+        "harmonized"
+      ]
+    },
+    {
+      "shot": "canada",
+      "start": 6.15,
+      "end": 10.95,
+      "text": "Canada: doubled, not quadrupled. Official burned area agrees: *1.9×*.",
+      "check": [
+        "2.0×",
+        "4.2×",
+        "quadrupled"
+      ]
+    },
+    {
+      "shot": "calendar",
+      "start": 11.15,
+      "end": 17.45,
+      "text": "A harmonized burning calendar, month by month, 2001 to October 2026.",
+      "check": [
+        "2001 – Oct 2026"
+      ]
+    },
+    {
+      "shot": "place",
+      "start": 17.65,
+      "end": 22.75,
+      "text": "Pick any place. Compare any month with its historical median.",
+      "check": [
+        "of a normal"
+      ]
+    },
+    {
+      "shot": "evidence",
+      "start": 22.95,
+      "end": 25.95,
+      "text": "Checked year by year: within *±10%* in *13 of 14* years.",
+      "check": [
+        "year by year"
+      ]
+    }
+  ],
+  "endCard": {
+    "title": "FireBridge",
+    "lines": [
+      "One offline file · NASA FIRMS data, 2001 – Oct 2026",
+      "Team BlackCoffeeOnly"
+    ],
+    "url": "mouloud08.github.io/BlackCoffeeOnly-Nasa-Space-Apps",
+    "check": [
+      "2001 to October 2026"
+    ]
+  }
+}

@@ -23,9 +23,16 @@ import { seriesCsv, calendarSvg, downloadSvg, downloadPng, hotspotText, fileStem
 import { cx, reduced, useWidth, useHeight, useTheme, copyText, downloadBlob, Icon, IC } from './util.jsx';
 
 const COUNTRIES = { canada: 'Canada', argentina: 'Argentina' };
-const TAB_LABEL = { overview: 'Overview', dash: 'Dashboard', evidence: 'Evidence', how: 'How it works', method: 'Method' };
+const TAB_LABEL = { overview: 'Overview', dash: 'Calendar', evidence: 'Evidence', how: 'How it works', method: 'Method' };
 const TAB_ICON = { overview: 'M4 19h16M6 16V10M10 16V6M14 16v-4M18 16V8', dash: 'M4 5h7v6H4zM13 5h7v14h-7zM4 13h7v6H4z', evidence: 'M5 19V9M10 19V5M15 19v-7M20 19v-11', how: 'M5 12h14M13 6l6 6-6 6', method: 'M6 4h9l3 3v13H6zM9 10h6M9 14h6' };
 const HOTSPOT_FILES = (() => { try { return JSON.parse(document.getElementById('fb-hotspots').textContent); } catch (e) { return {}; } })();
+// Readable name of an embedded FIRMS extract, from its file name only ("la-rioja-2024-08" → "La Rioja, Aug 2024");
+// a name that does not match a known place and a year-month falls back to the raw name.
+const HOT_PLACE = { 'la-rioja': 'La Rioja', 'quebec-boreal': 'Boreal Québec' };
+const MON3 = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+const hotName = (n) => { const m = /^(.+)-(\d{4})-(\d{2})$/.exec(n); const mo = m ? +m[3] : 0; return m && HOT_PLACE[m[1]] && mo >= 1 && mo <= 12 ? HOT_PLACE[m[1]] + ', ' + MON3[mo - 1] + ' ' + m[2] : n; };
+// The embedded extracts as menu items (Download menu and ⋯ menu): same file names as before.
+const hotItems = (close) => Object.keys(HOTSPOT_FILES).map((n) => <button key={n} type="button" role="menuitem" data-nav onClick={() => { close(); downloadBlob('firebridge_hotspots_' + n + '.csv', new Blob([HOTSPOT_FILES[n]], { type: 'text/csv' })); }}><b>FIRMS hotspots (CSV) · {hotName(n)}</b><span>NASA FIRMS points for this event</span></button>);
 
 function Mark() {
   return (
@@ -45,7 +52,8 @@ const zoneOf = (data, country, box) => {
   if (!z && data && data[country]) { z = guarded(computeZone(data[country], box)); ZCACHE.set(k, z); }
   return z || null;
 };
-const factOf = (z) => (!z ? '' : z.empty ? 'no detections' : !z.harmOK ? 'raw only · C' : (z.trend && z.trend.status === 'uncertain' ? 'sensor effect ' + X(z.ratio) + ' · trend uncertain' : X(z.riseH)) + (z.gradeWhy === 'borrowed' ? ' · borrowed' : '') + ' · ' + z.grade);
+// Live facts in the zone menu: an uncertain or guarded zone shows the correction factor (÷ r), not a rise.
+const factOf = (z) => (!z ? '' : z.empty ? 'no detections' : !z.harmOK ? 'not harmonized' : z.guard ? '÷' + z.ratio.toFixed(1) + ' · no trend' + (z.gradeWhy === 'borrowed' ? ' · borrowed' : '') : z.trend && z.trend.status === 'uncertain' ? '÷' + z.ratio.toFixed(1) + ' · trend uncertain' + (z.gradeWhy === 'borrowed' ? ' · borrowed' : '') : X(z.riseH) + (z.gradeWhy === 'borrowed' ? ' · borrowed' : '') + ' · ' + z.grade);
 
 /* ───────── top bar pieces ───────── */
 function Tabs({ tab, setTab, bottom }) {
@@ -112,7 +120,7 @@ function Guide({ onClose }) {
 // v6.2 (P4): a small glossary in the top bar, six plain entries.
 const WORDS = [
   ['MODIS', 'The older NASA fire sensor (on the Terra and Aqua satellites), used from 2001.'],
-  ['VIIRS', 'The newer, sharper fire sensor; it took over in 2012 and sees about twice as many small fires.'],
+  ['VIIRS', 'The newer, sharper fire sensor (375 m squares instead of MODIS’s 1 km), used from 2012. It spots smaller fires, so it counts about twice as many fire detections.'],
   ['The 2012 satellite change', 'The fire record switched from MODIS to VIIRS in 2012, so the two records simply joined jump that year even if fires did not.'],
   ['Raw', 'The two satellite records simply joined, without any correction.'],
   ['Harmonized', 'Both satellites on the same scale: the older years are multiplied by how much more the newer satellite sees.'],
@@ -120,7 +128,7 @@ const WORDS = [
 ];
 function WordsMenu({ compact }) {
   return (
-    <Pop id="fb-words" ariaLabel="Words used on this page" btnClass="fb-dlbtn fb-wordsbtn" panelClass="fb-pop-words" align="end" label={compact ? <span aria-hidden="true">?</span> : <span>Words</span>}>
+    <Pop id="fb-words" ariaLabel="Glossary: words used on this page" btnClass="fb-dlbtn fb-wordsbtn" panelClass="fb-pop-words" align="end" label={compact ? <span aria-hidden="true">?</span> : <span>Glossary</span>}>
       <dl className="fb-words">{WORDS.map(([k, v]) => <div key={k}><dt>{k}</dt><dd>{v}</dd></div>)}</dl>
     </Pop>
   );
@@ -152,7 +160,7 @@ function ZoneButton({ data, country, box, zoneName, onPick, compact }) {
               );
             })}
           </ul>
-          <button type="button" className="fb-typebtn" data-nav aria-expanded={typing} onClick={() => setTyping((x) => !x)}><Icon d={typing ? IC.down : IC.arrow} />Type a box</button>
+          <button type="button" className="fb-typebtn" data-nav aria-expanded={typing} onClick={() => setTyping((x) => !x)}><Icon d={typing ? IC.down : IC.arrow} />Enter coordinates…</button>
           {typing && C && <BoxFields country={country} box={box} bbox={C.bbox} onBox={(b) => onPick(country, b)} done={<button type="button" className="at-btn at-btn-sm" onClick={close}>Done</button>} />}
         </>
       )}
@@ -163,7 +171,7 @@ function ZoneButton({ data, country, box, zoneName, onPick, compact }) {
 // v6 (judge C2): a visible Download button with the export items (the ⋯ menu keeps them too).
 function DownloadMenu({ onExport, disabled, compact }) {
   return (
-    <Pop id="fb-dl" ariaLabel="Download: series CSV, calendar image, map layer" btnClass="fb-dlbtn" panelClass="fb-pop-menu" align="end" menu label={<><Icon d={IC.dl} />{!compact && <span>Download</span>}</>}>
+    <Pop id="fb-dl" ariaLabel={'Download: series CSV, calendar image, map layer' + (Object.keys(HOTSPOT_FILES).length ? ', FIRMS hotspots' : '')} btnClass="fb-dlbtn" panelClass="fb-pop-menu" align="end" menu label={<><Icon d={IC.dl} />{!compact && <span>Download</span>}</>}>
       {(close) => {
         const go = (k) => { close(); onExport(k); };
         return (
@@ -172,7 +180,8 @@ function DownloadMenu({ onExport, disabled, compact }) {
             <button type="button" role="menuitem" data-nav disabled={disabled} onClick={() => go('svg')}><b>Calendar image (SVG)</b><span>The calendar as shown</span></button>
             <button type="button" role="menuitem" data-nav disabled={disabled} onClick={() => go('png')}><b>Calendar image (PNG)</b><span>The same drawing, 2× pixels</span></button>
             <button type="button" role="menuitem" data-nav onClick={() => go('map')}><b>Map layer (CSV)</b><span>One row per 0.5° place, with provenance</span></button>
-            <button type="button" role="menuitem" data-nav disabled={disabled} onClick={() => go('hot')}><b>Raw hotspots…</b><span>Where to get the points for this box</span></button>
+            {hotItems(close)}
+            <button type="button" role="menuitem" data-nav disabled={disabled} onClick={() => go('hot')}><b>Hotspots for this box (FIRMS request)…</b><span>Where to get the points for this box</span></button>
           </>
         );
       }}
@@ -192,13 +201,13 @@ function MoreMenu({ onExport, disabled, copyLink, copied, theme, toggleTheme, on
             <button type="button" role="menuitem" data-nav disabled={disabled} onClick={() => go('svg')}><b>Calendar image (SVG)</b><span>The calendar as shown</span></button>
             <button type="button" role="menuitem" data-nav disabled={disabled} onClick={() => go('png')}><b>Calendar image (PNG)</b><span>The same drawing, 2× pixels</span></button>
             <button type="button" role="menuitem" data-nav onClick={() => go('map')}><b>Map layer (CSV)</b><span>One row per 0.5° place, with provenance</span></button>
-            {Object.keys(HOTSPOT_FILES).map((n) => <button key={n} type="button" role="menuitem" data-nav onClick={() => { close(); downloadBlob('firebridge_hotspots_' + n + '.csv', new Blob([HOTSPOT_FILES[n]], { type: 'text/csv' })); }}><b>Raw hotspots (CSV) — {n}</b><span>NASA FIRMS points for this event</span></button>)}
-            <button type="button" role="menuitem" data-nav disabled={disabled} onClick={() => go('hot')}><b>Raw hotspots…</b><span>Where to get the points for this box</span></button>
+            {hotItems(close)}
+            <button type="button" role="menuitem" data-nav disabled={disabled} onClick={() => go('hot')}><b>Hotspots for this box (FIRMS request)…</b><span>Where to get the points for this box</span></button>
             <div className="fb-pop-sep" role="separator" />
             <button type="button" role="menuitem" data-nav onClick={() => { copyLink(); }}><b>{copied === 'ok' ? 'Link copied' : copied === 'fail' ? 'Copy failed: use the address bar' : 'Copy link'}</b><span>This view, as a URL</span></button>
             <button type="button" role="menuitem" data-nav onClick={() => { close(); toggleTheme(); }}><b>Switch to {theme === 'dark' ? 'light' : 'dark'} theme</b></button>
             <button type="button" role="menuitem" data-nav onClick={() => { close(); onAbout(); }}><b>About and credits</b><span>Challenge, data, AI use</span></button>
-            <p className="fb-pop-meta">{meta}</p>
+            <p className="fb-pop-meta" title={/provisional/.test(meta) ? 'Provisional: fast-release data, not yet filtered for non-fire sources.' : undefined}>{meta}</p>
             <p className="fb-pop-meta">Tip: hold R (or hold the Raw button) to peek at the raw record.</p>
           </>
         );
@@ -209,12 +218,15 @@ function MoreMenu({ onExport, disabled, copyLink, copied, theme, toggleTheme, on
 
 function HotDialog({ open, text, onClose }) {
   const ref = useRef(null);
+  const hotNames = Object.keys(HOTSPOT_FILES).map(hotName);
   const [copied, setCopied] = useState(false);
   useEffect(() => { const d = ref.current; if (!d) return; if (open && !d.open) d.showModal(); if (!open && d.open) d.close(); }, [open]);
   return (
     <dialog ref={ref} className="fb-dialog" aria-labelledby="fb-hot-t" onClose={onClose}>
-      <h2 id="fb-hot-t" className="fb-paneltitle">Raw hotspots for this box and period come from NASA FIRMS</h2>
-      <p className="fb-pop-p">This prototype holds monthly 0.5° counts, not individual detections, so it does not make that file. Request the points from FIRMS with these values:</p>
+      <h2 id="fb-hot-t" className="fb-paneltitle">Original hotspot points for this box and period come from NASA FIRMS</h2>
+      {hotNames.length
+        ? <p className="fb-pop-p">This prototype holds monthly 0.5° counts, not individual detections, except for {hotNames.length === 1 ? 'one FIRMS extract' : hotNames.length + ' FIRMS extracts'} ({hotNames.join('; ')}), offered as CSV in the Download and ⋯ menus. For any other box or period, request the points from FIRMS with these values:</p>
+        : <p className="fb-pop-p">This prototype holds monthly 0.5° counts, not individual detections, so it does not make that file. Request the points from FIRMS with these values:</p>}
       <pre className="fb-hot-pre at-mono">{text}</pre>
       <div className="fb-dialog-act">
         <button type="button" className="at-btn" onClick={() => copyText(text).then((ok) => { setCopied(ok); setTimeout(() => setCopied(false), 2000); })}><Icon d={copied ? IC.check : IC.copy} />{copied ? 'Copied' : 'Copy request'}</button>
@@ -344,7 +356,9 @@ export function App() {
   // Peek (hold Raw or R): the same 200 ms map + calendar cross-fade as a flip, both directions.
   const peekVT = useCallback((v, vt) => (vt ? runVT(() => setPeek(v), 'flip') : setPeek(v)), []);
   const toggleTheme = useCallback(() => runVT(() => toggleTheme0(), 'theme'), [toggleTheme0]);
-  const pick = useCallback((country, box) => { autoSel.current = true; set({ country, box }); }, []); // the map flies; the number fades (no View Transition: it held the paint ~300 ms)
+  // The map flies; the number fades (no View Transition: it held the paint ~300 ms). The Overview always shows a whole
+  // country, so a zone that is not a whole country, picked there, opens the Dashboard where that zone is shown.
+  const pick = useCallback((country, box) => { autoSel.current = true; set((s) => { const p = presetFor(country, box); return s.tab === 'overview' && !(p && p.whole) ? { country, box, tab: 'dash' } : { country, box }; }); }, []);
   const onBox = useCallback((b) => set((s) => ({ box: b })), []);
   const onMapBox = useCallback((b) => { autoSel.current = true; set({ box: b }); }, []);
   const onSelect = useCallback((i) => { setFellBack(false); set({ sel: i, mPicked: true }); }, []);
@@ -408,14 +422,14 @@ export function App() {
   const meta = 'NASA FIRMS · MODIS + VIIRS · 2001–' + CAL_LAST + ' · last month ' + endLabel() + (data && data[st.country] && data[st.country].provSet.has(NM - 1) ? ' (provisional)' : '');
   const verdict = (variant) => <Verdict variant={variant} wide={w >= 1680} Z={Z} box={dBox} zoneName={zoneName} official={official} cover={cover} country={COUNTRIES[dCountry]} onEvidence={() => setTab('evidence')} onMethod={() => setTab('method')} onLarger={larger} onPicker={openPicker} onNearest={nearest} rawView={series === 'raw' && harmOK} />;
   const mapPanel = <MapPanel monthPicked={st.mPicked} onMethod={goMethod} C={C} S={S} country={dCountry} box={st.country === dCountry ? st.box : dBox} onBox={onMapBox} harm={series === 'harmonized' && harmOK} rawOnly={!harmOK && !!Z} layer={st.layer} setLayer={setLayer} sel={st.sel} theme={theme} phone={phone} hlYear={hlYear} onHoverYear={setMarkYear} />;
-  const calPanel = <CalPanel onMethod={goMethod} mPicked={st.mPicked} onClear={onClearMonth} Z={Z} cd={cd} empty={empty} outside={outside} onLarger={larger} onNearest={nearest} series={series} cv={st.cv} setCv={setCv} from={st.from} to={st.to} setRange={setRange} sel={st.sel} defSel={defSel} defIsPeak={!!Z && peakOfLastYear(Z) === defSel} onSelect={onSelect} onHoverYear={setHlYear} markYear={markYear} phone={phone} />;
+  const calPanel = <CalPanel onMethod={goMethod} mPicked={st.mPicked} onClear={onClearMonth} Z={Z} cd={cd} empty={empty} outside={outside} onLarger={larger} onNearest={nearest} series={series} cv={st.cv} setCv={setCv} from={st.from} to={st.to} setRange={setRange} sel={st.sel} defSel={defSel} defIsPeak={!!Z && peakOfLastYear(Z) === defSel} onSelect={onSelect} onHoverYear={setHlYear} markYear={markYear} phone={phone} theme={theme} />;
   const layoutClass = rail ? 'is-rail' : tablet ? 'is-tablet' : phone ? 'is-phone' : 'is-strip';
 
   let content;
   if (st.tab === 'overview') {
     content = <Overview Z={ovZ} country={st.country} official={ovOfficial} raw={peek || st.view === 'raw'} peek={peek} phone={phone}
       onCountry={(c) => { if (c !== st.country) pick(c, PRESETS.find((q) => q.whole && q.country === c).box); }}
-      onPeek={(v) => peekVT(v, true)} onToggleView={() => setView(view === 'raw' ? 'harmonized' : 'raw', true)}
+      onPeek={(v) => peekVT(v, true)} onToggleView={() => setView(st.view === 'raw' ? 'harmonized' : 'raw', true)}
       onOpen={() => setTab('dash')} onHow={() => setTab('how')} onMethod={() => setTab('method')} />;
   } else
   if (st.tab === 'dash') {

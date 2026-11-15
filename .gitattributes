@@ -1,0 +1,2 @@
+# Keep every file byte-exact on every platform (the build is checked by hash; data and the built HTML must not get CRLF).
+* -text

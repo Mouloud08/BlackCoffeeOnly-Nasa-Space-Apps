@@ -787,6 +787,10 @@ html.fb-noanim .fb-ov-chart * { animation: none !important; }
 .fb-ov-holdbtn { font: inherit; font-size: var(--fs-3); font-weight: 600; min-height: 2.25rem; padding: 0 var(--sp-4); display: inline-flex; align-items: center; gap: var(--sp-2); border: 0; border-radius: var(--radius-control); background: transparent; color: var(--ink); box-shadow: inset 0 0 0 1.5px var(--ink-2); cursor: pointer; touch-action: none; user-select: none; }
 .fb-ov-holdbtn[aria-pressed="true"] { background: var(--ink); color: var(--surface); box-shadow: none; }
 .fb-ov-holdbtn svg { width: 1.1rem; height: 1.1rem; fill: none; stroke: currentColor; stroke-width: 1.8; }
+.fb-ov-holdlab { display: inline-grid; text-align: center; } /* both labels in one cell: the button keeps its width when the label changes */
+.fb-ov-holdlab > span { grid-area: 1 / 1; visibility: hidden; }
+.fb-ov-holdlab > span.is-on { visibility: visible; }
+.fb-ov-holdlab.is-l { text-align: left; }
 .fb-ov-figs { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); column-gap: var(--sp-6); align-items: center; border-top: 1px solid var(--rule); padding-top: var(--sp-2); }
 .fb-ov-pair { margin: 0; display: flex; gap: var(--sp-6); flex-wrap: wrap; }
 .fb-ov-pair > div { display: grid; grid-template-columns: auto minmax(0, 1fr); grid-template-areas: "v t" "v s"; column-gap: var(--sp-3); align-items: baseline; }
