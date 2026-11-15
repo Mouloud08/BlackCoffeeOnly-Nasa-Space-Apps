@@ -1,0 +1,412 @@
+{
+ "cpu": 4,
+ "load": {
+  "fcp": 184,
+  "numT": 1455,
+  "mapT": 2007,
+  "cellT": 885,
+  "decode": 1430,
+  "compute": 45.9,
+  "longtasks": [
+   [
+    332,
+    137
+   ],
+   [
+    517,
+    67
+   ],
+   [
+    584,
+    67
+   ],
+   [
+    653,
+    243
+   ],
+   [
+    897,
+    70
+   ],
+   [
+    984,
+    228
+   ],
+   [
+    1216,
+    243
+   ],
+   [
+    1487,
+    405
+   ],
+   [
+    1899,
+    114
+   ],
+   [
+    2013,
+    74
+   ],
+   [
+    2088,
+    312
+   ],
+   [
+    2505,
+    52
+   ]
+  ],
+  "dom": 636,
+  "heapMB": 36
+ },
+ "rest": {
+  "fps": 61,
+  "maxGap": 17,
+  "over50": 0
+ },
+ "flip_raw": {
+  "fps": 57,
+  "maxGap": 117,
+  "over50": 1,
+  "longtasks": [
+   91
+  ],
+  "inp": 160,
+  "proc": 55
+ },
+ "flip_harm": {
+  "fps": 59,
+  "maxGap": 67,
+  "over50": 1,
+  "longtasks": [],
+  "inp": 104,
+  "proc": 37
+ },
+ "key_H_after_tap_R": {
+  "fps": 54,
+  "maxGap": 83,
+  "over50": 2,
+  "longtasks": [
+   56,
+   59
+  ],
+  "inp": 128,
+  "proc": 44
+ },
+ "cal_anomaly": {
+  "fps": 60,
+  "maxGap": 50,
+  "over50": 0,
+  "longtasks": [
+   53
+  ],
+  "inp": 88,
+  "proc": 48
+ },
+ "cal_counts": {
+  "fps": 59,
+  "maxGap": 50,
+  "over50": 0,
+  "longtasks": [
+   65
+  ],
+  "inp": 104,
+  "proc": 44
+ },
+ "layer_2": {
+  "fps": 58,
+  "maxGap": 100,
+  "over50": 1,
+  "longtasks": [
+   69
+  ],
+  "inp": 120,
+  "proc": 67
+ },
+ "layer_3": {
+  "fps": 57,
+  "maxGap": 117,
+  "over50": 1,
+  "longtasks": [
+   93
+  ],
+  "inp": 144,
+  "proc": 88
+ },
+ "layer_4": {
+  "fps": 59,
+  "maxGap": 50,
+  "over50": 1,
+  "longtasks": [],
+  "inp": 80,
+  "proc": 37
+ },
+ "layer_1": {
+  "fps": 58,
+  "maxGap": 83,
+  "over50": 1,
+  "longtasks": [
+   54
+  ],
+  "inp": 96,
+  "proc": 49
+ },
+ "zoom_in_btn": {
+  "fps": 58,
+  "maxGap": 100,
+  "over50": 1,
+  "longtasks": [
+   89
+  ],
+  "inp": 64,
+  "proc": 3
+ },
+ "wheel_zoom": {
+  "fps": 57,
+  "maxGap": 117,
+  "over50": 1,
+  "longtasks": [
+   113
+  ],
+  "inp": 0,
+  "proc": 0
+ },
+ "pan_drag": {
+  "fps": 60,
+  "maxGap": 50,
+  "over50": 0,
+  "longtasks": [
+   64
+  ],
+  "inp": 40,
+  "proc": 3
+ },
+ "fit_btn": {
+  "fps": 59,
+  "maxGap": 67,
+  "over50": 1,
+  "longtasks": [
+   60
+  ],
+  "inp": 24,
+  "proc": 0
+ },
+ "hover_map": {
+  "fps": 53,
+  "maxGap": 67,
+  "over50": 2,
+  "longtasks": [],
+  "inp": 0,
+  "proc": 0
+ },
+ "hover_calendar": {
+  "fps": 51,
+  "maxGap": 50,
+  "over50": 0,
+  "longtasks": [
+   54
+  ],
+  "inp": 0,
+  "proc": 0
+ },
+ "presetFrames": {
+  "preset_All_of_Canada2.0": {
+   "firstFrame": 13,
+   "verdictFrame": 2013
+  },
+  "preset_All_of_Argentina": {
+   "firstFrame": 2,
+   "verdictFrame": 269
+  },
+  "preset_Boreal_Québecref": {
+   "firstFrame": 11,
+   "verdictFrame": 211
+  },
+  "preset_Chibougamaurefer": {
+   "firstFrame": 13,
+   "verdictFrame": 63
+  },
+  "preset_Côte-Nordreferen": {
+   "firstFrame": 13,
+   "verdictFrame": 63
+  },
+  "preset_La_Riojasensor_e": {
+   "firstFrame": 1,
+   "verdictFrame": 118
+  },
+  "preset_Córdoba0.6×_·_A": {
+   "firstFrame": 2,
+   "verdictFrame": 102
+  },
+  "preset_Tucumán0.6×_·_A": {
+   "firstFrame": 15,
+   "verdictFrame": 82
+  },
+  "preset_Chilecitosensor_": {
+   "firstFrame": 13,
+   "verdictFrame": 79
+  }
+ },
+ "preset_All_of_Canada2.0": {
+  "fps": 61,
+  "maxGap": 17,
+  "over50": 0,
+  "longtasks": [],
+  "inp": 592,
+  "proc": 6
+ },
+ "preset_All_of_Argentina": {
+  "fps": 50,
+  "maxGap": 183,
+  "over50": 3,
+  "longtasks": [
+   181
+  ],
+  "inp": 0,
+  "proc": 0
+ },
+ "preset_Boreal_Québecref": {
+  "fps": 47,
+  "maxGap": 133,
+  "over50": 3,
+  "longtasks": [
+   79,
+   73,
+   98
+  ],
+  "inp": 0,
+  "proc": 0
+ },
+ "preset_Chibougamaurefer": {
+  "fps": 54,
+  "maxGap": 67,
+  "over50": 1,
+  "longtasks": [
+   54,
+   61
+  ],
+  "inp": 0,
+  "proc": 0
+ },
+ "preset_Côte-Nordreferen": {
+  "fps": 56,
+  "maxGap": 67,
+  "over50": 1,
+  "longtasks": [
+   53,
+   58
+  ],
+  "inp": 0,
+  "proc": 0
+ },
+ "preset_La_Riojasensor_e": {
+  "fps": 56,
+  "maxGap": 67,
+  "over50": 2,
+  "longtasks": [],
+  "inp": 0,
+  "proc": 0
+ },
+ "preset_Córdoba0.6×_·_A": {
+  "fps": 56,
+  "maxGap": 50,
+  "over50": 0,
+  "longtasks": [],
+  "inp": 0,
+  "proc": 0
+ },
+ "preset_Tucumán0.6×_·_A": {
+  "fps": 55,
+  "maxGap": 67,
+  "over50": 1,
+  "longtasks": [],
+  "inp": 0,
+  "proc": 0
+ },
+ "preset_Chilecitosensor_": {
+  "fps": 54,
+  "maxGap": 100,
+  "over50": 1,
+  "longtasks": [
+   72
+  ],
+  "inp": 0,
+  "proc": 0
+ },
+ "click_box": {
+  "fps": 58,
+  "maxGap": 50,
+  "over50": 0,
+  "longtasks": [],
+  "inp": 56,
+  "proc": 6
+ },
+ "shift_drag_box": {
+  "fps": 58,
+  "maxGap": 50,
+  "over50": 1,
+  "longtasks": [],
+  "inp": 72,
+  "proc": 33
+ },
+ "cal_cell_click": {
+  "fps": 60,
+  "maxGap": 33,
+  "over50": 0,
+  "longtasks": [],
+  "inp": 80,
+  "proc": 16
+ },
+ "tab_evidence": {
+  "fps": 58,
+  "maxGap": 67,
+  "over50": 1,
+  "longtasks": [
+   69
+  ],
+  "inp": 104,
+  "proc": 42
+ },
+ "tab_how": {
+  "fps": 60,
+  "maxGap": 50,
+  "over50": 0,
+  "longtasks": [
+   63
+  ],
+  "inp": 80,
+  "proc": 23
+ },
+ "tab_method": {
+  "fps": 56,
+  "maxGap": 150,
+  "over50": 1,
+  "longtasks": [
+   155
+  ],
+  "inp": 176,
+  "proc": 145
+ },
+ "tab_dash": {
+  "fps": 49,
+  "maxGap": 217,
+  "over50": 2,
+  "longtasks": [
+   96,
+   183
+  ],
+  "inp": 144,
+  "proc": 92
+ },
+ "theme_toggle": {
+  "fps": 58,
+  "maxGap": 67,
+  "over50": 1,
+  "longtasks": [],
+  "inp": 208,
+  "proc": 2
+ },
+ "requests": [],
+ "errors": []
+}

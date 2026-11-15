@@ -1,0 +1,1 @@
+{"name":"fb-vendor","private":true,"dependencies":{"topojson-client":"^3.1.0","world-atlas":"^2.0.2"}}

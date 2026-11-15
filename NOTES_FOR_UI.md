@@ -1,0 +1,141 @@
+# Notes for the interface team (data hand-off, 15 November 2026)
+
+Written while adding the real 2026 data (record now ends October 2026) and two real hotspot files. Only item 1 was
+changed in `src/`; everything else is reported here and left as it is. Screenshots are in `shots/verify-2026/`
+(not committed) and can be regenerated with the scripts named below.
+
+## 1. Calendar: the "typical month" margin is drawn over the grid when the last year is partial — FIXED LOCALLY, please carry into 6.2.1
+
+- **Screen:** Dashboard, calendar panel, any width where the margin shows (cells ≥ 24 px: seen at 1100 × 900, 1920 × 1080,
+  2560 × 1300; also at 1280–1680 with a shorter date range), both themes.
+- **Steps:** open the build with 2026 data (record ends October 2026) at 1920 × 1080. The grey "typical month,
+  2003–2025" bars and their label start at the left edge of the panel and cover the month rows. It needs a record
+  that ends before December: a date range alone does not trigger it (the calendar always builds whole years), so the
+  December-2025 build is not affected.
+- **Cause:** `src/CalPanel.jsx`, overlay geometry: the right edge is measured on the cell `<last year>-12`. When the
+  record ends before December, the months after it have no `data-key`, so `right` is 0 and the margin is placed at
+  `left: 0`.
+- **Second defect, same code:** the month rows are measured on the first year's keyed cells. With a date range that
+  starts in the partial last year (only 2026, or March 2026 onwards) the measure stops and the previous range's
+  geometry stays: the "MODIS × 2.10 | VIIRS" seam and the "2001–02: Terra only" note remain drawn over a 2026-only grid.
+- **Fix applied in this folder (`src/CalPanel.jsx`, the only file of `src/` that differs from 6.2):**
+  ```js
+  // was: const yA = cd.years[0], rows = [];
+  //      for (…) { const c = el.querySelector('.at-cal-cells [data-key="' + yA + '-' + MM + '"]'); if (!c) return; … }
+  const rowEls = el.querySelectorAll('.at-cal-cells'), rows = [];
+  for (let m = 0; m < 12; m++) { const c = rowEls[m] && rowEls[m].firstElementChild; if (!c) { if (geo) setGeo(null); return; } const r = c.getBoundingClientRect(); rows.push({ y: Math.round(r.top - b0.top), h: Math.round(r.height) }); }
+  // was: const last = el.querySelector('.at-cal-cells [data-key="' + cd.years[cd.years.length - 1] + '-12"]');
+  let lastR = 0; for (const c of el.querySelectorAll('.at-cal-cells [data-key^="' + cd.years[cd.years.length - 1] + '-"]')) lastR = Math.max(lastR, c.getBoundingClientRect().right);
+  // was: const right = last ? Math.round(last.getBoundingClientRect().right - b0.left + 8) : 0;
+  const right = lastR ? Math.round(lastR - b0.left + 8) : 0;
+  // and the margin is rendered only when the measure succeeded:
+  {!empty && cd && geo && geo.right > 0 && margin && Z.harmOK && ( … )}
+  ```
+- **Check:** `node scripts/check_margin.mjs` (7 sizes × 2 themes × 8 cases, including the last year alone and a range
+  starting in March of the last year): before the fix the bars start inside the grid wherever the margin shows; after,
+  the margin is shown in 88 cases with 0 failures.
+- **If 6.2.1 replaces `src/` without this change, both defects come back** as soon as the record ends in a month other
+  than December.
+
+## 2. The visible Download menu does not offer the real hotspot files
+
+- **Screen:** top bar, "Download" button.
+- **Steps:** build with `data/hotspots/*.csv` present, open Download: it lists Series CSV, Calendar image (SVG/PNG),
+  Map layer (CSV) and "Raw hotspots… Where to get the points for this box". The items
+  "Raw hotspots (CSV) — la-rioja-2024-08" and "Raw hotspots (CSV) — quebec-boreal-2023-06" appear only in the ⋯ menu.
+- **Where:** `src/App.jsx`, `DownloadMenu` (no `HOTSPOT_FILES` loop) versus `MoreMenu` (has it).
+- **Also:** with a real file embedded, "Raw hotspots… Where to get the points for this box" still says that the
+  prototype "does not make that file"; the wording could point to the two embedded events.
+
+## 3. Coherence check: one violation, present in the December-2025 build too (reload changes the calendar readout)
+
+- **Tool:** `tools/coherence.mjs`, 1366 × 768, seed 1, step 234 (300 actions): after
+  `panel false → peek → draw+Esc → reload`, the readout changes from "October 2026: 55% of a normal October…" to
+  "Peak month of 2025: July 2025: 3.9 times a normal July…". The other five walks (1,500 actions) have no violation.
+- **Reading:** a month shown without being "picked" (so not written to the hash as `m=`) is lost on reload, where the
+  default month (peak of the last complete year) comes back.
+- **Not caused by the 2026 data:** the original December-2025 build gives the same violation at the same seed and
+  step ("December 2025: 71% of a normal December…" → "Peak month of 2025: July 2025…"), 1 violation in 1,800 actions
+  in both builds.
+
+## 4. Partial-year label on the calendar bars overlaps the previous bar
+
+- **Screen:** Dashboard, calendar, All of Argentina, 1920 × 1080, light theme.
+- **Steps:** the "to Oct" label above the 2026 bar starts over the top of the tall 2025 bar; its first letter is
+  hidden ("o Oct"). For All of Canada the label is clear of the bars.
+
+## 5. Wording for months continued on NOAA-20 during a partial S-NPP outage
+
+- **Screen:** Evidence / month row caveat, a 2026 month continued on NOAA-20 (Canada: March, July; Argentina: April, July).
+- **Text:** "Computed: NOAA-20 rescaled to S-NPP (…); S-NPP has no data this month." In 2026 these are partial outages
+  (S-NPP has no detection on 10–12 March, 28–30 April, 1–2 June, 11–16 July and 3 August, in both countries), not
+  months without data. The same outage days leave April (Canada) and June (both countries) on S-NPP alone, a little
+  low, because their NOAA-20 ÷ S-NPP ratio stays under the 1.25 threshold.
+
+## 6. Texts that still say 2025
+
+- `build.mjs`, `<meta name="description">`: "…on one scale, 2001–2025…" is fixed text; the record now ends October 2026.
+- `src/Method.jsx`: "Country yearly files, 2000–2025, 96 files, 19.2 million detections read" does not mention the
+  2026 months, which come from the FIRMS area API.
+
+## 7. Tools
+
+- `tools/interact.mjs`: the "Last 5 years" check expects `f=2021-01` (record ending in 2025). With the record ending
+  in 2026 the app correctly gives 2022 – Oct 2026 and the check fails. Suggested: expected year = record-end year − 4.
+- `tools/copycheck.out.txt` is older than the current sentences ("tiles" instead of "places", older story wording):
+  175 differing lines before any 2026 data.
+- The tools do not run on Windows as shipped (`new URL('..', import.meta.url).pathname` gives `/C:/…`; Chrome path
+  `/usr/bin/google-chrome`; `'file://' +` a drive path; a dynamic `import()` of a drive path). `tools/` is untouched
+  here: `node scripts/winport.mjs` generates patched copies in `tools-win/` and `build-win.mjs`.
+  `fileURLToPath(new URL('..', import.meta.url))` and a `CHROME` environment variable would remove the need.
+- `tools/README.md` gives `/home/claude/...` paths; `barcheck.mjs`, `exportshot.mjs`, `flash.mjs` default to
+  `/home/claude/v62/...`.
+
+## 8. Fetch script (`scripts/fetch_firms_2026.mjs`): days lost at the standard / near-real-time boundary
+
+- A 5-day window that straddles the last day of the standard product is requested entirely from the near-real-time
+  source, which starts the day after. On 15 November 2026 this lost 30–31 July (VIIRS S-NPP and NOAA-20) and
+  29–31 August (MODIS) in both countries.
+- Worked around without changing the script: the missing days were fetched with `--from/--to` under another
+  `--name` and the files copied into the country folder (see the hand-off report). A proper fix is to split the
+  straddling window at the last standard day.
+- The manifest is rewritten at every run and its `to` date becomes the record's `through`: a top-up run with the same
+  `--name` and an earlier `--to` would silently shorten the record.
+
+## 9. Neighbour-country mask (`tools/build_2026_tiles.mjs`): a few coastal points kept
+
+- The 1:50m outlines put some coastal places of neighbouring countries in the sea, and offshore points are kept.
+  In 2026: 12 tiles on the United States and Greenland coasts for Canada (19 cell-days) and 7 tiles on the Chilean
+  coast for Argentina (20 cell-days), none of which had a detection in 2001–2025. No effect on any printed figure
+  (annual statistics stop at 2025); they can appear in the This-month layer for a 2026 month.
+
+## 10. Near-real-time months are not filtered for non-fire sources (disclosed in the app as "provisional")
+
+- August to October 2026 come from near-real-time files, which have no `type` column. Share of S-NPP cell-days that
+  fall in cells flagged as static sources in the January–July standard files: Canada 3% (August), 35% (September),
+  18% (October); Argentina 5%, 3%, 8%. October 2026 is the last month of the record.
+
+## 11. Dark theme: the legend wording is the wrong way round (present before today's work)
+
+- **Screen:** Dashboard, dark theme, calendar legend and map legend (Detections layer).
+- **Steps:** switch to the dark theme. The calendar legend reads "fire detections a month: lighter = fewer, darker =
+  more" and the map sentence reads "Darker = more fires seen each year…", but in the dark theme both ramps run from
+  dark (few) to light (many): the busiest months and places are the lightest. In the light theme the wording is right.
+- **Where:** `src/CalPanel.jsx` (legend `unit` text) and the map sentence in `src/MapPanel.jsx`.
+
+## 12. Manifest and gap-fill files
+
+- Each country's `data/raw/2026/<country>/manifest.json` lists the 192 files of the main run; the folder holds 195
+  CSV files (the three gap-fill files of item 8 were copied in and are not listed). The converter reads the folder,
+  not the list.
+
+## 13. More on the tools (found in review, not changed in `tools/`)
+
+- `tools/interact.mjs`, the two date-range checks before "Last 5 years" (To year set to 2025, "months after the record
+  end disabled in its last year (record ends Dec)") test nothing once the record ends in October 2026: they pass
+  without looking at the last year. The generated `tools-win/` copy follows the record end.
+- `tools/perf.mjs` writes its result into `tools/` (`tools/perf.<n>x.json`).
+- `tools/scdiff.sh` cannot print "SELF-CHECK IDENTICAL TO V4" with the 2026 record: the first line of the self-check
+  is now "Record ends 2026-10". The 2003–2025 table is unchanged (see the hand-off report).
+- The tools build paths from `new URL('..', import.meta.url).pathname`, which is percent-encoded: a checkout path
+  with spaces or accents breaks them (on any system).

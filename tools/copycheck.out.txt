@@ -1,0 +1,182 @@
+
+## All of Canada 41.5°–83° N · 141.5°–52.5° W · 41.5° × 89° · 14,774 tiles | grade A (own)
+  rule: A: own ratio, 14 usable years (10+ needed), median error 3% (≤ 30%), ratio range 3% of the ratio (≤ 10%).
+  ROBUST number: 2.0× | not 4.2× as raw data suggest | case rise-smaller | range 1.3–2.9
+  sentence: Detections rose 2.0-fold, not 4.2-fold: about two thirds of the apparent rise came from the sensor change. | Without 2023, the largest year: 1.6×.
+  story: Did fire activity in All of Canada more than quadruple after 2012? / No. The satellite changed. / 4.2× becomes 2.0×.
+  V5 short sentence: About two thirds of the apparent rise came from the sensor change.
+  V5 headings: 4.2× becomes 2.0×. | Year by year, the correction predicts what VIIRS measured
+  2025-12: 485 typ 680 | 0.7× a typical December | 17th most active December of 23 | Without harmonizing, this month could only be ranked among 14 VIIRS years (13th of 14). On the harmonized record: 17th of 23. 
+  2023-6: 96,517 typ 11,668 | 8.3× a typical June | Most active June of 23 | Without harmonizing, this month could only be ranked among 14 VIIRS years (1st of 14). On the harmonized record: the same rank, now over 23 years instead of 14. 
+
+## All of Argentina 55°–21.5° S · 73.5°–53.5° W · 33.5° × 20° · 2,680 tiles | grade A (own)
+  rule: A: own ratio, 14 usable years (10+ needed), median error 3% (≤ 30%), ratio range 2% of the ratio (≤ 10%).
+  ROBUST number: 0.7× | raw data say 1.4× — a rise that is not there | case rise-false | range 0.57–0.82
+  sentence: Detections fell by about a third; the raw record shows a rise that the sensor change created. | Without 2020, the largest year: 0.6×.
+  story: Did fire activity in All of Argentina rise by a third after 2012? / No. The satellite changed, and detections fell. / 1.4× becomes 0.7×: the rise was not real.
+  V5 short sentence: The raw record shows a rise that the sensor change created.
+  V5 headings: 1.4× becomes 0.7×: the rise was not real. | Year by year, the correction predicts what VIIRS measured
+  2025-12: 3,957 typ 5,392 | 0.7× a typical December | 14th most active December of 23 | Without harmonizing, this month could only be ranked among 14 VIIRS years (7th of 14). On the harmonized record: 14th of 23. 
+  2023-6: 3,243 typ 4,134 | 0.8× a typical June | 17th most active June of 23 | Without harmonizing, this month could only be ranked among 14 VIIRS years (10th of 14). On the harmonized record: 17th of 23. | depends 16,17
+
+## Boreal Québec 47.5°–52.5° N · 80°–68° W · 5° × 12° · 240 tiles | grade A (own)
+  rule: A: own ratio, 13 usable years (10+ needed), median error 16% (≤ 30%), ratio range 4% of the ratio (≤ 10%).
+  UNCERTAIN number: 2.1× | sensor effect | The trend itself is uncertain here: 1.6× on the harmonized record, 0.7× without 2023 (90% range 0.13–4.7). | Without 2023, the largest year: 0.7×.
+  story: Did fire activity in Boreal Québec more than triple after 2012? / No: raw data overstate it 2.1×. The corrected trend itself is uncertain. / 3.4× becomes 1.6×, but 0.7× without 2023.
+  V5 short sentence: The trend itself is uncertain here: 1.6× on the harmonized record, 0.7× without 2023 (90% range 0.13–4.7).
+  V5 factor clause: raw reads 2.1× too high
+  V5 headings: 3.4× becomes 1.6×, but 0.7× without 2023. | Year by year, the correction predicts VIIRS within about 16%
+  2025-12: too few (typ 0.0) -> comparable 296
+  2025-9: 11 typ 11 | 1.0× a typical September | 12th most active September of 23 | Without harmonizing, this month could only be ranked among 14 VIIRS years (4th of 14). On the harmonized record: 12th of 23. 
+  2023-6: 24,968 typ 195 | over 100× a typical June | Most active June of 23 | Without harmonizing, this month could only be ranked among 14 VIIRS years (1st of 14). On the harmonized record: the same rank, now over 23 years instead of 14. 
+
+## Chibougamau 49.5°–51.5° N · 79°–72.5° W · 2° × 6.5° · 52 tiles | grade B (own)
+  rule: B: own ratio, 5 usable years (5+ needed), median error 4% (≤ 50%), ratio range 4% of the ratio (≤ 25%).
+  UNCERTAIN number: 2.2× | sensor effect | The trend itself is uncertain here: 2.2× on the harmonized record, 0.6× without 2023 (90% range 0.08–7.9). | Without 2023, the largest year: 0.6×.
+  story: Did fire activity in Chibougamau rise 4.9-fold after 2012? / No: raw data overstate it 2.2×. The corrected trend itself is uncertain. / 4.9× becomes 2.2×, but 0.6× without 2023.
+  V5 short sentence: The trend itself is uncertain here: 2.2× on the harmonized record, 0.6× without 2023 (90% range 0.08–7.9).
+  V5 factor clause: raw reads 2.2× too high
+  V5 headings: 4.9× becomes 2.2×, but 0.6× without 2023. | Year by year, the correction predicts what VIIRS measured
+  2025-12: too few (typ 0.0) -> comparable none
+  2023-06: too few (typ 6.0) -> comparable none
+
+## Côte-Nord 48.5°–52.5° N · 70°–61° W · 4° × 9° · 144 tiles | grade B (own)
+  rule: B: own ratio, 7 usable years (5+ needed), median error 15% (≤ 50%), ratio range 12% of the ratio (≤ 25%).
+  UNCERTAIN number: 1.9× | sensor effect | The trend itself is uncertain here: 2.0× on the harmonized record, 0.8× without 2013 (90% range 0.42–5.8). | Without 2013, the largest year: 0.8×.
+  story: Did fire activity in Côte-Nord quadruple after 2012? / No: raw data overstate it 1.9×. The corrected trend itself is uncertain. / 4.0× becomes 2.0×, but 0.8× without 2013.
+  V5 short sentence: The trend itself is uncertain here: 2.0× on the harmonized record, 0.8× without 2013 (90% range 0.42–5.8).
+  V5 factor clause: raw reads 1.9× too high
+  V5 headings: 4.0× becomes 2.0×, but 0.8× without 2013. | Year by year, the correction predicts VIIRS within about 15%
+  2025-12: too few (typ 0.0) -> comparable 294
+  2025-7: 2 typ 19 | 0.1× a typical July | 21st most active July of 23 | Without harmonizing, this month could only be ranked among 14 VIIRS years (12th of 14). On the harmonized record: 21st of 23. 
+  2023-6: 1,403 typ 53 | 27× a typical June | 2nd most active June of 23 | Without harmonizing, this month could only be ranked among 14 VIIRS years (2nd of 14). On the harmonized record: the same rank, now over 23 years instead of 14. 
+
+## La Rioja 32°–27.5° S · 69.5°–65.5° W · 4.5° × 4° · 72 tiles | grade A (own)
+  rule: A: own ratio, 14 usable years (10+ needed), median error 9% (≤ 30%), ratio range 3% of the ratio (≤ 10%).
+  UNCERTAIN number: 2.3× | sensor effect | The trend itself is uncertain here: 0.8× on the harmonized record, 0.9× without 2003 (90% range 0.58–1.0). | Without 2003, the largest year: 0.9×.
+  story: Did fire activity in La Rioja almost double after 2012? / No: raw data overstate it 2.3×. The corrected trend itself is uncertain. / 1.8× becomes 0.8×, but 0.9× without 2003.
+  V5 short sentence: The trend itself is uncertain here: 0.8× on the harmonized record, 0.9× without 2003 (90% range 0.58–1.0).
+  V5 factor clause: raw reads 2.3× too high
+  V5 headings: 1.8× becomes 0.8×, but 0.9× without 2003. | Year by year, the correction predicts what VIIRS measured
+  2025-12: 87 typ 107 | 0.8× a typical December | 16th most active December of 23 | Without harmonizing, this month could only be ranked among 14 VIIRS years (10th of 14). On the harmonized record: 16th of 23. 
+  2023-6: 92 typ 146 | 0.6× a typical June | 20th most active June of 23 | Without harmonizing, this month could only be ranked among 14 VIIRS years (12th of 14). On the harmonized record: 20th of 23. 
+
+## Córdoba 35°–29.5° S · 66°–62° W · 5.5° × 4° · 88 tiles | grade A (own)
+  rule: A: own ratio, 14 usable years (10+ needed), median error 5% (≤ 30%), ratio range 3% of the ratio (≤ 10%).
+  ROBUST number: 0.6× | a decline that raw data hide (1.1×) | case hidden-decline | range 0.44–0.71
+  sentence: Detections fell by about 45%; the raw record shows almost no change because the sensor change hid the decline. | Without 2003, the largest year: 0.6×.
+  story: Raw data say fire activity in Córdoba barely changed. / They hide a decline. / 1.1× becomes 0.6×: a decline the raw record hid.
+  V5 short sentence: The raw record shows almost no change because the sensor change hid the decline.
+  V5 headings: 1.1× becomes 0.6×: a decline the raw record hid. | Year by year, the correction predicts what VIIRS measured
+  2025-12: 151 typ 256 | 0.6× a typical December | 20th most active December of 23 | Without harmonizing, this month could only be ranked among 14 VIIRS years (12th of 14). On the harmonized record: 20th of 23. 
+  2023-6: 94 typ 252 | 0.4× a typical June | 22nd most active June of 23 | Without harmonizing, this month could only be ranked among 14 VIIRS years (13th of 14). On the harmonized record: 22nd of 23. 
+
+## Tucumán 28°–26° S · 66.5°–64.5° W · 2° × 2° · 16 tiles | grade A (own)
+  rule: A: own ratio, 14 usable years (10+ needed), median error 6% (≤ 30%), ratio range 1% of the ratio (≤ 10%).
+  ROBUST number: 0.6× | raw data say 1.2× — a rise that is not there | case rise-false | range 0.47–0.64
+  sentence: Detections fell by about 45%; the raw record shows a rise that the sensor change created. | Without 2009, the largest year: 0.6×.
+  story: Did fire activity in Tucumán rise by a fifth after 2012? / No. The satellite changed, and detections fell. / 1.2× becomes 0.6×: the rise was not real.
+  V5 short sentence: The raw record shows a rise that the sensor change created.
+  V5 headings: 1.2× becomes 0.6×: the rise was not real. | Year by year, the correction predicts what VIIRS measured
+  2025-12: 48 typ 80 | 0.6× a typical December | 17th most active December of 23 | Without harmonizing, this month could only be ranked among 14 VIIRS years (10th of 14). On the harmonized record: 17th of 23. | depends 17,18
+  2023-6: 129 typ 230 | 0.6× a typical June | 17th most active June of 23 | Without harmonizing, this month could only be ranked among 14 VIIRS years (9th of 14). On the harmonized record: 17th of 23. 
+
+## Chilecito 29.5°–28.5° S · 68°–67° W · 1° × 1° · 4 tiles | grade B (borrowed)
+  rule: B: this box has 3 usable overlap years (fewer than 5), so the ratio is borrowed from the wider area, which meets A (14 usable years, median error 16%, ratio range 4% of the ratio).
+  UNCERTAIN number: 2.4× | sensor effect | The trend itself is uncertain here: 1.2× on the harmonized record, 0.7× without 2017 (90% range 0.54–2.7). | Without 2017, the largest year: 0.7×.
+  story: Did fire activity in Chilecito almost triple after 2012? / No: raw data overstate it 2.4×. The corrected trend itself is uncertain. / 2.9× becomes 1.2×, but 0.7× without 2017.
+  V5 short sentence: The trend itself is uncertain here: 1.2× on the harmonized record, 0.7× without 2017 (90% range 0.54–2.7).
+  V5 factor clause: raw reads 2.4× too high
+  V5 headings: 2.9× becomes 1.2×, but 0.7× without 2017. | Year by year, the correction predicts VIIRS within about 16%
+  2025-12: too few (typ 6.0) -> comparable 297
+  2025-10: 34 typ 12 | 2.8× a typical October | 5th most active October of 23 | Without harmonizing, this month could only be ranked among 14 VIIRS years (3rd of 14). On the harmonized record: 5th of 23. 
+  2023-06: too few (typ 7.0) -> comparable 261
+  2022-10: 29 typ 12 | 2.4× a typical October | 6th most active October of 23 | Without harmonizing, this month could only be ranked among 14 VIIRS years (4th of 14). On the harmonized record: 6th of 23. 
+
+## NWT (judge) 58°–63.5° N · 125.5°–116.5° W · 5.5° × 9° · 198 tiles | grade A (own)
+  rule: A: own ratio, 14 usable years (10+ needed), median error 11% (≤ 30%), ratio range 5% of the ratio (≤ 10%).
+  ROBUST number: 13.6× | not 28.3× as raw data suggest | case rise-smaller | range 5.0–39.8
+  sentence: Detections rose 13.6-fold, not 28.3-fold: over half of the apparent rise came from the sensor change. | Without 2023, the largest year: 9.6×.
+  story: Did fire activity in NWT (judge) rise 28.3-fold after 2012? / No. The satellite changed. / 28.3× becomes 13.6×.
+  V5 short sentence: Over half of the apparent rise came from the sensor change.
+  V5 headings: 28.3× becomes 13.6×. | Year by year, the correction predicts what VIIRS measured
+  2025-12: 10 typ 12 | 0.8× a typical December | 13th most active December of 23 | Without harmonizing, this month could only be ranked among 14 VIIRS years (11th of 14). On the harmonized record: 13th of 23. 
+  2023-6: 14,985 typ 193 | 78× a typical June | Most active June of 23 | Without harmonizing, this month could only be ranked among 14 VIIRS years (1st of 14). On the harmonized record: the same rank, now over 23 years instead of 14. 
+
+## Nunavik C (judge) 58°–59° N · 75°–74° W · 1° × 1° · 4 tiles | grade C (no-wider)
+  rule: C: 0 usable overlap years here (MODIS ≥ 50 cell-days; 5 needed), and no wider area up to 4° around it reaches 10.
+  C: 0 usable overlap years here (MODIS ≥ 50 cell-days; 5 needed), and no wider area up to 4° around it reaches 10.
+  story: No detections here before 2012, so no change can be measured. / Too few detections here to harmonize the two sensors reliably. / No before/after comparison possible.
+  V5 short sentence: Not harmonized: 0 usable overlap years here (MODIS ≥ 50 cell-days; 5 needed), and no wider area up to 4° around it reaches 10.
+  V5 headings: Raw only: the two sensors cannot be harmonized here | Too few usable years to test the correction here
+
+## Lac-Saint-Jean 48°–50° N · 76°–72° W · 2° × 4° · 32 tiles | grade B (borrowed)
+  rule: B: this box has 2 usable overlap years (fewer than 5), so the ratio is borrowed from the wider area, which meets A (11 usable years, median error 14%, ratio range 2% of the ratio).
+  UNCERTAIN number: 2.2× | sensor effect | The trend itself is uncertain here: 0.9× on the harmonized record, 0.04× without 2023 (90% range 0.02–4.1). | Without 2023, the largest year: 0.04×.
+  story: Did fire activity in Lac-Saint-Jean almost double after 2012? / No: raw data overstate it 2.2×. The corrected trend itself is uncertain. / 1.9× becomes 0.9×, but 0.04× without 2023.
+  V5 short sentence: The trend itself is uncertain here: 0.9× on the harmonized record, 0.04× without 2023 (90% range 0.02–4.1).
+  V5 factor clause: raw reads 2.2× too high
+  V5 headings: 1.9× becomes 0.9×, but 0.04× without 2023. | Year by year, the correction predicts what VIIRS measured
+  2025-12: too few (typ 0.0) -> comparable none
+  2023-06: too few (typ 3.0) -> comparable none
+
+## Arctic box 70°–72° N · 100°–96° W · 2° × 4° · 32 tiles | grade C (no-wider) EMPTY
+  rule: No detections in this box.
+  C: 0 usable overlap years here (MODIS ≥ 50 cell-days; 5 needed), and no wider area up to 4° around it reaches 10.
+  story: No detections to compare in this box. / Choose a zone with fire activity. / Nothing to harmonize here.
+  V5 short sentence: 
+
+## Tierra del Fuego 55°–53° S · 68.5°–65.5° W · 2° × 3° · 24 tiles | grade C (no-wider)
+  rule: C: 1 usable overlap year here (MODIS ≥ 50 cell-days; 5 needed), and no wider area up to 4° around it reaches 10.
+  C: 1 usable overlap year here (MODIS ≥ 50 cell-days; 5 needed), and no wider area up to 4° around it reaches 10.
+  story: Did fire activity in Tierra del Fuego rise 7.5-fold after 2012? / We cannot tell: too few detections here to harmonize the two sensors. / Raw 7.5×, and no reliable harmonization.
+  V5 short sentence: Not harmonized: 1 usable overlap year here (MODIS ≥ 50 cell-days; 5 needed), and no wider area up to 4° around it reaches 10.
+  V5 headings: Raw only: the two sensors cannot be harmonized here | Too few usable years to test the correction here
+
+## Small Patagonia 46°–45° S · 70°–69° W · 1° × 1° · 4 tiles | grade B (borrowed)
+  rule: B: this box has 0 usable overlap years (fewer than 5), so the ratio is borrowed from the wider area, which meets A (14 usable years, median error 19%, ratio range 8% of the ratio).
+  UNCERTAIN number: 2.6× | sensor effect | The trend itself is uncertain here: 0.7× on the harmonized record, 2.3× without 2003 (90% range 0.30–3.5). | Without 2003, the largest year: 2.3×.
+  story: Did fire activity in Small Patagonia almost double after 2012? / No: raw data overstate it 2.6×. The corrected trend itself is uncertain. / 1.8× becomes 0.7×, but 2.3× without 2003.
+  V5 short sentence: The trend itself is uncertain here: 0.7× on the harmonized record, 2.3× without 2003 (90% range 0.30–3.5).
+  V5 factor clause: raw reads 2.6× too high
+  V5 headings: 1.8× becomes 0.7×, but 2.3× without 2003. | Year by year, the correction predicts VIIRS within about 19%
+  2025-12: too few (typ 0.0) -> comparable none
+  2023-06: too few (typ 0.0) -> comparable none
+
+## Nunavut 1 tile 63.5°–64° N · 96°–95.5° W · 0.5° × 0.5° · 1 tile | grade C (no-wider) EMPTY
+  rule: No detections in this box.
+  C: 0 usable overlap years here (MODIS ≥ 50 cell-days; 5 needed), and no wider area up to 4° around it reaches 10.
+  story: No detections to compare in this box. / Choose a zone with fire activity. / Nothing to harmonize here.
+  V5 short sentence: 
+
+## synthetic R/H combos
+3.44 1.63 | rise-smaller | not 3.4× as raw data suggest | Detections rose 1.6-fold, not 3.4-fold: about three quarters of the apparent rise came from the sensor change. | Did fire activity more than triple after 2012? No. The satellite changed. 3.4× becomes 1.6×.
+1.78 0.77 | rise-false | raw data say 1.8× — a rise that is not there | Detections fell by about a quarter; the raw record shows a rise that the sensor change created. | Did fire activity almost double after 2012? No. The satellite changed, and detections fell. 1.8× becomes 0.8×: the rise was not real.
+1.07 0.55 | hidden-decline | a decline that raw data hide (1.1×) | Detections fell by about 45%; the raw record shows almost no change because the sensor change hid the decline. | Raw data say fire activity barely changed. They hide a decline. 1.1× becomes 0.6×: a decline the raw record hid.
+2 1 | rise-false | raw data say 2.0× — a rise that is not there | Detections barely changed; the raw record shows a rise that the sensor change created. | Did fire activity double after 2012? No. The satellite changed; detections barely moved. 2.0× becomes 1.0×: no real change.
+1.3 1.25 | agree | raw and harmonized agree | Detections rose 1.3-fold; raw data give much the same (1.3×). | Did fire activity rise by a third after 2012? Yes. The rise holds once the sensors are harmonized. 1.3× stays 1.3×: the rise holds.
+0.8 0.4 | steeper | a steeper decline than raw data show (0.8×) | Detections fell by about 60%, more than the raw record shows (0.8×). | Raw data say fire activity fell after 2012. The decline is steeper once harmonized. 0.8× becomes 0.4×: a steeper decline.
+1.2 1.9 | other | raw data say 1.2× | Harmonized, detections changed 1.9×; raw data say 1.2×. | Did fire activity rise by a fifth after 2012? It was larger: harmonized, 1.9×. 1.2× becomes 1.9×.
+0.95 0.72 | hidden-decline | a decline that raw data hide (1.0×) | Detections fell by about 30%; the raw record shows almost no change because the sensor change hid the decline. | Raw data say fire activity barely changed. They hide a decline. 1.0× becomes 0.7×: a decline the raw record hid.
+1 0.85 | agree | raw and harmonized agree | Detections fell by about 15%; raw data say 1.0×. | Raw data say fire activity barely changed. Bridged, 0.9×: close to the raw figure. 1.0× becomes 0.9×: raw and harmonized agree.
+2.4 2.3 | agree | raw and harmonized agree | Detections rose 2.3-fold; raw data give much the same (2.4×). | Did fire activity more than double after 2012? Yes. The rise holds once the sensors are harmonized. 2.4× stays 2.3×: the rise holds.
+0.6 0.55 | agree | raw and harmonized agree | Detections fell by about 45%; raw data give much the same (0.6×). | Raw data say fire activity fell after 2012. Harmonized, the picture holds. 0.6× stays 0.6×: the decline holds.
+5.2 2 | rise-smaller | not 5.2× as raw data suggest | Detections rose 2.0-fold, not 5.2-fold: about three quarters of the apparent rise came from the sensor change. | Did fire activity rise 5.2-fold after 2012? No. The satellite changed. 5.2× becomes 2.0×.
+1.16 1 | agree | raw and harmonized agree | Detections barely changed; raw data say 1.2×. | Did fire activity rise by a fifth after 2012? Hardly. Harmonized, 1.0×. 1.2× becomes 1.0×: raw and harmonized agree.
+
+## Overview headline (rule table in src/copy.js)
+canada H 2.0× R 4.2× rule A | Fire detections in Canada doubled. A stitched satellite record says they quadrupled. | lede: about twice as many
+argentina H 0.7× R 1.4× rule B | Fire detections in Argentina fell. A stitched satellite record says they rose. | lede: about twice as many
+synthetic H 2 R 4.2 → A | Fire detections in X doubled. A stitched satellite record says they quadrupled.
+synthetic H 1.85 R 3 → A | Fire detections in X doubled. A stitched satellite record says they tripled.
+synthetic H 2.3 R 4.4 → A | Fire detections in X doubled. A stitched satellite record says they quadrupled.
+synthetic H 2.4 R 5 → A | Fire detections in X rose 2.4×. A stitched satellite record says they rose 5.0×.
+synthetic H 1.5 R 2.2 → A | Fire detections in X rose by 50%. A stitched satellite record says they doubled.
+synthetic H 1.1 R 1.6 → A | Fire detections in X rose by 10%. A stitched satellite record says they rose by 60%.
+synthetic H 3 R 6.5 → A | Fire detections in X tripled. A stitched satellite record says they rose 6.5×.
+synthetic H 0.7 R 1.4 → B | Fire detections in X fell. A stitched satellite record says they rose.
+synthetic H 0.9 R 1.1 → B | Fire detections in X fell. A stitched satellite record says they rose.
+synthetic H 1 R 1.1 → C | The satellite sensor changed in 2012. In X, that changes the answer 1.1×.
+synthetic H 1.2 R 1.3 → C | The satellite sensor changed in 2012. In X, that changes the answer 1.1×.
+synthetic H 0.5 R 0.9 → C | The satellite sensor changed in 2012. In X, that changes the answer 1.8×.
+synthetic H 1.05 R 1.36 → C | The satellite sensor changed in 2012. In X, that changes the answer 1.3×.

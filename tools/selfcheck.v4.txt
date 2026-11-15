@@ -1,0 +1,70 @@
+Record ends 2025-12 | last complete year 2025
+S-NPP gap months (canada): 2024-07 N20/SNPP 1.42 (54927 vs 78068)
+S-NPP gap months (argentina): 2022-07 N20/SNPP 1.40 (5532 vs 7737); 2024-07 N20/SNPP 1.64 (6322 vs 10388)
+
+| zone | r (LOO range) | raw rise | harm rise | without largest (year) | bootstrap 90% | P(rise>1) | trend | bridge | LOO err | hold-out err | monthly err | Aqua | NOAA-20/S-NPP (yearly) |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| All of Canada | 2.10 (2.07–2.12) | 4.23 | 2.01 | 1.62 (2023) | 1.30–2.92 | 100% | robust | A | 3% | 7% (r12-18 2.17) | 16% (n 165) | 2.02 | 1.01 (0.98–1.06) |
+| All of Argentina | 2.13 (2.11–2.15) | 1.45 | 0.68 | 0.62 (2020) | 0.57–0.82 | 0% | robust | A | 3% | 5% (r12-18 2.06) | 12% (n 167) | 0.69 | 1.01 (0.98–1.03) |
+| Boreal Québec | 2.12 (2.04–2.12) | 3.45 | 1.63 | 0.67 (2023) | 0.13–4.72 | 69% | uncertain | A | 16% | 22% (r12-18 2.07) | 15% (n 20) | 1.65 | 0.99 (0.88–1.42) |
+| Chibougamau | 2.19 (2.12–2.20) | 4.91 | 2.24 | 0.60 (2023) | 0.08–7.90 | 73% | uncertain | B | 4% | 2% (r12-18 2.16) | 10% (n 10) | 2.31 | 0.98 (0.91–1.13) |
+| Côte-Nord | 1.95 (1.76–2.00) | 3.96 | 2.04 | 0.83 (2013) | 0.42–5.75 | 76% | uncertain | B | 15% | 27% (r12-18 2.07) | 9% (n 12) | 1.86 | 0.97 (0.65–1.10) |
+| La Rioja | 2.33 (2.30–2.37) | 1.78 | 0.77 | 0.90 (2003) | 0.58–1.01 | 5% | uncertain | A | 9% | 8% (r12-18 2.31) | 15% (n 103) | 0.69 | 1.01 (0.92–1.06) |
+| Córdoba | 1.95 (1.94–1.99) | 1.08 | 0.55 | 0.60 (2003) | 0.44–0.71 | 0% | robust | A | 5% | 5% (r12-18 1.98) | 15% (n 157) | 0.55 | 1.00 (0.98–1.02) |
+| Tucumán | 2.17 (2.16–2.19) | 1.20 | 0.55 | 0.57 (2009) | 0.47–0.64 | 0% | robust | A | 6% | 5% (r12-18 2.15) | 13% (n 89) | 0.55 | 1.03 (0.97–1.09) |
+| Chilecito | 2.44 (2.41–2.51) borrowed | 2.89 | 1.19 | 0.74 (2017) | 0.54–2.65 | 63% | uncertain | B | 16% | 16% (r12-18 2.44) | 28% (n 24) | 1.11 | 1.02 (0.90–1.17) |
+| NWT (judge) | 2.08 (2.02–2.12) | 28.28 | 13.62 | 9.56 (2023) | 4.95–39.78 | 100% | robust | A | 11% | 16% (r12-18 2.06) | 13% (n 66) | 14.07 | 1.00 (0.90–1.05) |
+| Lac-Saint-Jean | 2.20 (2.18–2.21) borrowed | 1.89 | 0.86 | 0.04 (2023) | 0.02–4.12 | 42% | uncertain | B | 14% | 19% (r12-18 2.27) | 17% (n 12) | 0.77 | 0.97 (0.97–0.97) |
+| Nunavik C (judge) | — (—–—) | — | — | — | — | — | — | C | — | — | — | — | — |
+
+Official area burned (NFD) rise 2012–2024 / 2003–2011: 1.92 | raw 3.96 | harmonized 1.88 | cell-days per km² before (raw, harm): 1.624 3.417 | after: 3.354
+Canada ratio 2012–2020 vs all years: 2.151 2.105
+
+## Map: cell statistics (0.5° cells, 2003–2025, eligible = ≥ 200 harmonized cell-days)
+| country | cells (with detections) | eligible | ratio case own3 / own5 / country | record since 2012 raw | harmonized | benchmark | depends on ratio | top record years raw | top record years harmonized | local ratio p5 / p50 / p95 |
+|---|---|---|---|---|---|---|---|---|---|---|
+| canada | 4545 | 1947 | 96.0% / 3.5% / 0.4% | 84.1% | 73.7% | 60.9% (14/23) | 6.3% | 2023 21.3%, 2025 10.7%, 2017 7.4% | 2023 20.2%, 2025 10.0%, 2024 6.8% | 1.60 / 2.02 / 3.53 |  (142 ms; country ratio 2.105)
+| argentina | 1201 | 713 | 98.0% / 1.0% / 1.0% | 70.0% | 38.7% | 60.9% (14/23) | 15.6% | 2020 23.1%, 2003 12.1%, 2017 6.6% | 2003 20.8%, 2020 13.0%, 2004 11.2% | 1.44 / 1.97 / 3.16 |  (64 ms; country ratio 2.132)
+Highest local ratios (canada, eligible cells ≥ 1° apart): 52–52.5°, -115–-114.5°: 6.20 (own3, 358 cell-days); 45–45.5°, -73.5–-73°: 6.20 (own5, 368 cell-days); 53.5–54°, -113.5–-113°: 6.18 (own3, 2657 cell-days); 43–43.5°, -82–-81.5°: 6.02 (own3, 398 cell-days); 63.5–64°, -112–-111.5°: 5.57 (own3, 408 cell-days)
+  eligible cells with local ratio > 4: 62
+Highest local ratios (argentina, eligible cells ≥ 1° apart): -38–-37.5°, -69–-68.5°: 16.96 (own3, 1715 cell-days); -35–-34.5°, -58–-57.5°: 5.87 (own3, 1292 cell-days); -40–-39.5°, -69.5–-69°: 5.45 (own5, 270 cell-days); -36.5–-36°, -70–-69.5°: 4.86 (own3, 369 cell-days); -39.5–-39°, -68–-67.5°: 4.64 (own3, 1204 cell-days)
+  eligible cells with local ratio > 4: 27
+Box Boreal Québec: 91 eligible cells; record since 2012 raw 76.9%, harmonized 70.3%, depends 4.4%
+Box Chibougamau: 32 eligible cells; record since 2012 raw 90.6%, harmonized 81.3%, depends 0.0%
+Box Côte-Nord: 25 eligible cells; record since 2012 raw 96.0%, harmonized 88.0%, depends 0.0%
+Box La Rioja: 45 eligible cells; record since 2012 raw 75.6%, harmonized 48.9%, depends 11.1%
+Box Córdoba: 81 eligible cells; record since 2012 raw 38.3%, harmonized 16.0%, depends 4.9%
+Box Tucumán: 16 eligible cells; record since 2012 raw 68.8%, harmonized 37.5%, depends 25.0%
+Box Chilecito: 4 eligible cells; record since 2012 raw 100.0%, harmonized 100.0%, depends 0.0%
+This-month layer canada 2023-06: record 255, top 3 157, active 146, no detection 1389 (of 1947 eligible; 23 years compared)
+This-month layer canada 2025-12: record 22, top 3 35, active 66, no detection 1824 (of 1947 eligible; 23 years compared)
+This-month layer argentina 2020-09: record 40, top 3 101, active 474, no detection 98 (of 713 eligible; 23 years compared)
+This-month layer argentina 2025-12: record 22, top 3 46, active 371, no detection 274 (of 713 eligible; 23 years compared)
+Detection floor canada: 4.1% of VIIRS cell-days 2012–2025 fall in place-months (0.5°, month) where MODIS recorded nothing
+Detection floor argentina: 5.5% of VIIRS cell-days 2012–2025 fall in place-months (0.5°, month) where MODIS recorded nothing
+Flip canada: 203 places move from since 2012 to before 2012 when harmonized, 0 the other way (of 1947); 1° blocks raw {"since":564,"before":78,"mixed":58}, harmonized {"since":489,"before":139,"mixed":72}
+Flip argentina: 223 places move from since 2012 to before 2012 when harmonized, 0 the other way (of 713); 1° blocks raw {"since":154,"before":42,"mixed":29}, harmonized {"since":76,"before":119,"mixed":30}
+
+## Record since 2012 vs chance (year labels permuted together for every place, 2000 seeded permutations, 5th–95th percentile)
+| area | places | raw (chance) | harmonized (chance) | MODIS alone (chance) | with the > 4× places: n, raw, harmonized |
+|---|---|---|---|---|---|
+| canada | 1947 (62 > 4× excluded) | 84.1% (42.7%–76.3%, above) | 73.7% (44.7%–74.5%, inside) | 73.5% (44.6%–74.4%, inside) | 2009, 84.5%, 73.1% |
+| argentina | 713 (27 > 4× excluded) | 70.0% (42.2%–76.7%, inside) | 38.7% (41.9%–78.7%, below) | 41.5% (42.8%–78.0%, below) | 740, 70.9%, 38.8% |
+| Boreal Québec | 91 | 76.9% (16.5%–95.6%, inside) | 70.3% (19.8%–94.5%, inside) | 67.0% (19.8%–95.6%, inside) | 91, 76.9%, 70.3% |
+| Chibougamau | 32 | 90.6% (3.1%–100.0%, inside) | 81.3% (9.4%–96.9%, inside) | 81.3% (9.4%–96.9%, inside) | 32, 90.6%, 81.3% |
+| Côte-Nord | 25 | 96.0% (8.0%–100.0%, inside) | 88.0% (12.0%–96.0%, inside) | 84.0% (16.0%–96.0%, inside) | 25, 96.0%, 88.0% |
+| La Rioja | 45 | 75.6% (37.8%–84.4%, inside) | 48.9% (33.3%–84.4%, inside) | 48.9% (33.3%–86.7%, inside) | 45, 75.6%, 48.9% |
+| Córdoba | 81 | 38.3% (35.8%–85.2%, inside) | 16.0% (29.6%–88.9%, below) | 17.3% (29.6%–87.7%, below) | 81, 38.3%, 16.0% |
+| Tucumán | 16 | 68.8% (31.3%–87.5%, inside) | 37.5% (37.5%–81.3%, inside) | 25.0% (37.5%–81.3%, below) | 16, 68.8%, 37.5% |
+| Chilecito | 4 | 100.0% (0.0%–100.0%, inside) | 100.0% (0.0%–100.0%, inside) | 100.0% (0.0%–100.0%, inside) | 4, 100.0%, 100.0% |
+
+## The ratio by calendar month (Σ VIIRS ÷ Σ MODIS, Feb 2012–2025; residual = ÷ pooled ratio; * = active month)
+All of Canada     pooled 2.10 | J 2.69* F 3.74* M 4.10* A 2.04* M 1.73* J 2.02* J 2.13* A 2.20* S 2.15* O 1.91* N 2.38* D 2.92* | seam note yes | empty months 2003–2011 / after: 0 / 0
+All of Argentina  pooled 2.13 | J 2.15* F 2.35* M 2.55* A 2.53* M 2.51* J 2.39* J 2.20* A 1.94* S 1.96* O 2.14* N 2.30* D 2.20* | seam note no | empty months 2003–2011 / after: 0 / 0
+Boreal Québec     pooled 2.12 | J — F — M 17.00 A 7.60 M 1.80* J 2.07* J 2.22* A 2.37* S 1.46* O 2.15 N 7.20 D — | seam note yes | empty months 2003–2011 / after: 42 / 34
+Chibougamau       pooled 2.19 | J — F — M — A — M 1.86 J 2.14 J 2.26 A 2.39 S 1.98 O 1.07 N 1.00 D — | seam note no | empty months 2003–2011 / after: 71 / 123
+Côte-Nord         pooled 1.95 | J — F — M 23.00 A 9.50 M 1.48 J 1.85* J 2.10* A 0.94 S 0.70 O 6.82 N 5.50 D — | seam note no | empty months 2003–2011 / after: 64 / 52
+La Rioja          pooled 2.33 | J 3.07* F 2.98* M 3.87* A 3.12* M 2.33* J 2.17* J 2.17* A 2.02* S 2.36* O 2.26* N 2.25* D 3.38* | seam note yes | empty months 2003–2011 / after: 0 / 0
+Córdoba           pooled 1.95 | J 1.88* F 2.62* M 2.71* A 2.36* M 2.45* J 2.21* J 2.10* A 1.72* S 1.73* O 1.82* N 2.07* D 2.60* | seam note yes | empty months 2003–2011 / after: 0 / 0
+Tucumán           pooled 2.17 | J 1.75* F 1.59* M 3.39* A 3.21* M 3.01* J 2.71* J 2.27* A 1.95* S 2.14* O 2.35* N 2.43* D 2.27* | seam note yes | empty months 2003–2011 / after: 0 / 0
+Chilecito         pooled 2.44 | J 3.96 F 3.00 M 2.15 A 2.81 M 1.78 J 2.21 J 1.92 A 2.15* S 2.36* O 2.45* N 3.27 D 5.63 | seam note no | empty months 2003–2011 / after: 37 / 3
