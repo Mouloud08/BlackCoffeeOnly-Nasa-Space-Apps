@@ -13,3 +13,6 @@ build-win.mjs
 .scratch/
 firebridge-data-handoff/
 .vscode/
+# language variants (scripts/lang.mjs): i18n/ is tracked, nothing in it is ignored; temporary build roots
+# go to .scratch/lang-<lang>/ (ignored above) and screenshots/reports to shots/i18n/ (ignored above)
+!i18n/

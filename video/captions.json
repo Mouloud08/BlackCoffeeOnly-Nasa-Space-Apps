@@ -1,26 +1,26 @@
 {
-  "_readme": "All on-screen text of the demo video. Times are seconds on the final video timeline (30 fps). Shots are the captured clips (the actions inside each clip are scripted in capture.mjs, relative to the shot start). *text* = emphasised. Every number in a caption (1.4×, ±10%, 13 of 14, …) must appear in the app text captured for that shot, or render.mjs stops; the optional check strings are looked for too, but only warned about. To add a voice track later, put voice.mp3 (or .wav/.m4a) in video/public/ and re-run render.mjs: Remotion lays it under the whole video.",
+  "_readme": "All on-screen text of the demo video. Times are seconds on the final video timeline (30 fps). Shots are the captured clips (the actions inside each clip are scripted in capture.mjs, relative to the shot start). *text* = emphasised. Every number in a caption (1.4×, ±10%, 13 of 14, …) must appear in the app text captured for that shot, or render.mjs stops; the optional check strings are looked for too, but only warned about. The voice-over (public/voice.mp3, made by voice.mjs) is timed to these caption start times: if a caption's text or start changes, regenerate or re-assemble the voice.",
   "fps": 30,
   "duration": 28.5,
   "shots": [
     {
       "id": "argentina",
       "start": 0,
-      "end": 6
+      "end": 7.35
     },
     {
       "id": "canada",
-      "start": 6,
-      "end": 11
+      "start": 7.35,
+      "end": 11.5
     },
     {
       "id": "calendar",
-      "start": 11,
-      "end": 17.5
+      "start": 11.5,
+      "end": 18
     },
     {
       "id": "place",
-      "start": 17.5,
+      "start": 18,
       "end": 22.8
     },
     {
@@ -38,25 +38,25 @@
     {
       "shot": "argentina",
       "start": 0,
-      "end": 2.9,
-      "text": "Argentina's fires seem to rise *1.4×* since 2012…",
+      "end": 3.9,
+      "text": "Join MODIS and VIIRS fire records: Argentina seems to rise *1.4×*…",
       "check": [
         "raw"
       ]
     },
     {
       "shot": "argentina",
-      "start": 3,
-      "end": 5.95,
-      "text": "…on one scale, they fell: *0.7×*. The rise was the satellite.",
+      "start": 4,
+      "end": 7.3,
+      "text": "…on one scale, it fell: *0.7×*. The rise was the satellite.",
       "check": [
         "harmonized"
       ]
     },
     {
       "shot": "canada",
-      "start": 6.45,
-      "end": 10.95,
+      "start": 7.5,
+      "end": 11.45,
       "text": "Canada: doubled, not quadrupled. Official burned area agrees: *1.9×*.",
       "check": [
         "2.0×",
@@ -66,20 +66,30 @@
     },
     {
       "shot": "calendar",
-      "start": 11.15,
-      "end": 17.45,
-      "text": "A harmonized burning calendar, month by month, 2001 to October 2026.",
+      "start": 11.65,
+      "end": 15.3,
+      "text": "A harmonized burning calendar, 2001 to October 2026…",
       "check": [
         "2001 – Oct 2026"
       ]
     },
     {
-      "shot": "place",
-      "start": 17.65,
-      "end": 22.75,
-      "text": "Pick any place. Compare any month with its historical median.",
+      "shot": "calendar",
+      "start": 15.4,
+      "end": 17.95,
+      "text": "…compare any month with its historical median.",
       "check": [
-        "of a normal"
+        "typical"
+      ]
+    },
+    {
+      "shot": "place",
+      "start": 18.15,
+      "end": 22.75,
+      "text": "Pick any place. Where the data cannot support a trend, it says so.",
+      "check": [
+        "uncertain",
+        "typical"
       ]
     },
     {
@@ -99,8 +109,9 @@
       "Team BlackCoffeeOnly · Yasmine Lounaci & Mouloud Serir"
     ],
     "url": "mouloud08.github.io/BlackCoffeeOnly-Nasa-Space-Apps",
+    "note": "Not a NASA product · AI-generated voice",
     "check": [
-      "2001 to October 2026"
+      "2001 – Oct 2026"
     ]
   }
 }

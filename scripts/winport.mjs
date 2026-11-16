@@ -51,10 +51,17 @@ const PATCHES = [
   ['layer-label-one-month', "=== 'This month' &&", "=== 'One month' &&"],
   // 13. the Sensor effect legend ends "× more seen" (was "× too high"): coherence matches the legend to the layer by it.
   ['coherence-ratio-legend', "ratio: 'too high'", "ratio: 'more seen'"],
-  // 14–15. Export menus regrouped (15 November, evening): where the Download button is shown (Calendar tab, width
-  //     ≥ 1024) the ⋯ menu no longer repeats the exports; items are a one-line title plus a format badge ("Series" + CSV,
-  //     "Calendar image" + SVG / PNG, "Map layer" + CSV). The tests open whichever menu carries the exports
-  //     (.fb-pop-export) and find an item by title + badge.
+  // 14–15. Export menus regrouped (15 November, evening): where the Download button is shown (every tab at width
+  //     ≥ 1024 since the late evening, not phones) the ⋯ menu carries no export item; items are a one-line title plus
+  //     a format badge ("Series" + CSV, "Calendar image" + SVG / PNG, "Map layer" + CSV). The tests open whichever menu
+  //     carries the exports (.fb-pop-export) and find an item by title + badge.
+  // 16–17. The theme is a switch row "Dark theme" in the ⋯ menu (was the item "Switch to dark/light theme"); the menu
+  //     now stays open after a toggle. The tests still find it by /theme/; coherence and perf close the menu after the
+  //     toggle (hidePopover, no key press that the app could also read) so the next step starts as it used to.
+  ['coherence-theme-switch', "b && b.click(); }); return 'theme'; }",
+    "b && b.click(); const m = document.getElementById('fb-more'); if (m && m.matches(':popover-open')) m.hidePopover(); }); return 'theme'; }"],
+  ['perf-theme-switch', "find((x) => /theme/.test(x.textContent)).click()); });",
+    "find((x) => /theme/.test(x.textContent)).click()); await p.evaluate(() => { const m = document.getElementById('fb-more'); if (m && m.matches(':popover-open')) m.hidePopover(); }); });"],
   ['export-menu-interact', "  for (const k of ['Series CSV', 'Calendar image (SVG)', 'Calendar image (PNG)', 'Map layer (CSV)']) {\n    await p.click('.fb-morebtn'); await sleep(200);\n    await p.evaluate((k) => [...document.querySelectorAll('#fb-more button')].find((e) => e.textContent.startsWith(k)).click(), k); await sleep(700);",
     "  for (const k of ['Series CSV', 'Calendar image SVG', 'Calendar image PNG', 'Map layer CSV']) {\n    await p.click((await p.$('button[aria-controls=\"fb-dl\"]')) ? 'button[aria-controls=\"fb-dl\"]' : '.fb-morebtn'); await sleep(200);\n    await p.evaluate((k) => [...document.querySelectorAll('.fb-pop-export [role=\"menuitem\"]')].find((e) => e.querySelector('b').textContent + ' ' + (e.querySelector('.fb-pop-fmt') || {}).textContent === k).click(), k); await sleep(700);"],
   ['export-menu-exportshot', "await p.click('.fb-morebtn'); await new Promise((r) => setTimeout(r, 200)); await p.evaluate(() => [...document.querySelectorAll('#fb-more button')].find((e) => e.textContent.startsWith('Calendar image (PNG)')).click());",

@@ -211,3 +211,27 @@ Figures are untouched: `tools/selfcheck.mjs` gives the same output before and af
 - **Credits** (`src/Method.jsx`, About and credits): "Team BlackCoffeeOnly: Yasmine Lounaci and Mouloud Serir."
 - **Tests** (`tools/` untouched; patches in `scripts/winport.mjs`): `interact.mjs` and `exportshot.mjs` find the
   export items by title and badge in the menu that offers them.
+
+## 17. After an independent mock judging (15 November, ~20:30; carry into 6.2.1)
+
+- **Theme**: the ⋯ menu item "Switch to dark/light theme" is now a row "Dark theme" with an on/off control
+  (`role="menuitemcheckbox"`: axe rejects `role="switch"` inside a menu); the menu stays open when it is toggled.
+- **Exports in one place**: the Download button shows on every tab at width ≥ 1024 (not on phones); where it shows,
+  the ⋯ menu has no export item; on phones and narrow widths the ⋯ menu keeps the grouped export list.
+- **Languages**: `src/lang.js` holds `LANG`, `LANGS` and `langUrl()`. A "Language" row in the ⋯ menu links the
+  English, French and Spanish builds (`firebridge.html` / `.fr.html` / `.es.html` offline; `./`, `./fr.html`,
+  `./es.html` hosted), keeping the hash; the row lists only the codes in `LANGS`. The French and Spanish builds are
+  full copies of `src/` translated in place under `i18n/<lang>/src/` (no i18n framework; `metrics.js` byte-identical;
+  see `i18n/README.md`, `i18n/GLOSSARY.md`, `scripts/lang.mjs`). Any later change to an English text must be carried
+  into both copies by hand.
+- **Bug fixed**: the hotspot request dialog printed "La Rioja0Aug 2024; Boreal Québec1Jun 2023" (`.map(hotName)`
+  passed the index as separator).
+- **Calendar readout**: when the line does not fit it now shortens in steps (short source wording, then no source,
+  then no "(peak month of …)") instead of being cut with "…".
+- **Overview lede**: "Since 2012 NASA has watched fires with a second, sharper sensor, VIIRS, which sees about twice
+  as many fire detections as MODIS. Both have flown since, so FireBridge measures the gap and corrects for it."
+  (the previous wording suggested that MODIS stopped in 2012). The paragraph is one line longer; the chart is one
+  line shorter.
+- **Reviewer's remarks left open**: a box over water (Hudson Bay) answers "outside Canada"; an inverted coordinate
+  box silently returns to the whole country; calendar labels are clipped at 900 × 700; the Evidence month panel
+  title can name the peak month while a "Latest" chip sits under it; no independent series for Argentina.

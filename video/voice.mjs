@@ -26,13 +26,15 @@ const plan = JSON.parse(readFileSync(join(HERE, 'captions.json'), 'utf8'));
 // The narration: same words and numbers as the captions ("×" read "times", "±10%" read "within ten percent").
 // `caption` = index in captions.json (the clip starts at that caption's start); the end card line starts at `start`.
 const SEGMENTS = [
-  // digits here: the model reads "1.4 times since 2012" faster than the spelled-out words, and the slot is 2.85 s
-  { caption: 0, text: 'Argentina’s fires seem to rise 1.4 times since 2012.' },
-  { caption: 1, text: 'On one scale, they fell: zero point seven times. The rise was the satellite.' },
+  // digits here: the model reads "1.4 times" faster than the spelled-out words, and the slot is 3.4 s.
+  // Sensor names are spelled as they are said ("MODIS" = "Modis", "VIIRS" = "veers"), so the model never spells them out.
+  { caption: 0, text: 'Join Modis and veers fire records: Argentina seems to rise 1.4 times.' },
+  { caption: 1, text: 'On one scale, it fell: zero point seven times. The rise was the satellite.' },
   { caption: 2, text: 'Canada: doubled, not quadrupled. Official burned area agrees: one point nine times.' },
-  { caption: 3, text: 'A harmonized burning calendar, month by month, two thousand one to October twenty twenty-six.' },
-  { caption: 4, text: 'Pick any place. Compare any month with its historical median.' },
-  { caption: 5, text: 'Checked year by year: within ten percent in thirteen of fourteen years.' },
+  { caption: 3, text: 'A harmonized burning calendar, two thousand one to October twenty twenty-six.' },
+  { caption: 4, text: 'Compare any month with its historical median.' },
+  { caption: 5, text: 'Pick any place. Where the data cannot support a trend, it says so.' },
+  { caption: 6, text: 'Checked year by year: within ten percent in thirteen of fourteen years.' },
   { endCard: true, start: 26.35, text: 'FireBridge, on NASA FIRMS data.' },
 ];
 const SETTINGS = { stability: 0.6, similarity_boost: 0.75, style: 0, use_speaker_boost: true }; // neutral, stable

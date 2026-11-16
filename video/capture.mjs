@@ -61,7 +61,8 @@ const SEL = {
 const SHOTS = {
   argentina: {
     hash: 'tab=overview&z=argentina&v=raw', cursor: [1180, 560],
-    async run(c) { await c.at(0.7); await c.glide(SEL.harmonized, 1.2); await c.at(2.35); await c.click(); },
+    // the switch is clicked 0.65 s before the second caption ("…on one scale, it fell"), so the number turns as it is said
+    async run(c) { await c.at(1.9); await c.glide(SEL.harmonized, 1.2); await c.at(3.35); await c.click(); },
   },
   canada: {
     hash: 'tab=overview&z=canada&v=raw', cursor: [1600, 120],
@@ -77,12 +78,17 @@ const SHOTS = {
     },
   },
   place: {
-    hash: 'tab=dash&z=canada', cursor: [700, 420],
-    // click a place (2° box), "Zoom to it" in the selection chip, then the October 2026 cell of the calendar
+    // a 2° box in northern Saskatchewan (56–58° N, 106–104° W), opened by the hash (no pixel click): its calendar is
+    // clean in June–August, the correction factor reads ÷2.2 and the app refuses a trend ("Trend uncertain")
+    hash: 'tab=dash&z=custom&c=canada&b=56,58,-106,-104', cursor: [335, 560],
+    // the cursor leaves the selected box for the refusal pill (while "where the data cannot support a trend" is said),
+    // then clicks the July 2023 cell: the readout under the calendar compares that month with a typical July
     async run(c) {
-      await c.at(0.15); await c.glide(SEL.map(0.3, 0.45), 0.75); await c.at(1.0); await c.click();
-      await c.at(1.35); await c.glide(SEL.el('.fb-selchip button'), 0.5); await c.at(1.95); await c.click();
-      await c.at(2.55); await c.glide(SEL.cell('^October 2026'), 0.8); await c.at(3.5); await c.click();
+      // (falls back to the verdict strip's top-left area if a later build renames the pill classes)
+      const pill = async (page) => (await SEL.el('.fb-ba .fb-pill.is-warning, .fb-verdict2 .fb-pill.is-warning', 0.5, 0.6)(page))
+        ?? (await SEL.el('.fb-verdict2', 0.42, 0.42)(page)) ?? { x: 800, y: 150 };
+      await c.at(0.3); await c.glide(pill, 0.9);
+      await c.at(2.55); await c.glide(SEL.cell('^July 2023'), 0.75); await c.at(3.45); await c.click();
     },
   },
   evidence: {

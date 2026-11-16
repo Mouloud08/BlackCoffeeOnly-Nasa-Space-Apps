@@ -80,9 +80,12 @@ step('Verifying');
 const probe = JSON.parse(execFileSync('ffprobe', ['-v', 'error', '-show_entries', 'format=duration,size:stream=codec_name,codec_type,width,height,pix_fmt,r_frame_rate', '-of', 'json', FINAL], { encoding: 'utf8' }));
 const v = probe.streams.find((s) => s.codec_type === 'video');
 const dur = Number(probe.format.duration), mb = Number(probe.format.size) / 1e6;
-const ok = dur <= 29.5 && v.width === 1920 && v.height === 1080 && v.codec_name === 'h264' && v.pix_fmt === 'yuv420p' && mb < 15;
-console.log(`  ${FINAL}\n  duration ${dur.toFixed(2)} s · ${v.width}×${v.height} · ${v.codec_name} ${v.pix_fmt} · ${v.r_frame_rate} fps · ${mb.toFixed(2)} MB · audio: ${hasAudio ? 'yes' : 'none'}`);
-if (!ok) throw new Error('The video fails a requirement (≤ 29.5 s, 1920×1080, H.264 yuv420p, < 15 MB).');
+// faststart: the moov atom must come before the media data
+const head = readFileSync(FINAL).subarray(0, 4e6).toString('latin1');
+const faststart = head.indexOf('moov') !== -1 && (head.indexOf('mdat') === -1 || head.indexOf('moov') < head.indexOf('mdat'));
+const ok = dur <= 28.6 && v.width === 1920 && v.height === 1080 && v.codec_name === 'h264' && v.pix_fmt === 'yuv420p' && v.r_frame_rate === `${plan.fps}/1` && mb < 15 && faststart;
+console.log(`  ${FINAL}\n  duration ${dur.toFixed(2)} s · ${v.width}×${v.height} · ${v.codec_name} ${v.pix_fmt} · ${v.r_frame_rate} fps · ${mb.toFixed(2)} MB · faststart: ${faststart ? 'yes' : 'NO'} · audio: ${hasAudio ? 'yes' : 'none'}`);
+if (!ok) throw new Error('The video fails a requirement (≤ 28.6 s, 1920×1080, H.264 yuv420p, 30 fps, < 15 MB, faststart).');
 // a voice track in public/ must reach the MP4 as exactly one AAC stream
 const voiceFile = ['mp3', 'wav', 'm4a', 'aac'].map((x) => join(HERE, 'public', `voice.${x}`)).find((p) => existsSync(p));
 const audio = probe.streams.filter((s) => s.codec_type === 'audio');

@@ -72,27 +72,42 @@ function RangePop({ from, to, onChange, short }) {
 // The readout line under the grid (replaces the floating tooltip that covered the cells): the hovered or focused month,
 // else the selected one (the latest by default). Anomaly view leads with the anomaly. Also draws the crosshair bands.
 const cap1 = (x) => x.charAt(0).toUpperCase() + x.slice(1);
+// 15 Nov (late): the line never wraps and is never cut on desktop. When it does not fit, it drops detail step by step
+// before paint: 1 short source words and "Provisional."; 2 no source sentence; 3 no "(peak month of …)" and a short
+// off-season flag. Only past step 3 can the CSS ellipsis still cut it.
 function CalReadout({ reg, Z, sel, y0, y1, raw, harm, anomaly, isDef }) {
   const [hov, setHov] = useState(null);
   reg.current = setHov;
   const ri = hov != null ? hov : sel;
-  const pre = hov == null && isDef ? ' (peak month of ' + Math.floor(sel / 12 + FIRST) + ')' : ''; // after the month: "July 2025 (peak month of 2025): …"
+  const ref = useRef(null);
+  const fitKey = [ri, hov == null, raw, harm, anomaly, isDef, y0, y1, Z.ratio, Z.box.s, Z.box.n, Z.box.w, Z.box.e].join('|');
+  const [fit, setFit] = useState({ k: '', l: 0 });
+  const lvl = fit.k === fitKey ? fit.l : 0;
+  useLayoutEffect(() => {
+    const p = ref.current && ref.current.closest('.fb-calread');
+    if (p && lvl < 3 && p.scrollWidth > p.clientWidth + 1) setFit({ k: fitKey, l: lvl + 1 });
+  });
+  useEffect(() => { const re = () => setFit({ k: '', l: 0 }); window.addEventListener('resize', re); return () => window.removeEventListener('resize', re); }, []);
+  const pre = hov == null && isDef && lvl < 3 ? ' (peak month of ' + Math.floor(sel / 12 + FIRST) + ')' : ''; // after the month: "July 2025 (peak month of 2025): …"
   const q = monthReading(Z, ri, y0, y1), nm = monthLong(q.m), lab = nm + ' ' + q.y;
-  const src = q.computed ? (raw ? 'older satellite (MODIS), as recorded' : 'estimated from the older satellite (MODIS × ' + F2(Z.ratio) + ')') : (Z.contSet && Z.contSet.has(ri) ? 'NOAA-20 rescaled' : 'measured by the newer satellite (VIIRS)');
+  const noaa = Z.contSet && Z.contSet.has(ri);
+  const src = lvl >= 2 ? '' : lvl === 1
+    ? (q.computed ? (raw ? 'older satellite (MODIS)' : 'estimated (MODIS × ' + F2(Z.ratio) + ')') : (noaa ? 'NOAA-20 rescaled' : 'newer satellite (VIIRS)'))
+    : (q.computed ? (raw ? 'older satellite (MODIS), as recorded' : 'estimated from the older satellite (MODIS × ' + F2(Z.ratio) + ')') : (noaa ? 'NOAA-20 rescaled' : 'measured by the newer satellite (VIIRS)'));
   const val = NUM(raw ? q.raw : q.v) + ' fire detections';
   const prov = Z.provSet && Z.provSet.has(ri);
   // v6 (judge C5): a computed month whose calendar month sits off the pooled ratio by more than 1.3× is flagged.
   const bm = Z.byMonth && Z.byMonth[q.m], offFit = !raw && q.computed && bm && bm.active && bm.resid != null && (bm.resid > 1.3 || bm.resid < 1 / 1.3);
-  const flag = offFit ? <>{' '}<span className="fb-offfit" title="Off-season month: the annual ratio fits it poorly (its own ratio is off the pooled one by more than 1.3×)">off-season month: ratio fits poorly</span></> : null;
+  const flag = offFit ? <>{' '}<span className="fb-offfit" title="Off-season month: the annual ratio fits it poorly (its own ratio is off the pooled one by more than 1.3×)">{lvl >= 3 ? 'off-season month' : 'off-season month: ratio fits poorly'}</span></> : null;
   const an = q.partial ? 'partial MODIS coverage (' + q.y + '): not used in statistics'
     : !harm ? 'raw: not comparable across 2012' : q.low ? 'too few fires in a typical ' + nm + ' to compare' : anomalyWords(q.anomaly, nm);
   const mm = String(q.m + 1).padStart(2, '0');
   const cross = hov != null ? '.fb-calpanel .at-cal-cells [data-key^="' + q.y + '-"], .fb-calpanel .at-cal-cells [data-key$="-' + mm + '"] { box-shadow: inset 0 0 0 100px color-mix(in oklab, var(--surface) 26%, transparent); } .fb-calpanel .at-cal-cells [data-key="' + q.y + '-' + mm + '"] { box-shadow: inset 0 0 0 2px var(--ink), inset 0 0 0 3px var(--surface); }' : '';
   return (
-    <>
+    <span ref={ref}>
       {cross && <style>{cross}</style>}
-      {/* v6.2 (P2): a sentence: "July 2025: 81,333 fire detections, 3.9 times a normal July." */}{anomaly && harm && !q.low && !q.partial ? <>{pre ? <><b>{lab}</b>{pre}: <b>{an}</b></> : <b>{lab}: {an}</b>}.{offFit ? null : ' ' + cap1(src) + '.'}{prov ? <>{' '}<span title="Provisional: fast-release data, not yet filtered for non-fire sources.">Provisional.</span></> : ''}{flag}</> : <><b>{lab}</b>{pre}: {val}, {an}.{offFit ? null : ' ' + cap1(src) + '.'}{prov ? <>{' '}<span title="Provisional: fast-release data, not yet filtered for non-fire sources.">Provisional (near-real-time).</span></> : ''}{flag}</>}
-    </>
+      {/* v6.2 (P2): a sentence: "July 2025: 81,333 fire detections, 3.9 times a normal July." */}{anomaly && harm && !q.low && !q.partial ? <>{pre ? <><b>{lab}</b>{pre}: <b>{an}</b></> : <b>{lab}: {an}</b>}.{offFit || !src ? null : ' ' + cap1(src) + '.'}{prov ? <>{' '}<span title="Provisional: fast-release data, not yet filtered for non-fire sources.">Provisional.</span></> : ''}{flag}</> : <><b>{lab}</b>{pre}: {val}, {an}.{offFit || !src ? null : ' ' + cap1(src) + '.'}{prov ? <>{' '}<span title="Provisional: fast-release data, not yet filtered for non-fire sources.">{lvl >= 1 ? 'Provisional.' : 'Provisional (near-real-time).'}</span></> : ''}{flag}</>}
+    </span>
   );
 }
 

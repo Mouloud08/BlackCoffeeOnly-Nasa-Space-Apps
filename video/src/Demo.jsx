@@ -105,6 +105,7 @@ function EndCard() {
       <div style={{ marginTop: 14, fontSize: 40, fontWeight: 440, color: C.ink2, ...rise(11) }}>{e.lines[1]}</div>
       <div style={{ marginTop: 52, fontSize: 42, fontWeight: 560, color: C.accent, background: C.surface, border: `1.5px solid ${C.line}`,
         borderRadius: 999, padding: '14px 40px 16px', ...rise(15) }}>{e.url}</div>
+      {e.note && <div style={{ marginTop: 34, fontSize: 30, fontWeight: 440, color: C.ink2, letterSpacing: '0.01em', ...rise(18) }}>{e.note}</div>}
     </AbsoluteFill>
   );
 }

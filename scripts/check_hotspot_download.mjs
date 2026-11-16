@@ -1,8 +1,9 @@
 // Clicks every embedded FIRMS hotspot item ("La Rioja · Aug 2024" in the "Real FIRMS hotspots" group) of EVERY menu
 // that offers it, lets the browser download the file, and compares it byte for byte with data/hotspots/<name>.csv.
-// Every file in data/hotspots must be offered by the build. Menus checked:
-//   - Calendar tab at 1440 px: the Download menu offers the exports; the ⋯ menu must have NO export item there.
-//   - Overview tab at 1440 px and the Calendar tab at 390 px (phone): no Download button; the ⋯ menu offers them.
+// Every file in data/hotspots must be offered by the build. Menus checked (exports live in exactly one place):
+//   - Desktop width (1440 px): the Download button is shown on EVERY tab and offers the exports (checked on the
+//     Calendar and Evidence tabs); the ⋯ menu has NO export item on any of the five tabs.
+//   - Calendar tab at 390 px (phone): no Download button; the ⋯ menu offers them.
 // The item title is derived from the file name ("la-rioja-2024-08" → "La Rioja · Aug 2024"; an unknown name is shown
 // as is); its detail line gives the number of data rows and the size, both checked against the file on disk. Also
 // downloads the Series CSV for both countries (kept for inspection). Exit 1 on any failure.
@@ -37,7 +38,7 @@ const DL = 'button[aria-controls="fb-dl"]', MORE = 'button[aria-controls="fb-mor
 // Where each menu offers the exports: [name, hash, width, height, trigger, panel id].
 const OFFERS = [
   ['Download menu (Calendar tab, 1440)', 'tab=dash', 1440, 900, DL, 'fb-dl'],
-  ['⋯ menu (Overview tab, 1440)', 'tab=overview', 1440, 900, MORE, 'fb-more'],
+  ['Download menu (Evidence tab, 1440)', 'tab=evidence', 1440, 900, DL, 'fb-dl'],
   ['⋯ menu (Calendar tab, phone 390)', 'tab=dash', 390, 844, MORE, 'fb-more'],
 ];
 let fail = 0;
@@ -56,7 +57,7 @@ const open = async (hash, w, h) => {
 const items = async (p, trigger, id) => {
   if (!(await p.$(trigger))) return null;
   await p.click(trigger); await sleep(300);
-  const r = await p.evaluate((id) => [...document.querySelectorAll('#' + id + ' [role="menuitem"]')].map((e) => ({ title: (e.querySelector('b') || {}).textContent || '', sub: (e.querySelector(':scope > span') || {}).textContent || '', fmt: (e.querySelector('.fb-pop-fmt') || {}).textContent || '', group: (e.closest('[role="group"]') || { getAttribute: () => '' }).getAttribute('aria-label') })), id);
+  const r = await p.evaluate((id) => [...document.querySelectorAll('#' + id + ' [role="menuitem"]')].map((e) => ({ title: (e.querySelector('b') || e).textContent || '', sub: (e.querySelector(':scope > span') || {}).textContent || '', fmt: (e.querySelector('.fb-pop-fmt') || {}).textContent || '', group: (e.closest('[role="group"]') || { getAttribute: () => '' }).getAttribute('aria-label') })), id);
   return r;
 };
 const clickItem = async (p, trigger, id, title) => {
@@ -68,23 +69,26 @@ const clickItem = async (p, trigger, id, title) => {
   return ok;
 };
 
-// 1. Calendar tab at 1440: the Download button is shown, so the ⋯ menu carries no export item.
-{
-  const p = await open('tab=dash&z=canada', 1440, 900);
+// 1. Every tab at 1440: the Download button is shown, so the ⋯ menu carries no export item.
+for (const tab of ['overview', 'dash', 'evidence', 'how', 'method']) {
+  const p = await open('tab=' + tab + '&z=canada', 1440, 900);
   const names = await p.evaluate(() => { const e = document.getElementById('fb-hotspots'); return e ? Object.keys(JSON.parse(e.textContent)) : null; });
-  if (!names) check(false, 'no fb-hotspots element in the build');
-  for (const n of onDisk) if (!names || !names.includes(n)) check(false, 'data/hotspots/' + n + '.csv is embedded in the build');
-  if (!onDisk.length) console.log('NOTE no data/hotspots/*.csv: nothing to compare');
-  check(!!(await p.$(DL)), 'Download button visible on the Calendar tab at 1440');
+  if (tab === 'overview') {
+    if (!names) check(false, 'no fb-hotspots element in the build');
+    for (const n of onDisk) if (!names || !names.includes(n)) check(false, 'data/hotspots/' + n + '.csv is embedded in the build');
+    if (!onDisk.length) console.log('NOTE no data/hotspots/*.csv: nothing to compare');
+  }
+  check(!!(await p.$(DL)), 'Download button visible on the ' + tab + ' tab at 1440');
   const more = await items(p, MORE, 'fb-more'); await p.keyboard.press('Escape'); await sleep(200);
-  const exportish = (more || []).filter((i) => i.group || i.fmt || /Series|Calendar image|Map layer|Map image|Another area|points ·/.test(i.title + ' ' + i.sub));
-  check(more && more.length > 0 && exportish.length === 0, '⋯ menu has NO export item where the Download button is shown', more ? '(items: ' + more.map((i) => i.title).join(' / ') + ')' : '(⋯ menu not found)');
+  const exportish = (more || []).filter((i) => (i.group && i.group !== 'Language') || i.fmt || /Series|Calendar image|Map layer|Map image|Another area|points ·/.test(i.title + ' ' + i.sub));
+  check(more && more.length > 0 && exportish.length === 0, '⋯ menu has NO export item on the ' + tab + ' tab at 1440 (Download button shown)', more ? '(items: ' + more.map((i) => i.title).join(' / ') + ')' : '(⋯ menu not found)');
   await p.close();
 }
 
 // 2. Every menu that offers the exports: groups, labels, detail lines, hotspot bytes.
 for (const [mname, hash, w, h, trig, id] of OFFERS) {
   const p = await open(hash + '&z=canada', w, h);
+  if (trig === MORE) check(!(await p.$(DL)), mname, 'no Download button there (the ⋯ menu carries the exports)');
   const list = await items(p, trig, id); await p.keyboard.press('Escape'); await sleep(200);
   if (!list) { check(false, mname, '(menu button not found)'); await p.close(); continue; }
   const zone = list.filter((i) => i.group === 'This zone').map((i) => i.title + ' ' + i.fmt);

@@ -21,6 +21,7 @@ import { boxCover } from './geo.js';
 import { Pop, navKeys, useTransitionRunner } from './ui.jsx';
 import { seriesCsv, calendarSvg, downloadSvg, downloadPng, hotspotText, fileStem, mapCsv } from './exports.js';
 import { cx, reduced, useWidth, useHeight, useTheme, copyText, downloadBlob, Icon, IC } from './util.jsx';
+import { LANG, LANGS, langUrl } from './lang.js';
 
 const COUNTRIES = { canada: 'Canada', argentina: 'Argentina' };
 const TAB_LABEL = { overview: 'Overview', dash: 'Calendar', evidence: 'Evidence', how: 'How it works', method: 'Method' };
@@ -207,7 +208,8 @@ function ZoneButton({ data, country, box, zoneName, onPick, compact }) {
   );
 }
 
-// v6 (judge C2): a visible Download button with the export items. Where it is shown, the ⋯ menu leaves them out.
+// v6 (judge C2): a visible Download button with the export items, on every tab at desktop width. Where it is shown, the
+// ⋯ menu leaves them out.
 function DownloadMenu({ onExport, disabled, compact }) {
   return (
     <Pop id="fb-dl" ariaLabel={'Download: series CSV, calendar image, map layer' + (Object.keys(HOTSPOT_FILES).length ? ', FIRMS hotspots' : '')} btnClass="fb-dlbtn" panelClass="fb-pop-menu fb-pop-export" align="end" menu label={<><Icon d={IC.dl} />{!compact && <span>Download</span>}</>}>
@@ -216,16 +218,29 @@ function DownloadMenu({ onExport, disabled, compact }) {
   );
 }
 
-// `exports`: false where the Download button is shown (Calendar tab, width ≥ 1024), so the two menus never repeat.
+// The language builds (separate files side by side) listed in LANGS (src/lang.js); names in their own language.
+const LANG_NAME = { en: 'English', fr: 'Français', es: 'Español' };
+const LANG_ITEMS = LANGS.filter((k) => LANG_NAME[k]).map((k) => [k, LANG_NAME[k]]);
+// `exports`: false where the Download button is shown (every tab, width ≥ 1024, not phones), so the exports live in
+// exactly one place. The theme is a switch (the menu stays open so the change is seen); the language row opens the
+// sibling build at the same hash.
 function MoreMenu({ exports, onExport, disabled, copyLink, copied, theme, toggleTheme, onAbout, meta }) {
   return (
-    <Pop id="fb-more" ariaLabel={exports ? 'More: export, copy link, theme' : 'More: copy link, theme, about'} btnClass="fb-morebtn" panelClass={cx('fb-pop-menu', exports && 'fb-pop-export')} align="end" menu label={<Icon d="M5 12h.01M12 12h.01M19 12h.01" />}>
+    <Pop id="fb-more" ariaLabel={exports ? 'More: export, copy link, theme, language' : 'More: copy link, theme, language, about'} btnClass="fb-morebtn" panelClass={cx('fb-pop-menu', exports && 'fb-pop-export')} align="end" menu label={<Icon d="M5 12h.01M12 12h.01M19 12h.01" />}>
       {(close) => {
         return (
           <>
             {exports && <><ExportItems go={(k) => { close(); onExport(k); }} close={close} disabled={disabled} /><div className="fb-pop-sep" role="separator" /></>}
             <button type="button" role="menuitem" data-nav onClick={() => { copyLink(); }}><b>{copied === 'ok' ? 'Link copied' : copied === 'fail' ? 'Copy failed: use the address bar' : 'Copy link'}</b><span>This view, as a URL</span></button>
-            <button type="button" role="menuitem" data-nav onClick={() => { close(); toggleTheme(); }}><b>Switch to {theme === 'dark' ? 'light' : 'dark'} theme</b></button>
+            {/* A switch drawn as a track; inside a menu its ARIA role is menuitemcheckbox (role=switch is not allowed in
+                role=menu): announced as "Dark theme, checked / not checked". Space and Enter toggle it (native button). */}
+            <button type="button" role="menuitemcheckbox" aria-checked={theme === 'dark'} data-nav className="fb-switch" onClick={() => { toggleTheme(); }}><b>Dark theme</b><i className="fb-switch-t" aria-hidden="true" /></button>
+            {LANG_ITEMS.length > 1 && <div className="fb-pop-lang" role="group" aria-label="Language">
+              <span className="fb-pop-k" aria-hidden="true">Language</span>
+              <span className="fb-seg2">
+                {LANG_ITEMS.map(([k, l]) => <a key={k} role="menuitem" data-nav lang={k} hrefLang={k} href={langUrl(k, window.location)} aria-current={k === LANG ? 'true' : undefined} className={cx('fb-seg2-i', k === LANG && 'is-on')} onClick={(e) => { e.preventDefault(); if (k !== LANG) window.location.assign(langUrl(k, window.location)); else close(); }}>{l}</a>)}
+              </span>
+            </div>}
             <button type="button" role="menuitem" data-nav onClick={() => { close(); onAbout(); }}><b>About and credits</b><span>Challenge, data, AI use</span></button>
             <p className="fb-pop-meta" title={/provisional/.test(meta) ? 'Provisional: fast-release data, not yet filtered for non-fire sources.' : undefined}>{meta}</p>
             <p className="fb-pop-meta">Tip: hold R (or hold the Raw button) to peek at the raw record.</p>
@@ -238,7 +253,7 @@ function MoreMenu({ exports, onExport, disabled, copyLink, copied, theme, toggle
 
 function HotDialog({ open, text, onClose }) {
   const ref = useRef(null);
-  const hotNames = Object.keys(HOTSPOT_FILES).map(hotName);
+  const hotNames = Object.keys(HOTSPOT_FILES).map((n) => hotName(n)); // not .map(hotName): the index would become the separator
   const [copied, setCopied] = useState(false);
   useEffect(() => { const d = ref.current; if (!d) return; if (open && !d.open) d.showModal(); if (!open && d.open) d.close(); }, [open]);
   return (
@@ -425,9 +440,9 @@ export function App() {
 
   const stem = fileStem(zoneName, st.from, st.to);
   const calView = series === 'raw' ? 'raw' : st.cv === 'anomaly' ? 'anomaly' : 'harmonized';
-  // The Download button shows on the Calendar tab at widths ≥ 1024 (not on phones); elsewhere the ⋯ menu carries the
-  // same export list, so the two menus never repeat each other.
-  const dlShown = st.tab === 'dash' && !phone && w >= 1024;
+  // The Download button shows on every tab at widths ≥ 1024 (not on phones); only below that does the ⋯ menu carry the
+  // same export list, so the exports live in exactly one place.
+  const dlShown = !phone && w >= 1024;
   const onExport = (k) => {
     if (k === 'map' && S) { downloadBlob('firebridge_map_' + st.country + '_' + st.layer + '.csv', new Blob([mapCsv(S, st, series, monthKey(st.sel), data[st.country])], { type: 'text/csv' })); return; }
     if (!Z || empty) return;

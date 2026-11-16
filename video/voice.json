@@ -24,51 +24,60 @@
   "segments": [
     {
       "n": 1,
-      "text": "Argentina’s fires seem to rise 1.4 times since 2012.",
-      "caption": "Argentina's fires seem to rise *1.4×* since 2012…",
+      "text": "Join Modis and veers fire records: Argentina seems to rise 1.4 times.",
+      "caption": "Join MODIS and VIIRS fire records: Argentina seems to rise *1.4×*…",
       "speed": 1.12,
       "start": 0,
-      "duration": 2.822,
-      "end": 2.822
+      "duration": 3.808,
+      "end": 3.808
     },
     {
       "n": 2,
-      "text": "On one scale, they fell: zero point seven times. The rise was the satellite.",
-      "caption": "…on one scale, they fell: *0.7×*. The rise was the satellite.",
+      "text": "On one scale, it fell: zero point seven times. The rise was the satellite.",
+      "caption": "…on one scale, it fell: *0.7×*. The rise was the satellite.",
       "speed": 1.12,
-      "start": 3,
-      "duration": 3.228,
-      "end": 6.228
+      "start": 4,
+      "duration": 3.317,
+      "end": 7.317
     },
     {
       "n": 3,
       "text": "Canada: doubled, not quadrupled. Official burned area agrees: one point nine times.",
       "caption": "Canada: doubled, not quadrupled. Official burned area agrees: *1.9×*.",
       "speed": 1.12,
-      "start": 6.45,
+      "start": 7.5,
       "duration": 3.861,
-      "end": 10.311
+      "end": 11.361
     },
     {
       "n": 4,
-      "text": "A harmonized burning calendar, month by month, two thousand one to October twenty twenty-six.",
-      "caption": "A harmonized burning calendar, month by month, 2001 to October 2026.",
+      "text": "A harmonized burning calendar, two thousand one to October twenty twenty-six.",
+      "caption": "A harmonized burning calendar, 2001 to October 2026…",
       "speed": 1.12,
-      "start": 11.15,
-      "duration": 4.291,
-      "end": 15.441
+      "start": 11.65,
+      "duration": 3.485,
+      "end": 15.135
     },
     {
       "n": 5,
-      "text": "Pick any place. Compare any month with its historical median.",
-      "caption": "Pick any place. Compare any month with its historical median.",
+      "text": "Compare any month with its historical median.",
+      "caption": "…compare any month with its historical median.",
       "speed": 1.12,
-      "start": 17.65,
-      "duration": 2.557,
-      "end": 20.207
+      "start": 15.4,
+      "duration": 1.789,
+      "end": 17.189
     },
     {
       "n": 6,
+      "text": "Pick any place. Where the data cannot support a trend, it says so.",
+      "caption": "Pick any place. Where the data cannot support a trend, it says so.",
+      "speed": 1.12,
+      "start": 18.15,
+      "duration": 3.053,
+      "end": 21.203
+    },
+    {
+      "n": 7,
       "text": "Checked year by year: within ten percent in thirteen of fourteen years.",
       "caption": "Checked year by year: within *±10%* in *13 of 14* years.",
       "speed": 1.12,
@@ -77,7 +86,7 @@
       "end": 26.186
     },
     {
-      "n": 7,
+      "n": 8,
       "text": "FireBridge, on NASA FIRMS data.",
       "caption": "end card",
       "speed": 1.12,
@@ -89,8 +98,8 @@
   "track": {
     "file": "public/voice.mp3",
     "length": 28.4,
-    "lufs": -16.88,
-    "truePeak": -1.03,
-    "samplePeak": -1
+    "lufs": -16.8,
+    "truePeak": -1.06,
+    "samplePeak": -1.1
   }
 }

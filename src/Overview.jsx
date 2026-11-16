@@ -136,7 +136,7 @@ export const Overview = memo(function Overview({ Z, country, official, raw, peek
       </div>
       <div className="fb-ov-head is-lede">
         <div>
-          <p className="fb-ov-lede">In 2012 NASA’s fire record moved to VIIRS, a sharper sensor that sees {ratioWords(Z.ratio)} fire detections as MODIS. Both flew from 2012 on, so FireBridge measures the gap and corrects for it.</p>
+          <p className="fb-ov-lede">Since 2012 NASA has watched fires with a second, sharper sensor, VIIRS, which sees {ratioWords(Z.ratio)} fire detections as MODIS. Both have flown since, so FireBridge measures the gap and corrects for it.</p>
           <p className="fb-ov-honest">The correction matters month by month (calendar, ranks) and after MODIS ends. For this one before/after figure, MODIS alone gives the same answer, by construction.</p>
         </div>
       </div>
@@ -150,7 +150,7 @@ export const Overview = memo(function Overview({ Z, country, official, raw, peek
           <p className="fb-ov-sub">Average year 2012–{LAST} vs 2003–2011, counting 1 km squares with fire, day by day.</p>
         </div>
         <div>
-          <p className="fb-ov-lede">In 2012 NASA’s fire record moved to VIIRS, a sharper sensor that sees {ratioWords(Z.ratio)} fire detections as MODIS. Both flew from 2012 on, so FireBridge measures the gap and corrects for it.</p>
+          <p className="fb-ov-lede">Since 2012 NASA has watched fires with a second, sharper sensor, VIIRS, which sees {ratioWords(Z.ratio)} fire detections as MODIS. Both have flown since, so FireBridge measures the gap and corrects for it.</p>
           <p className="fb-ov-honest">The correction matters month by month (calendar, ranks) and after MODIS ends. For this one before/after figure, MODIS alone gives the same answer, by construction.</p>
         </div>
       </div>

@@ -5,10 +5,11 @@ VIIRS, on one scale, so the answer no longer depends on the sensor.**
 
 ![The harmonized burning calendar for All of Canada: months × years, 2001 to October 2026, with the 2012 sensor change marked](docs/img/calendar.png)
 
-In 2012 the long-term fire record switches to a sharper sensor (VIIRS) that sees about twice as many fires as the
-older one (MODIS). Joined naively, the two records show a jump in 2012 that is partly "more fires" and partly "better
-eyes". FireBridge measures that jump in the years when both sensors fly, puts the older record on the new scale, and
-shows a harmonized burning calendar (months × years) for any area of Canada or Argentina, 2001 to October 2026.
+Since 2012 NASA has watched fires with two sensors. Any record that uses MODIS before 2012 and VIIRS after it jumps
+in 2012: VIIRS is sharper and, counted on the same ~1 km grid, records about twice as many fire detections (2.10× in
+Canada, 2.13× in Argentina). The jump is partly "more fires" and partly "sharper eyes". FireBridge measures the factor in the years
+when both sensors fly, puts the 2001–2011 record on the VIIRS scale (the sensor that continues), and shows a
+harmonized burning calendar (months × years) for any area of Canada or Argentina, 2001 to October 2026.
 
 NASA Space Apps Challenge 2026, challenge "Harmonization of MODIS and VIIRS Hot Spots" (challenge author: CONAE),
 team BlackCoffeeOnly (Yasmine Lounaci and Mouloud Serir). A hackathon prototype: not a NASA product, not endorsed by NASA.
@@ -27,13 +28,20 @@ team BlackCoffeeOnly (Yasmine Lounaci and Mouloud Serir). A hackathon prototype:
 Rise = mean year of fire detections 2012–2025 against 2003–2011 (a fire detection is a spot where a satellite saw a
 fire).
 
-| Zone | VIIRS ÷ MODIS | Records simply joined | Harmonized | Independent check |
+| Zone | VIIRS ÷ MODIS | Records simply joined | Harmonized | Independent check of the trend |
 |---|---|---|---|---|
 | All of Canada | 2.10 | 4.23× | **2.01×** | Official area burned 1.92×, harmonized 1.88× (same years, 2012–2024) |
-| All of Argentina | 2.13 | 1.45× | **0.68×** (fell) | No official series checked |
+| All of Argentina | 2.13 | 1.45× | **0.68×** (fell) | None yet: the result rests on the MODIS record alone |
 
-In Argentina the sensor change turns a fall into an apparent rise. In Canada the rise is real, but joining the records
+In Argentina the sensor change turns a fall into an apparent rise. In Canada the rise holds, but joining the records
 doubles it.
+
+**Why not simply use MODIS alone?** For the single before/after figure, MODIS alone gives the same answer, by
+construction: the years before 2012 are multiplied by the ratio that links VIIRS to MODIS after 2012, so the ratio
+cancels. That equality validates nothing, and the official area-burned check tests the trend, not the correction. The
+harmonized record gives what MODIS alone cannot: a month-by-month calendar and month ranks on the
+scale of the sensor that continues, so the record does not break when MODIS stops. The correction itself is tested on
+the overlap years (each year predicted from the others: median error 3% in both countries).
 
 | Records simply joined ("Raw") | Harmonized |
 |---|---|
@@ -51,10 +59,10 @@ a **Glossary** button explains the words used on the page.
 |---|---|---|
 | Harmonized MODIS + VIIRS | Harmonized by default; the **Raw \| Harmonized** switch (keys R / H) flips map, calendar and numbers together | 0 (1 to compare) |
 | Burning calendar, months × years | **Calendar** tab | 1 |
-| Region by map | **Calendar** → click a place (2° box), or **Draw area**, or move / resize the box | 2 |
+| Region by map | **Calendar** → click a place (2° box), or **Draw area**, or move / resize the box; map layers **Detections**, **Record years**, **Sensor effect**, **One month** | 2 |
 | Region by coordinates | Zone picker → **Enter coordinates…** | 2 + typing |
 | Date range | **Calendar** → date-range button above the calendar | 2 |
-| Downloads, incl. hotspot CSV | **Calendar** → **Download**: series CSV, calendar SVG / PNG, map layer CSV, **FIRMS hotspots (CSV) · La Rioja, Aug 2024**, **FIRMS hotspots (CSV) · Boreal Québec, Jun 2023** | 3 |
+| Downloads, incl. hotspot CSV | **Download** (top bar, every tab on desktop) → **This zone**: series CSV, calendar SVG / PNG, map layer CSV; **Real FIRMS hotspots**: **La Rioja · Aug 2024**, **Boreal Québec · Jun 2023** (real FIRMS points, embedded for these two events), **Another area or period…** (the exact FIRMS request for any other area: the app holds monthly counts, not individual detections) | 2 |
 | Accessible colour ramps | Ramps checked for colour blindness and grayscale (`tools/cvd.mjs`); sensors shown by shape (MODIS hollow, VIIRS filled); light and dark themes | 0 |
 | Current month vs historical median | **Calendar** → click a month: compared with a typical month (median 2003–2025); **Anomaly** mode; **One month** map layer | 2 |
 
@@ -72,8 +80,9 @@ The same hashes work on the offline file.
 2. **Measure the jump**: on the overlap years (2012–2025, both sensors flying), ratio = Σ VIIRS ÷ Σ MODIS for the
    selected area (small areas borrow it from a wider area).
 3. **Bridge**: every MODIS month before 2012 × that ratio; VIIRS months stay as measured.
-4. **Test**: each overlap year predicted from the others (median error 3% in both countries); official area burned
-   (Canada); the trend without its largest year (Canada 1.62× without 2023; Argentina 0.62× without 2020) and with
+4. **Test**: the correction, by predicting each overlap year from the others (median error 3% in both countries);
+   the trend, against official area burned (Canada; a check of the trend, not of the correction), without its
+   largest year (Canada 1.62× without 2023; Argentina 0.62× without 2020) and with
    resampled years (90% range: Canada 1.30–2.92, Argentina 0.57–0.82).
 
 The application declines to print a rise when the data do not support one: too few detections before 2012, years too
@@ -89,7 +98,7 @@ reason. Every figure is computed in the browser by `src/metrics.js`; `node tools
 - **Canadian National Forestry Database** (via Environment and Climate Change Canada): area burned by year
   (`data/official/`), the independent check for Canada.
 - **Natural Earth** country outlines (map and neighbour-country mask).
-- **Real hotspot extracts** (`data/hotspots/`), original FIRMS points, values unchanged, in the Download menu:
+- **Real hotspot extracts** (`data/hotspots/`), original FIRMS points, values unchanged, in the Download menu (group **Real FIRMS hotspots**):
   Boreal Québec, June 2023 (`quebec-boreal-2023-06`, box 80°–68° W, 47.5°–52.5° N) and La Rioja, Argentina, August
   2024 (`la-rioja-2024-08`, box 68.5°–66.5° W, 29.8°–28.2° S); MODIS, VIIRS S-NPP and VIIRS NOAA-20. MODIS and VIIRS
   files name two columns differently (`brightness`, `bright_t31` / `bright_ti4`, `bright_ti5`): the header is the
@@ -102,7 +111,9 @@ The unit everywhere is the **cell-day**: a ~1 km cell with at least one detectio
 - Detections, not burned area. A cell-day says a fire was seen, not how much burned.
 - One VIIRS ÷ MODIS ratio per zone, pooled over whole years. It leaves a seasonal residual (in Canada the March ratio
   is 4.10 against 2.10 pooled); disclosed in the Method tab, not corrected.
-- No official series for Argentina: the Argentine result has no independent area-burned check.
+- Argentina has no independent check yet: its result rests on the MODIS record alone. Next step: an independent
+  series (for example annual burned area from the MODIS MCD64A1 product, or national fire statistics, 2003–2024),
+  compared the same way as Canada's official area burned.
 - Trends in small zones are often decided by one or two extreme years; the app then says "uncertain" and prints the
   sensor factor instead of a rise. Quality thresholds are heuristics calibrated on Québec.
 - Places with a local ratio above 4× (62 in Canada, 27 in Argentina) are not harmonized; causes not investigated.
@@ -110,8 +121,9 @@ The unit everywhere is the **cell-day**: a ~1 km cell with at least one detectio
   nothing that month); no ratio recovers them.
 - 2026 is a partial year: its months are shown in the calendar and the exports but are not used in any annual
   statistic. Months from near-real-time files are marked provisional (not filtered for non-fire sources). Months in
-  which S-NPP had an outage are continued on NOAA-20, rescaled to S-NPP, and marked as computed. S-NPP VIIRS data
-  production ended on 2 November 2026; the record continues on NOAA-20 (NOAA-20 ÷ S-NPP = 1.01 in both countries).
+  which S-NPP had an outage are continued on NOAA-20, rescaled to S-NPP, and marked as computed. As recorded in the
+  FIRMS availability on 15 November 2026, the S-NPP near-real-time data end on 2 November 2026; the record continues
+  on NOAA-20 (NOAA-20 ÷ S-NPP = 1.01 in both countries).
 - A few coastal points of neighbouring countries pass the country mask (1:50m outlines); see `NOTES_FOR_UI.md`.
 
 ## Rebuild
