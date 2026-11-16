@@ -106,6 +106,29 @@ can be re-applied only while `src/metrics.js` is still the validated `779e3785�
   test the pooled ratio (as validated); the month factors' own out-of-sample test is printed in Method only.
 - `src/` was being edited by someone else during this work; the copy was re-synced at 22:05 (see "Base" above).
 
+## Known defects (independent review, 15 November 2026)
+The figures below come from the reviewer's own scripts; they are **not** part of the self-check (`check.mjs` does not
+compute them). The Method tab now carries a short paragraph listing these limits (`id="m-seasonal-limits"`, right after
+the seasonal paragraph), and the banner is an `<aside aria-label="Experimental preview">` landmark (axe rule `region`).
+- **Month factors have no cap and no minimum amount of data:** up to 27× in one 2° box reachable by a map click (Canada,
+  S48–50, W104–102, July: MODIS saw 16 cell-days over 2012–2025); 55 of the 395 harmonized 2° boxes have a month
+  factor above 4 while their pooled ratio is ≤ 4; the validated app's guard G4 checks only the pooled ratio.
+- **Too few years per month:** a month seen in only two or three years can still get its own factor (only a
+  single-year month falls back).
+- **The out-of-sample test** counts only months where both sensors have ≥ 30 cell-days, so it never covers those months.
+- **Map and calendar disagree:** the map keeps the single ratio; record months and ranks in the calendar can differ
+  from the map's (for example, all of Canada: 49 of 108 pre-2012 months change rank).
+- **The gain is not universal:** on one Northwest Territories box the preview does worse out of sample (13.5 % → 17.2 %).
+- **Leftover single-ratio wording:** for uncertain zones the hero still prints the pooled factor (Chilecito "÷ 2.4"
+  while the preview's own raw ÷ harmonized gap is 2.30); a tooltip in `Verdict.jsx` and one sentence in `Method.jsx`
+  still describe a single ratio; the figures 16.5 → 11.7 % and 11.7 → 6.9 % in the Method tab are typed by hand (they
+  are correct, reproduced by `research/seasonal.mjs`).
+- **Needed before it could replace the validated app:** a per-month 4× limit, a minimum amount of data per month, a
+  between-month variance that outlying months cannot inflate, an out-of-sample test covering every month that gets its
+  own factor, the map and the calendar on the same rule, self-check coverage.
+- **What the review confirmed:** the 12 month factors, the pooled ratio, the rises (Canada 2.009 → 2.011, Argentina
+  0.681 → 0.684) and the out-of-sample errors were reproduced by independent code; no leak in the test.
+
 ## If the team publishes it
 Sentence for the project page:
 > An experimental build with the seasonal correction is online at <url>; its figures are not the validated ones.

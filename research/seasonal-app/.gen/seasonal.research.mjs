@@ -4,11 +4,11 @@
 // Deterministic: no random draws. Run: node research/seasonal.mjs
 import fs from 'fs';
 import { fileURLToPath } from 'url';
-import * as MX from "file:///C:/Users/moulo/Downloads/firebridge-v6.2-preview-source/src/metrics.js";
-import { decodeCountry, computeZone, boxMonthly, bridgeStats, ownGrade, PRESETS, setRecordEnd, median, countClass, countBreaks, calendarData, FIRST, SW, VJ, MIN_MODIS } from "file:///C:/Users/moulo/Downloads/firebridge-v6.2-preview-source/src/metrics.js";
-import { loadTiles } from "file:///C:/Users/moulo/Downloads/firebridge-v6.2-preview-source/tools-win/tiles.mjs";
+import * as MX from "file:///c:/Users/moulo/Downloads/firebridge-v6.2-preview-source/src/metrics.js";
+import { decodeCountry, computeZone, boxMonthly, bridgeStats, ownGrade, PRESETS, setRecordEnd, median, countClass, countBreaks, calendarData, FIRST, SW, VJ, MIN_MODIS } from "file:///c:/Users/moulo/Downloads/firebridge-v6.2-preview-source/src/metrics.js";
+import { loadTiles } from "file:///c:/Users/moulo/Downloads/firebridge-v6.2-preview-source/tools-win/tiles.mjs";
 
-const here = "C:/Users/moulo/Downloads/firebridge-v6.2-preview-source/";
+const here = "c:/Users/moulo/Downloads/firebridge-v6.2-preview-source/";
 const LT = loadTiles(here); setRecordEnd(LT.end);
 const LAST = MX.LAST, NM = MX.NM, mEnd = (LAST - FIRST + 1) * 12;
 const C = { canada: decodeCountry(LT.tiles.canada), argentina: decodeCountry(LT.tiles.argentina) };

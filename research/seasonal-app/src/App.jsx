@@ -509,7 +509,7 @@ export function App() {
   return (
     <div className={cx('fb-app', layoutClass, 'tab-' + st.tab)}>
       <a className="fb-skip" href="#fb-tabpanel">Skip to content</a>
-      <div className="fb-xbanner" role="note"><span><b>Experimental preview</b> · seasonal correction · not the validated figures</span><a href={validatedUrl(window.location)} onClick={(e) => { e.preventDefault(); window.location.assign(validatedUrl(window.location)); }}><span className="fb-xb-long">Open the validated app</span><span className="fb-xb-short">Validated app</span></a></div>
+      <aside className="fb-xbanner" aria-label="Experimental preview"><span><b>Experimental preview</b> · seasonal correction · not the validated figures</span><a href={validatedUrl(window.location)} onClick={(e) => { e.preventDefault(); window.location.assign(validatedUrl(window.location)); }}><span className="fb-xb-long">Open the validated app</span><span className="fb-xb-short">Validated app</span></a></aside>
       <header className="fb-top2">
         <BrandTag className="fb-brand"><Mark /><span className="product-name">FireBridge</span><span className="sr-only"> — MODIS and VIIRS fire hotspots, harmonized</span></BrandTag>
         {!phone && <Tabs tab={st.tab} setTab={setTab} />}
