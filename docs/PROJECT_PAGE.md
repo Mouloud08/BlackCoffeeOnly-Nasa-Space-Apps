@@ -111,7 +111,7 @@ Clicks from the first screen (Overview). Tabs: Overview, Calendar, Evidence, How
 | Region by map | **Calendar** → click a place (2° box), **Draw area**, or move / resize the box. Layers: Detections, Record years, Sensor effect, One month. | 2 |
 | Region by coordinates | Zone picker → **Enter coordinates…** | 2 + typing |
 | Date range | **Calendar** → the date-range button ("2001 – Oct 2026"). | 2 |
-| Downloads, including hotspot CSV | **Download** (top bar, every tab on desktop). **This zone**: series CSV, calendar SVG / PNG, map layer CSV. **Real FIRMS hotspots**: **La Rioja · Aug 2024**, **Boreal Québec · Jun 2023** (original points, unchanged, with point count and size); **Another area or period…** gives the exact FIRMS request for any other area (the app holds monthly counts, not individual detections). | 2 |
+| Downloads, including hotspot CSV | **Download** (top bar, every tab on desktop). **This zone**: series CSV, calendar SVG / PNG, map layer CSV, map image PNG. **Real FIRMS hotspots**: **La Rioja · Aug 2024**, **Boreal Québec · Jun 2023** (original points, unchanged, with point count and size); **Another area or period…** gives the exact FIRMS request for any other area (the app holds monthly counts, not individual detections). | 2 |
 | Accessible colour ramps | Ramps checked for colour blindness and grayscale; sensors told apart by shape (MODIS hollow, VIIRS filled); light and dark themes; keyboard; **Glossary**. | 0 |
 | Current month vs historical median | **Calendar** → click a month: compared with the median of that month, 2003–2025; **Anomaly** mode; **One month** layer. [October 2026, Argentina](https://mouloud08.github.io/BlackCoffeeOnly-Nasa-Space-Apps/#tab=dash&z=argentina&m=2026-10). | 2 |
 

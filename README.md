@@ -65,7 +65,7 @@ a **Glossary** button explains the words used on the page.
 | Region by map | **Calendar** → click a place (2° box), or **Draw area**, or move / resize the box; map layers **Detections**, **Record years**, **Sensor effect**, **One month** | 2 |
 | Region by coordinates | Zone picker → **Enter coordinates…** | 2 + typing |
 | Date range | **Calendar** → date-range button above the calendar | 2 |
-| Downloads, incl. hotspot CSV | **Download** (top bar, every tab on desktop) → **This zone**: series CSV, calendar SVG / PNG, map layer CSV; **Real FIRMS hotspots**: **La Rioja · Aug 2024**, **Boreal Québec · Jun 2023** (real FIRMS points, embedded for these two events), **Another area or period…** (the exact FIRMS request for any other area: the app holds monthly counts, not individual detections) | 2 |
+| Downloads, incl. hotspot CSV | **Download** (top bar, every tab on desktop) → **This zone**: series CSV, calendar SVG / PNG, map layer CSV, map image PNG; **Real FIRMS hotspots**: **La Rioja · Aug 2024**, **Boreal Québec · Jun 2023** (real FIRMS points, embedded for these two events), **Another area or period…** (the exact FIRMS request for any other area: the app holds monthly counts, not individual detections) | 2 |
 | Accessible colour ramps | Ramps checked for colour blindness and grayscale (`tools/cvd.mjs`); sensors shown by shape (MODIS hollow, VIIRS filled); light and dark themes | 0 |
 | Current month vs historical median | **Calendar** → click a month: compared with a typical month (median 2003–2025); **Anomaly** mode; **One month** map layer | 2 |
 
