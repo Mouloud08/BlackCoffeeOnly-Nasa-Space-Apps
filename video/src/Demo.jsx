@@ -78,12 +78,11 @@ function Caption({ text, len }) {
   );
 }
 
+// The app's mark, concept A "flame rising from a bridge arch" (docs/logo/concept-a.svg), in the ink colour
 function Mark({ size }) {
   return (
-    <svg viewBox="0 0 24 24" width={size} height={size} style={{ color: C.ink, display: 'block' }}>
-      <rect x="2.5" y="10" width="6.5" height="10.5" rx="1.5" fill="none" stroke="currentColor" strokeWidth="1.6" />
-      <rect x="15" y="5" width="6.5" height="15.5" rx="1.5" fill="currentColor" />
-      <path d="M5.75 7.5 Q12 1.5 18.25 2.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+    <svg viewBox="0 0 24 24" width={size} height={size} fill="currentColor" aria-hidden="true" style={{ color: C.ink, display: 'block' }}>
+      <path d="M14 1.5C16.5 5 20 8.5 20 14v7h-4.5v-3a3.5 3.5 0 0 0-7 0v3H4v-7c0-3 1.2-5.5 3.5-7.5.5 1.5 1.3 2.6 2.5 3C10 6.5 12 4.5 14 1.5Z" />
     </svg>
   );
 }

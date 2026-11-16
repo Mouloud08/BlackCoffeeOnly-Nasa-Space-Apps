@@ -1,0 +1,96 @@
+{
+  "voice": {
+    "name": "Chris - Charming, Down-to-Earth",
+    "id": "iP95p4xoKVk53GoZ742B",
+    "category": "premade",
+    "labels": {
+      "accent": "american",
+      "gender": "male",
+      "use_case": "conversational",
+      "language": "en",
+      "descriptive": "casual",
+      "age": "middle_aged"
+    }
+  },
+  "model": "eleven_multilingual_v2",
+  "format": "mp3_44100_128",
+  "settings": {
+    "stability": 0.6,
+    "similarity_boost": 0.75,
+    "style": 0,
+    "use_speaker_boost": true
+  },
+  "maxPause": 0.2,
+  "segments": [
+    {
+      "n": 1,
+      "text": "Argentina’s fires seem to rise 1.4 times since 2012.",
+      "caption": "Argentina's fires seem to rise *1.4×* since 2012…",
+      "speed": 1.12,
+      "start": 0,
+      "duration": 2.822,
+      "end": 2.822
+    },
+    {
+      "n": 2,
+      "text": "On one scale, they fell: zero point seven times. The rise was the satellite.",
+      "caption": "…on one scale, they fell: *0.7×*. The rise was the satellite.",
+      "speed": 1.12,
+      "start": 3,
+      "duration": 3.228,
+      "end": 6.228
+    },
+    {
+      "n": 3,
+      "text": "Canada: doubled, not quadrupled. Official burned area agrees: one point nine times.",
+      "caption": "Canada: doubled, not quadrupled. Official burned area agrees: *1.9×*.",
+      "speed": 1.12,
+      "start": 6.45,
+      "duration": 3.861,
+      "end": 10.311
+    },
+    {
+      "n": 4,
+      "text": "A harmonized burning calendar, month by month, two thousand one to October twenty twenty-six.",
+      "caption": "A harmonized burning calendar, month by month, 2001 to October 2026.",
+      "speed": 1.12,
+      "start": 11.15,
+      "duration": 4.291,
+      "end": 15.441
+    },
+    {
+      "n": 5,
+      "text": "Pick any place. Compare any month with its historical median.",
+      "caption": "Pick any place. Compare any month with its historical median.",
+      "speed": 1.12,
+      "start": 17.65,
+      "duration": 2.557,
+      "end": 20.207
+    },
+    {
+      "n": 6,
+      "text": "Checked year by year: within ten percent in thirteen of fourteen years.",
+      "caption": "Checked year by year: within *±10%* in *13 of 14* years.",
+      "speed": 1.12,
+      "start": 22.95,
+      "duration": 3.236,
+      "end": 26.186
+    },
+    {
+      "n": 7,
+      "text": "FireBridge, on NASA FIRMS data.",
+      "caption": "end card",
+      "speed": 1.12,
+      "start": 26.35,
+      "duration": 1.321,
+      "end": 27.671
+    }
+  ],
+  "track": {
+    "file": "public/voice.mp3",
+    "length": 28.4,
+    "lufs": -16.88,
+    "truePeak": -1.03,
+    "samplePeak": -1
+  }
+}

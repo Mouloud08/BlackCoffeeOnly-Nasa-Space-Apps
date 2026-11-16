@@ -30,16 +30,55 @@ const HOTSPOT_FILES = (() => { try { return JSON.parse(document.getElementById('
 // a name that does not match a known place and a year-month falls back to the raw name.
 const HOT_PLACE = { 'la-rioja': 'La Rioja', 'quebec-boreal': 'Boreal Québec' };
 const MON3 = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-const hotName = (n) => { const m = /^(.+)-(\d{4})-(\d{2})$/.exec(n); const mo = m ? +m[3] : 0; return m && HOT_PLACE[m[1]] && mo >= 1 && mo <= 12 ? HOT_PLACE[m[1]] + ', ' + MON3[mo - 1] + ' ' + m[2] : n; };
-// The embedded extracts as menu items (Download menu and ⋯ menu): same file names as before.
-const hotItems = (close) => Object.keys(HOTSPOT_FILES).map((n) => <button key={n} type="button" role="menuitem" data-nav onClick={() => { close(); downloadBlob('firebridge_hotspots_' + n + '.csv', new Blob([HOTSPOT_FILES[n]], { type: 'text/csv' })); }}><b>FIRMS hotspots (CSV) · {hotName(n)}</b><span>NASA FIRMS points for this event</span></button>);
+const hotName = (n, sep = ', ') => { const m = /^(.+)-(\d{4})-(\d{2})$/.exec(n); const mo = m ? +m[3] : 0; return m && HOT_PLACE[m[1]] && mo >= 1 && mo <= 12 ? HOT_PLACE[m[1]] + sep + MON3[mo - 1] + ' ' + m[2] : n; };
+// Facts about each embedded extract, read from its own text once, on the first menu open: data rows (lines after the
+// header) and the size of the downloaded file (UTF-8 bytes, MB = 10^6 bytes).
+let HOT_META = null;
+const hotMeta = () => {
+  if (HOT_META) return HOT_META;
+  HOT_META = {};
+  for (const n of Object.keys(HOTSPOT_FILES)) {
+    const s = String(HOTSPOT_FILES[n] || '');
+    let lines = 0; for (let i = s.indexOf('\n'); i >= 0; i = s.indexOf('\n', i + 1)) lines++;
+    if (s.length && !s.endsWith('\n')) lines++;
+    const rows = Math.max(0, lines - 1), bytes = new Blob([s]).size;
+    HOT_META[n] = rows.toLocaleString('en-US') + ' points · ' + (bytes >= 1e5 ? (bytes / 1e6).toFixed(1) + ' MB' : Math.max(1, Math.round(bytes / 1e3)) + ' kB');
+  }
+  return HOT_META;
+};
+// One menu item: title (one line), a line of detail, and the file format as a small badge on the right.
+const MenuItem = ({ title, sub, fmt, ...rest }) => (
+  <button type="button" role="menuitem" data-nav {...rest}><b>{title}</b>{sub && <span>{sub}</span>}{fmt && <i className="fb-pop-fmt">{fmt}</i>}</button>
+);
+// The export list, shared by the Download menu and the ⋯ menu (where the Download button is not shown): two groups.
+// The embedded FIRMS extracts keep their file names (firebridge_hotspots_<name>.csv).
+function ExportItems({ go, close, disabled }) {
+  const hot = Object.keys(HOTSPOT_FILES), meta = hot.length ? hotMeta() : {};
+  return (
+    <>
+      <div role="group" aria-label="This zone" className="fb-pop-grp">
+        <div className="fb-pop-k" aria-hidden="true">This zone</div>
+        <MenuItem title="Series" sub="Monthly series with provenance" fmt="CSV" disabled={disabled} onClick={() => go('csv')} />
+        <MenuItem title="Calendar image" sub="The calendar as shown" fmt="SVG" disabled={disabled} onClick={() => go('svg')} />
+        <MenuItem title="Calendar image" sub="The same drawing, 2× pixels" fmt="PNG" disabled={disabled} onClick={() => go('png')} />
+        <MenuItem title="Map layer" sub="One row per 0.5° place, with provenance" fmt="CSV" onClick={() => go('map')} />
+      </div>
+      <div className="fb-pop-sep" role="separator" />
+      <div role="group" aria-label="Real FIRMS hotspots" className="fb-pop-grp">
+        <div className="fb-pop-k" aria-hidden="true">Real FIRMS hotspots</div>
+        {hot.map((n) => <MenuItem key={n} title={hotName(n, ' · ')} sub={meta[n]} fmt="CSV" onClick={() => { close(); downloadBlob('firebridge_hotspots_' + n + '.csv', new Blob([HOTSPOT_FILES[n]], { type: 'text/csv' })); }} />)}
+        <MenuItem title="Another area or period…" sub="How to request the points from FIRMS" disabled={disabled} onClick={() => go('hot')} />
+      </div>
+    </>
+  );
+}
 
 function Mark() {
   return (
-    <svg className="fb-mark" viewBox="0 0 24 24" aria-hidden="true">
-      <rect x="2.5" y="10" width="6.5" height="10.5" rx="1.5" className="m-modis" />
-      <rect x="15" y="5" width="6.5" height="15.5" rx="1.5" className="m-viirs" />
-      <path d="M5.75 7.5 Q12 1.5 18.25 2.5" className="m-bridge" />
+    <svg className="fb-mark" viewBox="0 0 24 24" aria-hidden="true" fill="currentColor">
+      {/* Concept A (docs/logo/concept-a.svg): a flame rising from a bridge arch, in the ink colour. The same path is in
+          the boot shell and the favicon (build.mjs). */}
+      <path d="M14 1.5C16.5 5 20 8.5 20 14v7h-4.5v-3a3.5 3.5 0 0 0-7 0v3H4v-7c0-3 1.2-5.5 3.5-7.5.5 1.5 1.3 2.6 2.5 3C10 6.5 12 4.5 14 1.5Z" />
     </svg>
   );
 }
@@ -168,42 +207,23 @@ function ZoneButton({ data, country, box, zoneName, onPick, compact }) {
   );
 }
 
-// v6 (judge C2): a visible Download button with the export items (the ⋯ menu keeps them too).
+// v6 (judge C2): a visible Download button with the export items. Where it is shown, the ⋯ menu leaves them out.
 function DownloadMenu({ onExport, disabled, compact }) {
   return (
-    <Pop id="fb-dl" ariaLabel={'Download: series CSV, calendar image, map layer' + (Object.keys(HOTSPOT_FILES).length ? ', FIRMS hotspots' : '')} btnClass="fb-dlbtn" panelClass="fb-pop-menu" align="end" menu label={<><Icon d={IC.dl} />{!compact && <span>Download</span>}</>}>
-      {(close) => {
-        const go = (k) => { close(); onExport(k); };
-        return (
-          <>
-            <button type="button" role="menuitem" data-nav disabled={disabled} onClick={() => go('csv')}><b>Series CSV</b><span>Monthly series with provenance</span></button>
-            <button type="button" role="menuitem" data-nav disabled={disabled} onClick={() => go('svg')}><b>Calendar image (SVG)</b><span>The calendar as shown</span></button>
-            <button type="button" role="menuitem" data-nav disabled={disabled} onClick={() => go('png')}><b>Calendar image (PNG)</b><span>The same drawing, 2× pixels</span></button>
-            <button type="button" role="menuitem" data-nav onClick={() => go('map')}><b>Map layer (CSV)</b><span>One row per 0.5° place, with provenance</span></button>
-            {hotItems(close)}
-            <button type="button" role="menuitem" data-nav disabled={disabled} onClick={() => go('hot')}><b>Hotspots for this box (FIRMS request)…</b><span>Where to get the points for this box</span></button>
-          </>
-        );
-      }}
+    <Pop id="fb-dl" ariaLabel={'Download: series CSV, calendar image, map layer' + (Object.keys(HOTSPOT_FILES).length ? ', FIRMS hotspots' : '')} btnClass="fb-dlbtn" panelClass="fb-pop-menu fb-pop-export" align="end" menu label={<><Icon d={IC.dl} />{!compact && <span>Download</span>}</>}>
+      {(close) => <ExportItems go={(k) => { close(); onExport(k); }} close={close} disabled={disabled} />}
     </Pop>
   );
 }
 
-function MoreMenu({ onExport, disabled, copyLink, copied, theme, toggleTheme, onAbout, meta }) {
+// `exports`: false where the Download button is shown (Calendar tab, width ≥ 1024), so the two menus never repeat.
+function MoreMenu({ exports, onExport, disabled, copyLink, copied, theme, toggleTheme, onAbout, meta }) {
   return (
-    <Pop id="fb-more" ariaLabel="More: export, copy link, theme" btnClass="fb-morebtn" panelClass="fb-pop-menu" align="end" menu label={<Icon d="M5 12h.01M12 12h.01M19 12h.01" />}>
+    <Pop id="fb-more" ariaLabel={exports ? 'More: export, copy link, theme' : 'More: copy link, theme, about'} btnClass="fb-morebtn" panelClass={cx('fb-pop-menu', exports && 'fb-pop-export')} align="end" menu label={<Icon d="M5 12h.01M12 12h.01M19 12h.01" />}>
       {(close) => {
-        const go = (k) => { close(); onExport(k); };
         return (
           <>
-            <div className="fb-pop-k">Export</div>
-            <button type="button" role="menuitem" data-nav disabled={disabled} onClick={() => go('csv')}><b>Series CSV</b><span>Monthly series with provenance</span></button>
-            <button type="button" role="menuitem" data-nav disabled={disabled} onClick={() => go('svg')}><b>Calendar image (SVG)</b><span>The calendar as shown</span></button>
-            <button type="button" role="menuitem" data-nav disabled={disabled} onClick={() => go('png')}><b>Calendar image (PNG)</b><span>The same drawing, 2× pixels</span></button>
-            <button type="button" role="menuitem" data-nav onClick={() => go('map')}><b>Map layer (CSV)</b><span>One row per 0.5° place, with provenance</span></button>
-            {hotItems(close)}
-            <button type="button" role="menuitem" data-nav disabled={disabled} onClick={() => go('hot')}><b>Hotspots for this box (FIRMS request)…</b><span>Where to get the points for this box</span></button>
-            <div className="fb-pop-sep" role="separator" />
+            {exports && <><ExportItems go={(k) => { close(); onExport(k); }} close={close} disabled={disabled} /><div className="fb-pop-sep" role="separator" /></>}
             <button type="button" role="menuitem" data-nav onClick={() => { copyLink(); }}><b>{copied === 'ok' ? 'Link copied' : copied === 'fail' ? 'Copy failed: use the address bar' : 'Copy link'}</b><span>This view, as a URL</span></button>
             <button type="button" role="menuitem" data-nav onClick={() => { close(); toggleTheme(); }}><b>Switch to {theme === 'dark' ? 'light' : 'dark'} theme</b></button>
             <button type="button" role="menuitem" data-nav onClick={() => { close(); onAbout(); }}><b>About and credits</b><span>Challenge, data, AI use</span></button>
@@ -225,7 +245,7 @@ function HotDialog({ open, text, onClose }) {
     <dialog ref={ref} className="fb-dialog" aria-labelledby="fb-hot-t" onClose={onClose}>
       <h2 id="fb-hot-t" className="fb-paneltitle">Original hotspot points for this box and period come from NASA FIRMS</h2>
       {hotNames.length
-        ? <p className="fb-pop-p">This prototype holds monthly 0.5° counts, not individual detections, except for {hotNames.length === 1 ? 'one FIRMS extract' : hotNames.length + ' FIRMS extracts'} ({hotNames.join('; ')}), offered as CSV in the Download and ⋯ menus. For any other box or period, request the points from FIRMS with these values:</p>
+        ? <p className="fb-pop-p">This prototype holds monthly 0.5° counts, not individual detections, except for {hotNames.length === 1 ? 'one FIRMS extract' : hotNames.length + ' FIRMS extracts'} ({hotNames.join('; ')}), offered as CSV in the same menu. For any other box or period, request the points from FIRMS with these values:</p>
         : <p className="fb-pop-p">This prototype holds monthly 0.5° counts, not individual detections, so it does not make that file. Request the points from FIRMS with these values:</p>}
       <pre className="fb-hot-pre at-mono">{text}</pre>
       <div className="fb-dialog-act">
@@ -405,6 +425,9 @@ export function App() {
 
   const stem = fileStem(zoneName, st.from, st.to);
   const calView = series === 'raw' ? 'raw' : st.cv === 'anomaly' ? 'anomaly' : 'harmonized';
+  // The Download button shows on the Calendar tab at widths ≥ 1024 (not on phones); elsewhere the ⋯ menu carries the
+  // same export list, so the two menus never repeat each other.
+  const dlShown = st.tab === 'dash' && !phone && w >= 1024;
   const onExport = (k) => {
     if (k === 'map' && S) { downloadBlob('firebridge_map_' + st.country + '_' + st.layer + '.csv', new Blob([mapCsv(S, st, series, monthKey(st.sel), data[st.country])], { type: 'text/csv' })); return; }
     if (!Z || empty) return;
@@ -474,9 +497,9 @@ export function App() {
         <span className="fb-topgap">{!phone && <span className="fb-subtitle"><span>Fire detections from MODIS and VIIRS on one scale</span><span><span className="sr-only"> · </span>Canada and Argentina · 2001–{CAL_LAST}</span></span>}</span>
         <ZoneButton data={data} country={st.country} box={st.box} zoneName={zoneName} onPick={pick} compact={phone || w < 1024} />
         <SeriesSwitch view={view} setView={setView} peek={peek} setPeek={peekVT} disabled={!!Z && !harmOK} compact={phone || w < 1024} hintOK={st.tab === "dash"} />
-        {st.tab === 'dash' && !phone && w >= 1024 && <DownloadMenu onExport={onExport} disabled={!Z || empty} compact={phone || w < 1280} />}
+        {dlShown && <DownloadMenu onExport={onExport} disabled={!Z || empty} compact={phone || w < 1280} />}
         <WordsMenu compact={phone || w < 1280} />
-        <MoreMenu meta={meta} onExport={onExport} disabled={!Z || empty} copyLink={copyLink} copied={copied} theme={theme} toggleTheme={toggleTheme} onAbout={() => { setTab('method'); setTimeout(() => { const el = document.getElementById('m-about'); el && el.scrollIntoView({ block: 'start' }); }, 50); }} />
+        <MoreMenu exports={!dlShown} meta={meta} onExport={onExport} disabled={!Z || empty} copyLink={copyLink} copied={copied} theme={theme} toggleTheme={toggleTheme} onAbout={() => { setTab('method'); setTimeout(() => { const el = document.getElementById('m-about'); el && el.scrollIntoView({ block: 'start' }); }, 50); }} />
       </header>
       <main className="fb-main"><div id="fb-tabpanel" className={cx('fb-tabarea', 'is-' + st.tab)} role="tabpanel" aria-labelledby={'fb-tab-' + st.tab} tabIndex={-1} data-meta={'2001–' + CAL_LAST + ' · last month ' + endLabel()}>
         <div className="fb-tabin" key={st.tab}>{content}</div>

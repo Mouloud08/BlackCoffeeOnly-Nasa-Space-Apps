@@ -80,7 +80,8 @@ try {
   const font = (f) => pathToFileURL(join(HERE, 'public', 'fonts', f)).href;
   const img = (i) => pathToFileURL(join(SHOTS, `slide-${i + 1}.png`)).href;
   const esc = (t) => t.replace(/&/g, '&amp;').replace(/</g, '&lt;');
-  const mark = '<svg viewBox="0 0 24 24" width="64" height="64"><rect x="2.5" y="10" width="6.5" height="10.5" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.6"/><rect x="15" y="5" width="6.5" height="15.5" rx="1.5" fill="currentColor"/><path d="M5.75 7.5 Q12 1.5 18.25 2.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>';
+  // the app's mark, concept A (docs/logo/concept-a.svg), in the ink colour
+  const mark = '<svg viewBox="0 0 24 24" width="64" height="64" fill="currentColor" aria-hidden="true"><path d="M14 1.5C16.5 5 20 8.5 20 14v7h-4.5v-3a3.5 3.5 0 0 0-7 0v3H4v-7c0-3 1.2-5.5 3.5-7.5.5 1.5 1.3 2.6 2.5 3C10 6.5 12 4.5 14 1.5Z"/></svg>';
   const deck = `<!doctype html><html lang="en"><head><meta charset="utf-8"><title>FireBridge — slides</title><style>
 @font-face { font-family: 'Atelier Texte'; src: url('${font('atelier-texte.woff2')}'); font-weight: 100 900; }
 @font-face { font-family: 'Radio Canada'; src: url('${font('radio-canada-latin-wght-normal.woff2')}'); font-weight: 300 700; }

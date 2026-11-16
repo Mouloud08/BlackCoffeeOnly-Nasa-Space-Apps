@@ -21,9 +21,6 @@ h1, h2, h3 { margin: 0; }
 .fb-top-in { height: 56px; display: flex; align-items: center; gap: 32px; }
 .fb-brand { flex: none; display: flex; align-items: center; gap: 10px; color: var(--ink); }
 .fb-mark { width: 24px; height: 24px; flex: none; }
-.fb-mark .m-modis { fill: none; stroke: currentColor; stroke-width: 1.6; }
-.fb-mark .m-viirs { fill: currentColor; }
-.fb-mark .m-bridge { fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; }
 .fb-anchors { display: flex; gap: 4px; }
 .fb-anchor { position: relative; font-size: 14px; line-height: 20px; font-weight: 500; color: var(--ink-2); text-decoration: none; padding: 6px 10px; border-radius: 6px; }
 .fb-anchor:hover { color: var(--ink); background: var(--quiet); }

@@ -11,7 +11,7 @@ eyes". FireBridge measures that jump in the years when both sensors fly, puts th
 shows a harmonized burning calendar (months × years) for any area of Canada or Argentina, 2001 to October 2026.
 
 NASA Space Apps Challenge 2026, challenge "Harmonization of MODIS and VIIRS Hot Spots" (challenge author: CONAE),
-team BlackCoffeeOnly. A hackathon prototype: not a NASA product, not endorsed by NASA.
+team BlackCoffeeOnly (Yasmine Lounaci and Mouloud Serir). A hackathon prototype: not a NASA product, not endorsed by NASA.
 
 ## Try it
 
@@ -167,6 +167,8 @@ Hotspot extracts: fetch a small box and a short period with the same script (`--
 `node scripts/assemble_hotspots.mjs <raw folder> <from> <to> <name>` writes `data/hotspots/<name>.csv`; rebuild.
 
 ## Credits
+
+Team BlackCoffeeOnly: Yasmine Lounaci and Mouloud Serir.
 
 Data: NASA FIRMS (MODIS Collection 6.1, VIIRS 375 m S-NPP and NOAA-20); Canadian National Forestry Database;
 Natural Earth. Code: React, esbuild, topojson-client; Radio Canada, Atelier Texte and DM Mono typefaces.

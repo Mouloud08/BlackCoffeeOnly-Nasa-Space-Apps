@@ -37,8 +37,8 @@
   "captions": [
     {
       "shot": "argentina",
-      "start": 0.15,
-      "end": 2.6,
+      "start": 0,
+      "end": 2.9,
       "text": "Argentina's fires seem to rise *1.4×* since 2012…",
       "check": [
         "raw"
@@ -46,7 +46,7 @@
     },
     {
       "shot": "argentina",
-      "start": 2.7,
+      "start": 3,
       "end": 5.95,
       "text": "…on one scale, they fell: *0.7×*. The rise was the satellite.",
       "check": [
@@ -55,7 +55,7 @@
     },
     {
       "shot": "canada",
-      "start": 6.15,
+      "start": 6.45,
       "end": 10.95,
       "text": "Canada: doubled, not quadrupled. Official burned area agrees: *1.9×*.",
       "check": [
@@ -96,7 +96,7 @@
     "title": "FireBridge",
     "lines": [
       "One offline file · NASA FIRMS data, 2001 – Oct 2026",
-      "Team BlackCoffeeOnly"
+      "Team BlackCoffeeOnly · Yasmine Lounaci & Mouloud Serir"
     ],
     "url": "mouloud08.github.io/BlackCoffeeOnly-Nasa-Space-Apps",
     "check": [

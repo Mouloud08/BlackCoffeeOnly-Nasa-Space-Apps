@@ -256,6 +256,7 @@ export function Method({ cells, floors, country, phone, Z, zoneName, reference, 
         <section className="fb-doc-sec" id="m-about" aria-labelledby="m-about-h">
           <h2 className="fb-doc-h" id="m-about-h">About and credits</h2>
           <p>FireBridge — NASA Space Apps Challenge 2026, challenge ‘Harmonization of MODIS and VIIRS Hot Spots’.</p>
+          <p>Team BlackCoffeeOnly: Yasmine Lounaci and Mouloud Serir.</p>
           <p>Data: NASA FIRMS. Outlines: Natural Earth. Not affiliated with or endorsed by NASA.</p>
           <p>Code, data processing and analysis were produced with extensive AI assistance, directed and reviewed by the team.</p>
           <p className="fb-muted">Prototype — every figure is computed in your browser from 0.5° monthly tiles.</p>

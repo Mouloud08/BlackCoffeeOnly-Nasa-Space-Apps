@@ -3,6 +3,8 @@
 Paste each section into the field of the same name on the Space Apps project page. Every figure below comes from
 the app's self-check (`node tools-win/selfcheck.mjs`, record ending October 2026).
 
+Team BlackCoffeeOnly: Yasmine Lounaci and Mouloud Serir.
+
 ---
 
 ## High-Level Project Summary
@@ -204,4 +206,6 @@ We used an AI assistant (Anthropic's Claude, through Claude Code) extensively: t
 data-processing scripts and the texts, including this page. The team chose the question and the method, directed the
 work and reviewed the results. AI did not produce any data: every figure is computed by the app's code from NASA
 FIRMS and official data, and the same code prints a self-check table that we used to verify each number quoted here.
-The images on this page are screenshots of the app. The app itself declares AI use (Method tab → About and credits).
+The images on this page are screenshots of the app. The narration of the demo video is an AI-generated voice
+(ElevenLabs text-to-speech) reading the on-screen captions; the footage is a real screen recording of the app. The app
+itself declares AI use (Method tab → About and credits).

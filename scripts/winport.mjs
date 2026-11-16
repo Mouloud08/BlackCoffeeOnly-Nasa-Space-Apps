@@ -51,6 +51,14 @@ const PATCHES = [
   ['layer-label-one-month', "=== 'This month' &&", "=== 'One month' &&"],
   // 13. the Sensor effect legend ends "× more seen" (was "× too high"): coherence matches the legend to the layer by it.
   ['coherence-ratio-legend', "ratio: 'too high'", "ratio: 'more seen'"],
+  // 14–15. Export menus regrouped (15 November, evening): where the Download button is shown (Calendar tab, width
+  //     ≥ 1024) the ⋯ menu no longer repeats the exports; items are a one-line title plus a format badge ("Series" + CSV,
+  //     "Calendar image" + SVG / PNG, "Map layer" + CSV). The tests open whichever menu carries the exports
+  //     (.fb-pop-export) and find an item by title + badge.
+  ['export-menu-interact', "  for (const k of ['Series CSV', 'Calendar image (SVG)', 'Calendar image (PNG)', 'Map layer (CSV)']) {\n    await p.click('.fb-morebtn'); await sleep(200);\n    await p.evaluate((k) => [...document.querySelectorAll('#fb-more button')].find((e) => e.textContent.startsWith(k)).click(), k); await sleep(700);",
+    "  for (const k of ['Series CSV', 'Calendar image SVG', 'Calendar image PNG', 'Map layer CSV']) {\n    await p.click((await p.$('button[aria-controls=\"fb-dl\"]')) ? 'button[aria-controls=\"fb-dl\"]' : '.fb-morebtn'); await sleep(200);\n    await p.evaluate((k) => [...document.querySelectorAll('.fb-pop-export [role=\"menuitem\"]')].find((e) => e.querySelector('b').textContent + ' ' + (e.querySelector('.fb-pop-fmt') || {}).textContent === k).click(), k); await sleep(700);"],
+  ['export-menu-exportshot', "await p.click('.fb-morebtn'); await new Promise((r) => setTimeout(r, 200)); await p.evaluate(() => [...document.querySelectorAll('#fb-more button')].find((e) => e.textContent.startsWith('Calendar image (PNG)')).click());",
+    "await p.click((await p.$('button[aria-controls=\"fb-dl\"]')) ? 'button[aria-controls=\"fb-dl\"]' : '.fb-morebtn'); await new Promise((r) => setTimeout(r, 200)); await p.evaluate(() => [...document.querySelectorAll('.fb-pop-export [role=\"menuitem\"]')].find((e) => e.querySelector('b').textContent + ' ' + (e.querySelector('.fb-pop-fmt') || {}).textContent === 'Calendar image PNG').click());"],
 ];
 // Linux-only plumbing that must not survive in a generated file (a pattern above stopped matching in that file).
 const LEFT = [
@@ -63,7 +71,7 @@ const LEFT = [
   ['record-2025 expectation', (l) => l.includes("'f=2021-01'") || l.includes('setSel(3, 2025)')],
   ['write into tools/', (l) => l.includes("here + 'tools/")],
   ['runs tools/ selfcheck', (l) => l.includes('node tools/selfcheck.mjs')],
-  ['old UI label in a test', (l) => l.includes("=== 'This month'") || l.includes("ratio: 'too high'") || l.includes("'guide shown on the dashboard (no anim=0)'")],
+  ['old UI label in a test', (l) => l.includes("=== 'This month'") || l.includes("ratio: 'too high'") || l.includes("'guide shown on the dashboard (no anim=0)'") || l.includes("'Calendar image (SVG)'") || l.includes("startsWith('Calendar image (PNG)')")],
 ];
 fs.rmSync(dst, { recursive: true, force: true }); fs.mkdirSync(dst, { recursive: true });
 const counts = Object.fromEntries(PATCHES.map((p) => [p[0], 0]));

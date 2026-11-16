@@ -63,12 +63,23 @@ body { overflow: hidden; }
 .fb-pop:popover-open { animation: fb-pop-in var(--dur-1) var(--ease) both; }
 @keyframes fb-pop-in { from { opacity: 0; transform: translateY(-0.25rem) scale(.98); } to { opacity: 1; transform: none; } }
 .fb-pop-zone { width: 24rem; display: flex; flex-direction: column; gap: var(--sp-2); }
-.fb-pop-menu { width: 17rem; padding: 0.375rem; display: flex; flex-direction: column; }
-.fb-pop-menu button { font: inherit; text-align: left; border: 0; background: transparent; color: var(--ink); padding: var(--sp-2) 0.625rem; border-radius: 0.375rem; cursor: pointer; display: flex; flex-direction: column; gap: 0.0625rem; min-height: 2.25rem; }
+/* Menus (Download, ⋯): as wide as the longest one-line title or detail, never narrower than 17rem nor wider than the
+   viewport minus margins. Each item: title and detail on one line each, the file format as a quiet badge on the right. */
+.fb-pop-menu { box-sizing: border-box; width: max-content; min-width: min(17rem, calc(100vw - 1rem)); max-width: calc(100vw - 1rem); padding: 0.375rem; display: flex; flex-direction: column; }
+.fb-pop-menu button { font: inherit; text-align: left; border: 0; background: transparent; color: var(--ink); padding: var(--sp-2) 0.625rem; border-radius: 0.375rem; cursor: pointer; display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: var(--sp-3); row-gap: 0.0625rem; align-items: center; align-content: center; min-height: 2.25rem; }
 .fb-pop-menu button:hover, .fb-pop-menu button:focus-visible { background: var(--quiet); }
 .fb-pop-menu button:disabled { color: var(--ink-disabled); cursor: default; }
+/* Titles never wrap. A detail line stays on one line wherever the viewport allows (the menu grows to fit it); on the
+   narrowest phones it wraps rather than clips. */
+.fb-pop-menu button > b, .fb-pop-menu button > span { grid-column: 1; min-width: 0; }
+.fb-pop-menu button > b { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .fb-pop-menu b { font-size: var(--fs-3); font-weight: 600; }
 .fb-pop-menu span { font-size: var(--fs-1); color: var(--ink-2); }
+.fb-pop-fmt { grid-column: 2; grid-row: 1 / span 2; font-style: normal; font-size: var(--fs-1); font-weight: 600; letter-spacing: .04em; line-height: 1.35; color: var(--ink-2); min-width: 2.5rem; text-align: center; padding: 0.0625rem 0.3125rem; border-radius: 0.25rem; box-shadow: inset 0 0 0 1px var(--edge); }
+.fb-pop-menu button:disabled .fb-pop-fmt { color: var(--ink-disabled); }
+.fb-pop-grp { display: flex; flex-direction: column; }
+.fb-pop-grp > .fb-pop-k { padding: var(--sp-1) 0.625rem 0.125rem; }
+.fb-pop-menu .fb-pop-meta { box-sizing: border-box; width: 0; min-width: 100%; }
 .fb-pop-k { font-size: var(--fs-1); font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: var(--ink-2); padding: var(--sp-1) 0.625rem 0; }
 .fb-pop-zone .fb-pop-k { padding: var(--sp-1) 0 0; }
 .fb-pop-sep { height: 1px; background: var(--rule); margin: var(--sp-1) 0; }

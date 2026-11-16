@@ -7,6 +7,10 @@ import { outlines } from './tools/outlines.mjs';
 import { loadTiles } from './tools/tiles.mjs';
 import { scaleCss } from './tools/cssscale.mjs';
 const here = path.dirname(fileURLToPath(import.meta.url));
+// The mark (concept A, docs/logo/concept-a.svg): one path, used by the boot shell and the favicon (the app draws it in Mark(), src/App.jsx).
+const markPath = fs.readFileSync(here + '/docs/logo/concept-a.svg', 'utf8').match(/ d="([^"]+)"/)[1];
+const markSvg = '<svg class="fb-mark" viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><path d="' + markPath + '"/></svg>';
+const favicon = 'data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><style>path{fill:#181c21}@media (prefers-color-scheme:dark){path{fill:#e9ecef}}</style><path d="' + markPath + '"/></svg>');
 const nm = here + '/node_modules';
 const ds = here + '/ds';
 const r = await esbuild.build({
@@ -55,13 +59,14 @@ const html = `<!DOCTYPE html>
 <meta name="color-scheme" content="light">
 <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data: blob:; font-src data:; connect-src 'none'; base-uri 'none'; form-action 'none'">
 <title>FireBridge · Is the rise in fire activity real, or is it the satellite?</title>
+<link rel="icon" type="image/svg+xml" href="${favicon}">
 <meta name="description" content="FireBridge joins NASA MODIS and VIIRS fire detections on one scale, 2001–2025, for any box in Canada or Argentina. Every figure is computed in the browser from NASA FIRMS 0.5° monthly tiles. Offline prototype.">
 <script>(function(){var t=null;try{t=localStorage.getItem('fb-theme')}catch(e){}if(t!=='light'&&t!=='dark')t='light';document.documentElement.setAttribute('data-theme',t);if(t==='dark'){var m=document.querySelector('meta[name="color-scheme"]');if(m)m.setAttribute('content','dark')}})()</script>
 <style>${css}</style>
 </head>
 <body>
 <noscript>FireBridge needs JavaScript.</noscript>
-<div id="root"><div class="fb-app fb-boot" aria-busy="true"><header class="fb-top2"><div class="fb-brand"><span class="product-name">FireBridge</span></div></header><main class="fb-tabarea"><div class="fb-dashb is-strip"><section class="fb-verdict2 is-strip"><p class="fb-kicker">Is the rise real — or the satellite?</p></section><section class="fb-panel fb-mappanel"></section><section class="fb-panel fb-calpanel"></section></div></main></div></div>
+<div id="root"><div class="fb-app fb-boot" aria-busy="true"><header class="fb-top2"><div class="fb-brand">${markSvg}<span class="product-name">FireBridge</span></div></header><main class="fb-tabarea"><div class="fb-dashb is-strip"><section class="fb-verdict2 is-strip"><p class="fb-kicker">Is the rise real — or the satellite?</p></section><section class="fb-panel fb-mappanel"></section><section class="fb-panel fb-calpanel"></section></div></main></div></div>
 <script type="application/json" id="fb-record">${record}</script>
 <script type="application/json" id="fb-canada">${tile('canada')}</script>
 <script type="application/json" id="fb-argentina">${tile('argentina')}</script>

@@ -195,3 +195,19 @@ Figures are untouched: `tools/selfcheck.mjs` gives the same output before and af
 - **Left for the interface team**: the provenance badge "Real" on the raw chart of How step 1 (in `ds/`); a visible
   colour-vision mention next to the Counts legend (no room without resizing the calendar); "bars before 2012:
   estimated" in the Overview key (true only in the harmonized view, and no room at 1366).
+
+## 16. Export menus, logo and credits (owner's request, 15 November, late evening; carry into 6.2.1)
+
+- **Export menus** (`src/App.jsx`, `src/v5.css`): one shared component for both menus. Two groups, "This zone"
+  (Series, Calendar image SVG, Calendar image PNG, Map layer) and "Real FIRMS hotspots" (one item per embedded file,
+  with its number of points and size computed from the file, then "Another area or period…"); the format is a small
+  badge on the right, every title fits on one line. The ⋯ menu no longer repeats the exports where the Download
+  button is shown (Calendar tab, width ≥ 1024); elsewhere it keeps them, with the same grouped layout.
+  Export contents and file names are unchanged. A map image export (PNG with its legend) was not added: no time to
+  do it properly.
+- **Logo** (`docs/logo/`): concept A, "flame rising from bridge arch", one colour (ink), replaces the two-bars mark in
+  `Mark()` (`src/App.jsx`); the old shape rules are removed from `src/app.css`; `build.mjs` now puts the mark in the
+  first-paint shell (the wordmark no longer jumps when the app mounts) and adds an inline `data:` SVG favicon.
+- **Credits** (`src/Method.jsx`, About and credits): "Team BlackCoffeeOnly: Yasmine Lounaci and Mouloud Serir."
+- **Tests** (`tools/` untouched; patches in `scripts/winport.mjs`): `interact.mjs` and `exportshot.mjs` find the
+  export items by title and badge in the menu that offers them.

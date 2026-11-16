@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
+  <!-- The current mark, from src/App.jsx Mark() with the styles of src/app.css (.fb-mark). -->
+  <rect x="2.5" y="10" width="6.5" height="10.5" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.6"/>
+  <rect x="15" y="5" width="6.5" height="15.5" rx="1.5" fill="currentColor"/>
+  <path d="M5.75 7.5 Q12 1.5 18.25 2.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+</svg>

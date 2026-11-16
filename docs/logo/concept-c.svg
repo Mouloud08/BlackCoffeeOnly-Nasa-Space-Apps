@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
+  <!-- C · Level deck: one deck carried level by two piers, MODIS hollow and VIIRS solid. -->
+  <rect x="2" y="4" width="20" height="4" rx="1" fill="currentColor"/>
+  <rect x="4" y="11" width="5" height="10" rx="0.5" fill="none" stroke="currentColor" stroke-width="2"/>
+  <rect x="14" y="10" width="7" height="12" rx="1" fill="currentColor"/>
+</svg>
