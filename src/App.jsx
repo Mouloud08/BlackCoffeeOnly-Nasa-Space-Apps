@@ -19,7 +19,7 @@ import { Method } from './Method.jsx';
 import { BoxFields } from './Picker.jsx';
 import { boxCover } from './geo.js';
 import { Pop, navKeys, useTransitionRunner } from './ui.jsx';
-import { seriesCsv, calendarSvg, downloadSvg, downloadPng, hotspotText, fileStem, mapCsv } from './exports.js';
+import { seriesCsv, calendarSvg, downloadSvg, downloadPng, hotspotText, fileStem, mapCsv, downloadMapPng } from './exports.js';
 import { cx, reduced, useWidth, useHeight, useTheme, copyText, downloadBlob, Icon, IC } from './util.jsx';
 import { LANG, LANGS, langUrl } from './lang.js';
 
@@ -63,6 +63,7 @@ function ExportItems({ go, close, disabled }) {
         <MenuItem title="Calendar image" sub="The calendar as shown" fmt="SVG" disabled={disabled} onClick={() => go('svg')} />
         <MenuItem title="Calendar image" sub="The same drawing, 2× pixels" fmt="PNG" disabled={disabled} onClick={() => go('png')} />
         <MenuItem title="Map layer" sub="One row per 0.5° place, with provenance" fmt="CSV" onClick={() => go('map')} />
+        <MenuItem title="Map image" sub="The map as shown" fmt="PNG" onClick={() => go('mappng')} />
       </div>
       <div className="fb-pop-sep" role="separator" />
       <div role="group" aria-label="Real FIRMS hotspots" className="fb-pop-grp">
@@ -212,7 +213,7 @@ function ZoneButton({ data, country, box, zoneName, onPick, compact }) {
 // ⋯ menu leaves them out.
 function DownloadMenu({ onExport, disabled, compact }) {
   return (
-    <Pop id="fb-dl" ariaLabel={'Download: series CSV, calendar image, map layer' + (Object.keys(HOTSPOT_FILES).length ? ', FIRMS hotspots' : '')} btnClass="fb-dlbtn" panelClass="fb-pop-menu fb-pop-export" align="end" menu label={<><Icon d={IC.dl} />{!compact && <span>Download</span>}</>}>
+    <Pop id="fb-dl" ariaLabel={'Download: series CSV, calendar image, map layer, map image' + (Object.keys(HOTSPOT_FILES).length ? ', FIRMS hotspots' : '')} btnClass="fb-dlbtn" panelClass="fb-pop-menu fb-pop-export" align="end" menu label={<><Icon d={IC.dl} />{!compact && <span>Download</span>}</>}>
       {(close) => <ExportItems go={(k) => { close(); onExport(k); }} close={close} disabled={disabled} />}
     </Pop>
   );
@@ -444,6 +445,8 @@ export function App() {
   // same export list, so the exports live in exactly one place.
   const dlShown = !phone && w >= 1024;
   const onExport = (k) => {
+    // Map image: redrawn from the data (the map need not be on screen: the view shown, or the one the map opens on).
+    if (k === 'mappng' && S && C) { downloadMapPng('firebridge_map_' + dCountry + '_' + st.layer + '_' + (series === 'harmonized' && harmOK ? 'harmonized' : 'raw') + '.png', { C, S, country: dCountry, box: st.country === dCountry ? st.box : dBox, layer: st.layer, harm: series === 'harmonized' && harmOK, theme, sel: st.sel, zoneName }); return; }
     if (k === 'map' && S) { downloadBlob('firebridge_map_' + st.country + '_' + st.layer + '.csv', new Blob([mapCsv(S, st, series, monthKey(st.sel), data[st.country])], { type: 'text/csv' })); return; }
     if (!Z || empty) return;
     if (k === 'csv') downloadBlob(stem + '.csv', new Blob([seriesCsv(Z, st, zoneName, reference)], { type: 'text/csv' }));

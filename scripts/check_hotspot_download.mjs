@@ -6,7 +6,10 @@
 //   - Calendar tab at 390 px (phone): no Download button; the ⋯ menu offers them.
 // The item title is derived from the file name ("la-rioja-2024-08" → "La Rioja · Aug 2024"; an unknown name is shown
 // as is); its detail line gives the number of data rows and the size, both checked against the file on disk. Also
-// downloads the Series CSV for both countries (kept for inspection). Exit 1 on any failure.
+// downloads the Series CSV for both countries (kept for inspection), and the Map image PNG ("This zone" has five items:
+// Series CSV, Calendar image SVG, Calendar image PNG, Map layer CSV, Map image PNG) for both countries from the Calendar
+// tab and from a tab without the map (Evidence): a real PNG of plausible size, not blank (many distinct colours).
+// Exit 1 on any failure.
 // Usage: node scripts/check_hotspot_download.mjs [path/to/firebridge.html]
 import puppeteer from 'puppeteer-core';
 import fs from 'fs';
@@ -92,7 +95,10 @@ for (const [mname, hash, w, h, trig, id] of OFFERS) {
   const list = await items(p, trig, id); await p.keyboard.press('Escape'); await sleep(200);
   if (!list) { check(false, mname, '(menu button not found)'); await p.close(); continue; }
   const zone = list.filter((i) => i.group === 'This zone').map((i) => i.title + ' ' + i.fmt);
-  check(['Series CSV', 'Calendar image SVG', 'Calendar image PNG', 'Map layer CSV'].every((t) => zone.includes(t)), mname, 'group "This zone": ' + zone.join(' / '));
+  const want5 = ['Series CSV', 'Calendar image SVG', 'Calendar image PNG', 'Map layer CSV', 'Map image PNG'];
+  check(zone.length === 5 && want5.every((t, i) => zone[i] === t), mname, 'group "This zone" (five items, in order): ' + zone.join(' / '));
+  const mi = list.find((i) => i.group === 'This zone' && i.title === 'Map image');
+  check(!!mi && mi.sub === 'The map as shown' && mi.fmt === 'PNG', mname, 'item "Map image" · "The map as shown" · PNG', mi ? '(shown: "' + mi.sub + '")' : '(not found)');
   const real = list.filter((i) => i.group === 'Real FIRMS hotspots');
   check(real.some((i) => i.title === 'Another area or period…' && i.sub === 'How to request the points from FIRMS'), mname, 'request item "Another area or period…" in "Real FIRMS hotspots"');
   check(!list.some((i) => /^Raw hotspots|^FIRMS hotspots \(CSV\)|^Hotspots for this box/.test(i.title)), mname, 'no old label left');
@@ -116,6 +122,24 @@ for (const c of ['canada', 'argentina']) {
   let got = false;
   for (let t = 0; ok && !got && t < 20000; t += 250) { got = fs.readdirSync(dl).some((x) => !before.has(x) && x.endsWith('.csv')); if (!got) await sleep(250); }
   check(got, 'series CSV downloaded for ' + c, ok ? '' : '(menu item not found)');
+  await p.close();
+}
+// 4. Map image PNG: Download menu on the Calendar tab (map on screen) and on the Evidence tab (map not mounted).
+for (const [c, tab] of [['canada', 'dash'], ['argentina', 'dash'], ['canada', 'evidence'], ['argentina', 'evidence']]) {
+  const p = await open('tab=' + tab + '&z=' + c + '&l=rec&v=harmonized', 1440, 900);
+  const name = 'firebridge_map_' + c + '_rec_harmonized.png', got = path.join(dl, name);
+  fs.rmSync(got, { force: true });
+  const ok = await clickItem(p, DL, 'fb-dl', 'Map image');
+  const there = ok && (await waitFile(got));
+  let facts = null;
+  if (there) {
+    const buf = fs.readFileSync(got);
+    const sig = buf.subarray(0, 8).equals(Buffer.from([137, 80, 78, 71, 13, 10, 26, 10])) && buf.subarray(12, 16).toString('latin1') === 'IHDR';
+    const w = sig ? buf.readUInt32BE(16) : 0, h = sig ? buf.readUInt32BE(20) : 0;
+    const colours = sig ? await p.evaluate(async (b64) => { const img = new Image(); img.src = 'data:image/png;base64,' + b64; await img.decode(); const cv = document.createElement('canvas'); cv.width = img.width; cv.height = img.height; const g = cv.getContext('2d'); g.drawImage(img, 0, 0); const d = g.getImageData(0, 0, cv.width, cv.height).data; const set = new Set(); for (let i = 0; i < d.length; i += 4 * 5) set.add((d[i] << 16) | (d[i + 1] << 8) | d[i + 2]); return set.size; }, buf.toString('base64')) : 0;
+    facts = { sig, w, h, colours, bytes: buf.length };
+  }
+  check(!!facts && facts.sig && facts.w >= 1000 && facts.w <= 8000 && facts.h >= 800 && facts.h <= 8000 && facts.colours > 50 && facts.bytes > 20000, 'map image PNG for ' + c + ' from the ' + tab + ' tab', !ok ? '(menu item not found)' : facts ? JSON.stringify(facts) : '(no file)');
   await p.close();
 }
 console.log('downloaded:', fs.readdirSync(dl).join(', '));

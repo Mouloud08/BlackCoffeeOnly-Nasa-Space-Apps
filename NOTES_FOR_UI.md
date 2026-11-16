@@ -203,8 +203,12 @@ Figures are untouched: `tools/selfcheck.mjs` gives the same output before and af
   with its number of points and size computed from the file, then "Another area or period…"); the format is a small
   badge on the right, every title fits on one line. The ⋯ menu no longer repeats the exports where the Download
   button is shown (Calendar tab, width ≥ 1024); elsewhere it keeps them, with the same grouped layout.
-  Export contents and file names are unchanged. A map image export (PNG with its legend) was not added: no time to
-  do it properly.
+  Export contents and file names are unchanged. A map image export was added later the same evening (22:30): fifth
+  item of "This zone", "Map image · The map as shown · PNG" (key `mappng`). `paintMap()` is now exported from
+  `src/MapPanel.jsx` and reused by `mapPng()` / `downloadMapPng()` in `src/exports.js`: the current layer, view and
+  zone outline redrawn at 2× on the theme's surface, with a caption strip (zone, layer, view, colour key, period,
+  source). The caption is English in every language build, like the other exports. Checked by
+  `scripts/check_hotspot_download.mjs` (five items, valid PNG). Carry into 6.2.1.
 - **Logo** (`docs/logo/`): concept A, "flame rising from bridge arch", one colour (ink), replaces the two-bars mark in
   `Mark()` (`src/App.jsx`); the old shape rules are removed from `src/app.css`; `build.mjs` now puts the mark in the
   first-paint shell (the wordmark no longer jumps when the app mounts) and adds an inline `data:` SVG favicon.

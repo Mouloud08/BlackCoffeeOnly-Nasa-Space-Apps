@@ -19,7 +19,7 @@ import { Method } from './Method.jsx';
 import { BoxFields } from './Picker.jsx';
 import { boxCover } from './geo.js';
 import { Pop, navKeys, useTransitionRunner } from './ui.jsx';
-import { seriesCsv, calendarSvg, downloadSvg, downloadPng, hotspotText, fileStem, mapCsv } from './exports.js';
+import { seriesCsv, calendarSvg, downloadSvg, downloadPng, hotspotText, fileStem, mapCsv, downloadMapPng } from './exports.js';
 import { cx, reduced, useWidth, useHeight, useTheme, copyText, downloadBlob, Icon, IC } from './util.jsx';
 import { LANG, LANGS, langUrl } from './lang.js';
 import { num, dec, MONTHS_SHORT_L, endLabelL, tm } from './l10n.js';
@@ -66,6 +66,7 @@ function ExportItems({ go, close, disabled }) {
         <MenuItem title="Imagen del calendario" sub="El calendario tal como se ve" fmt="SVG" disabled={disabled} onClick={() => go('svg')} />
         <MenuItem title="Imagen del calendario" sub="El mismo dibujo, 2× píxeles" fmt="PNG" disabled={disabled} onClick={() => go('png')} />
         <MenuItem title="Capa del mapa" sub="Una fila por celda de 0,5°, con procedencia" fmt="CSV" onClick={() => go('map')} />
+        <MenuItem title="Imagen del mapa" sub="El mapa tal como se muestra" fmt="PNG" onClick={() => go('mappng')} />
       </div>
       <div className="fb-pop-sep" role="separator" />
       <div role="group" aria-label="Focos de calor FIRMS reales" className="fb-pop-grp">
@@ -215,7 +216,7 @@ function ZoneButton({ data, country, box, zoneName, onPick, compact }) {
 // ⋯ menu leaves them out.
 function DownloadMenu({ onExport, disabled, compact }) {
   return (
-    <Pop id="fb-dl" ariaLabel={'Descargar: serie CSV, imagen del calendario, capa del mapa' + (Object.keys(HOTSPOT_FILES).length ? ', focos de calor FIRMS' : '')} btnClass="fb-dlbtn" panelClass="fb-pop-menu fb-pop-export" align="end" menu label={<><Icon d={IC.dl} />{!compact && <span>Descargar</span>}</>}>
+    <Pop id="fb-dl" ariaLabel={'Descargar: serie CSV, imagen del calendario, capa del mapa, imagen del mapa' + (Object.keys(HOTSPOT_FILES).length ? ', focos de calor FIRMS' : '')} btnClass="fb-dlbtn" panelClass="fb-pop-menu fb-pop-export" align="end" menu label={<><Icon d={IC.dl} />{!compact && <span>Descargar</span>}</>}>
       {(close) => <ExportItems go={(k) => { close(); onExport(k); }} close={close} disabled={disabled} />}
     </Pop>
   );
@@ -448,6 +449,8 @@ export function App() {
   // same export list, so the exports live in exactly one place.
   const dlShown = !phone && w >= 1024;
   const onExport = (k) => {
+    // Map image: redrawn from the data (the map need not be on screen: the view shown, or the one the map opens on).
+    if (k === 'mappng' && S && C) { downloadMapPng('firebridge_map_' + dCountry + '_' + st.layer + '_' + (series === 'harmonized' && harmOK ? 'harmonized' : 'raw') + '.png', { C, S, country: dCountry, box: st.country === dCountry ? st.box : dBox, layer: st.layer, harm: series === 'harmonized' && harmOK, theme, sel: st.sel, zoneName }); return; }
     if (k === 'map' && S) { downloadBlob('firebridge_map_' + st.country + '_' + st.layer + '.csv', new Blob([mapCsv(S, st, series, monthKey(st.sel), data[st.country])], { type: 'text/csv' })); return; }
     if (!Z || empty) return;
     if (k === 'csv') downloadBlob(stem + '.csv', new Blob([seriesCsv(Z, st, zoneNameEn, reference)], { type: 'text/csv' }));

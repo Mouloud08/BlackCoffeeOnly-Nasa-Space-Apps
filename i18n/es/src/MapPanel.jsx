@@ -24,7 +24,7 @@ export const LAYERS = [
 ];
 const snapDown = (v) => Math.floor(v * 2 + 1e-9) / 2, snapUp = (v) => Math.ceil(v * 2 - 1e-9) / 2;
 export const RATIO_BREAKS = [1.5, 2, 2.5, 3, 4];
-const RATIO_TOK = [0, 2, 3, 5, 6, 8]; // --civ-* (cividis family, passes tools/cvd.mjs)
+export const RATIO_TOK = [0, 2, 3, 5, 6, 8]; // --civ-* (cividis family, passes tools/cvd.mjs)
 const ratioClass = (r) => { let k = 0; RATIO_BREAKS.forEach((b) => { if (r >= b) k++; }); return k; };
 const fx = (r) => formatDecimal(r, r < 10 ? 1 : 0) + '×';
 const P1 = (x) => (x == null ? '—' : Math.round(x * 100) + PS);
@@ -75,6 +75,93 @@ function MapWait({ country }) {
       <svg viewBox={(-pw) + ' ' + (-ph) + ' ' + (W + 2 * pw) + ' ' + (H + 2 * ph)} preserveAspectRatio="xMidYMid meet"><path d={ringsPathP(o.self, o.q, P)} /></svg>
     </div>
   );
+}
+
+// For the map image export (src/exports.js mapPng), read only: the view and size of the map on screen (cur, null when
+// the map panel is not mounted) and the last size it had (size). The panel itself never reads them.
+export const MAP_LIVE = { cur: null, size: null };
+export { proj };
+// The same frame rules as MapView (data extent + fit, a box at ~22 % of the short side, clamped): the view the map opens
+// on for this zone at a given size. Used by the export when the map is not on screen.
+export function mapExtent(S, bb) {
+  const E = S.cells.filter((c) => c.eligible);
+  const r = E.length ? { s: Math.min(...E.map((c) => c.lat)) - 1, n: Math.max(...E.map((c) => c.lat)) + 1.5, w: Math.min(...E.map((c) => c.lon)) - 1, e: Math.max(...E.map((c) => c.lon)) + 1.5 } : bb;
+  const ext = { s: Math.max(bb.s - 1, r.s), n: Math.min(bb.n + 1, r.n), w: Math.max(bb.w - 1, r.w), e: Math.min(bb.e + 1, r.e) };
+  return { ext, k: Math.cos(((ext.s + ext.n) / 2) * Math.PI / 180) };
+}
+export function openingView(S, bb, box, whole, w, h) {
+  const { ext, k } = mapExtent(S, bb), padF = 0.03;
+  const fit = { cx: (ext.w + ext.e) / 2, cy: (ext.s + ext.n) / 2, sc: Math.max(0.5, Math.min((w * (1 - 2 * padF)) / ((ext.e - ext.w) * k), (h * (1 - 2 * padF)) / (ext.n - ext.s))) };
+  const hasData = S.cells.some((c) => c.eligible && c.lat + 0.5 > box.s && c.lat < box.n && c.lon + 0.5 > box.w && c.lon < box.e);
+  if (whole || !hasData) return fit;
+  const side = Math.max(box.n - box.s, (box.e - box.w) * k), v = { cx: (box.w + box.e) / 2, cy: (box.s + box.n) / 2, sc: (0.22 * Math.min(w, h)) / side };
+  if (v.sc < fit.sc) return fit;
+  const sc = Math.min(fit.sc * 40, Math.max(fit.sc, v.sc)), hw = w / 2 / (k * sc), hh = h / 2 / sc;
+  const cx0 = Math.min(Math.max(v.cx, ext.w - hw * 0.6), ext.e + hw * 0.6), cy0 = Math.min(Math.max(v.cy, ext.s - hh * 0.6), ext.n + hh * 0.6);
+  return sc <= fit.sc + 1e-9 ? fit : { cx: cx0, cy: cy0, sc };
+}
+
+// The map bitmap of a view (projection PD, size {w, h}): outlines, the layer's places, borders. Shared by the panel's
+// canvas and the map image export (src/exports.js mapPng), so the export draws exactly what the panel draws.
+export function paintMap(g, { PD, size, k, S, ML, layer, harm, theme, detBreaks, blocks, BL, paths }) {
+  const land = cssColor('--map-land'), border = cssColor('--map-border'), ink = cssColor('--ink'), ink3 = cssColor('--ink-3'), ink2 = cssColor('--ink-2'), other = cssColor('--map-other');
+  if (paths) { g.fillStyle = other; g.fill(paths.others); g.fillStyle = land; g.fill(paths.self); }
+  const P0 = PD, cw = 0.5 * k * P0.sc, ch = 0.5 * P0.sc;
+  const gap = cw > 5 ? 0.6 : cw > 2.5 ? 0.35 : 0;
+  const rect = (c0) => [P0.x(c0.lon) + gap, P0.y(c0.lat + 0.5) + gap, Math.max(0.8, cw - 2 * gap), Math.max(0.8, ch - 2 * gap)];
+  const vis = (c0) => P0.x(c0.lon + 0.5) >= -20 && P0.x(c0.lon) <= size.w + 20 && P0.y(c0.lat) >= -20 && P0.y(c0.lat + 0.5) <= size.h + 20;
+  if (layer === 'rec') {
+    const cB = cssColor('--rec-before'), cS = cssColor('--rec-since'), nbc = cssColor('--rec-nb');
+    if (blocks) {
+      const bw = k * P0.sc, bh = P0.sc, gp = bw > 4 ? 0.5 : 0;
+      const cur = harm ? BL.harm : BL.raw;
+      const seen = new Set();
+      for (const c0 of S.cells) { if (!c0.high) continue; const kk = Math.floor(c0.i / 2) * 100000 + Math.floor(c0.j / 2); if (cur.has(kk) || seen.has(kk)) continue; seen.add(kk); g.fillStyle = nbc; g.fillRect(P0.x(Math.floor(c0.j / 2)) + gp, P0.y(Math.floor(c0.i / 2) + 1) + gp, Math.max(1, bw - 2 * gp), Math.max(1, bh - 2 * gp)); }
+      for (const b of cur.values()) {
+        const x = P0.x(b.lon) + gp, y = P0.y(b.lat + 1) + gp, w = Math.max(1, bw - 2 * gp), h = Math.max(1, bh - 2 * gp);
+        if (x + w < 0 || x > size.w || y + h < 0 || y > size.h) continue;
+        if (b.era === 'mixed') { g.fillStyle = cB; g.fillRect(x, y, w / 2, h); g.fillStyle = cS; g.fillRect(x + w / 2, y, w / 2, h); continue; }
+        g.globalAlpha = harm && b.depends * 2 > b.n ? 0.5 : 1;
+        g.fillStyle = b.era === 'since' ? cS : cB; g.fillRect(x, y, w, h);
+        g.globalAlpha = 1;
+      }
+    } else {
+      for (const c0 of S.cells) {
+        if (!c0.eligible || !vis(c0)) continue;
+        const [x, y, w, h] = rect(c0);
+        if (c0.high) { g.fillStyle = nbc; g.fillRect(x, y, w, h); continue; }
+        g.globalAlpha = harm && c0.depends ? 0.5 : 1;
+        g.fillStyle = (harm ? c0.eraHarm : c0.eraRaw) === 'since' ? cS : cB; g.fillRect(x, y, w, h);
+        g.globalAlpha = 1;
+      }
+    }
+  } else if (layer === 'ratio') {
+    const ramp = RATIO_TOK.map((t) => liftColor(cssColor('--civ-' + t), land, ink, theme === 'dark' ? 3 : 1)); // dark: lowest class lifted to 3:1 against the land
+    for (const c0 of S.cells) {
+      if (!c0.eligible || !vis(c0)) continue;
+      g.globalAlpha = c0.rcase === 'country' ? 0.35 : 1;
+      const [x, y, w, h] = rect(c0);
+      g.fillStyle = ramp[ratioClass(c0.ratio)]; g.fillRect(x, y, w, h);
+      if (c0.high) { g.globalAlpha = 1; g.strokeStyle = ink; g.lineWidth = 1.5; g.strokeRect(x + 0.75, y + 0.75, Math.max(0.5, w - 1.5), Math.max(0.5, h - 1.5)); }
+    }
+    g.globalAlpha = 1;
+  } else if (layer === 'month' && ML) {
+    for (const c0 of S.cells) {
+      if (!c0.eligible || !vis(c0)) continue;
+      const cl = ML.cls.get(cellKey(c0.i, c0.j)); const [x, y, w, h] = rect(c0);
+      if (cl === 'record') { g.fillStyle = ink; g.fillRect(x, y, w, h); }
+      else if (cl === 'top3') { g.fillStyle = ink3; g.globalAlpha = 0.6; g.fillRect(x, y, w, h); g.globalAlpha = 1; }
+      else if (cl === 'active') { g.fillStyle = ink2; const r = Math.max(0.7, Math.min(w, h) / 5); g.beginPath(); g.arc(x + w / 2, y + h / 2, r, 0, 2 * Math.PI); g.fill(); }
+    }
+  } else if (layer === 'det') {
+    const ramp = Array.from({ length: 9 }, (_, i) => cssColor('--det-' + i)); // single hue, not the calendar ramp (floor 3:1 via the tokens)
+    for (const c0 of S.cells) {
+      if (!(c0.det > 0) || !vis(c0)) continue;
+      const kk = countClass(c0.det, detBreaks); if (kk < 0) continue;
+      g.fillStyle = ramp[kk]; g.fillRect(...rect(c0));
+    }
+  }
+  if (paths) { g.lineWidth = 0.8; g.strokeStyle = border; g.stroke(paths.others); g.lineWidth = 1; g.stroke(paths.self); }
 }
 
 export const MapPanel = memo(function MapPanel({ C, S, country, box, onBox, harm, rawOnly, layer, setLayer, sel, theme, phone, hlYear, onHoverYear, compactLegend, onMethod, narrow, monthPicked }) {
@@ -315,65 +402,11 @@ function MapView({ C, S, ML, detBreaks, country, box, whole, onBox: onBox0, noFl
     const dpr = window.devicePixelRatio || 1;
     c.width = Math.round(size.w * dpr); c.height = Math.round(size.h * dpr);
     const g = c.getContext('2d'); g.setTransform(dpr, 0, 0, dpr, 0, 0); g.clearRect(0, 0, size.w, size.h);
-    const land = cssColor('--map-land'), border = cssColor('--map-border'), ink = cssColor('--ink'), ink3 = cssColor('--ink-3'), ink2 = cssColor('--ink-2'), other = cssColor('--map-other');
-    if (paths) { g.fillStyle = other; g.fill(paths.others); g.fillStyle = land; g.fill(paths.self); }
-    const P0 = PD, cw = 0.5 * k * P0.sc, ch = 0.5 * P0.sc;
-    const gap = cw > 5 ? 0.6 : cw > 2.5 ? 0.35 : 0;
-    const rect = (c0) => [P0.x(c0.lon) + gap, P0.y(c0.lat + 0.5) + gap, Math.max(0.8, cw - 2 * gap), Math.max(0.8, ch - 2 * gap)];
-    const vis = (c0) => P0.x(c0.lon + 0.5) >= -20 && P0.x(c0.lon) <= size.w + 20 && P0.y(c0.lat) >= -20 && P0.y(c0.lat + 0.5) <= size.h + 20;
-    if (layer === 'rec') {
-      const cB = cssColor('--rec-before'), cS = cssColor('--rec-since'), nbc = cssColor('--rec-nb');
-      if (blocks) {
-        const bw = k * P0.sc, bh = P0.sc, gp = bw > 4 ? 0.5 : 0;
-        const cur = harm ? BL.harm : BL.raw;
-        const seen = new Set();
-        for (const c0 of S.cells) { if (!c0.high) continue; const kk = Math.floor(c0.i / 2) * 100000 + Math.floor(c0.j / 2); if (cur.has(kk) || seen.has(kk)) continue; seen.add(kk); g.fillStyle = nbc; g.fillRect(P0.x(Math.floor(c0.j / 2)) + gp, P0.y(Math.floor(c0.i / 2) + 1) + gp, Math.max(1, bw - 2 * gp), Math.max(1, bh - 2 * gp)); }
-        for (const b of cur.values()) {
-          const x = P0.x(b.lon) + gp, y = P0.y(b.lat + 1) + gp, w = Math.max(1, bw - 2 * gp), h = Math.max(1, bh - 2 * gp);
-          if (x + w < 0 || x > size.w || y + h < 0 || y > size.h) continue;
-          if (b.era === 'mixed') { g.fillStyle = cB; g.fillRect(x, y, w / 2, h); g.fillStyle = cS; g.fillRect(x + w / 2, y, w / 2, h); continue; }
-          g.globalAlpha = harm && b.depends * 2 > b.n ? 0.5 : 1;
-          g.fillStyle = b.era === 'since' ? cS : cB; g.fillRect(x, y, w, h);
-          g.globalAlpha = 1;
-        }
-      } else {
-        for (const c0 of S.cells) {
-          if (!c0.eligible || !vis(c0)) continue;
-          const [x, y, w, h] = rect(c0);
-          if (c0.high) { g.fillStyle = nbc; g.fillRect(x, y, w, h); continue; }
-          g.globalAlpha = harm && c0.depends ? 0.5 : 1;
-          g.fillStyle = (harm ? c0.eraHarm : c0.eraRaw) === 'since' ? cS : cB; g.fillRect(x, y, w, h);
-          g.globalAlpha = 1;
-        }
-      }
-    } else if (layer === 'ratio') {
-      const ramp = RATIO_TOK.map((t) => liftColor(cssColor('--civ-' + t), land, ink, theme === 'dark' ? 3 : 1)); // dark: lowest class lifted to 3:1 against the land
-      for (const c0 of S.cells) {
-        if (!c0.eligible || !vis(c0)) continue;
-        g.globalAlpha = c0.rcase === 'country' ? 0.35 : 1;
-        const [x, y, w, h] = rect(c0);
-        g.fillStyle = ramp[ratioClass(c0.ratio)]; g.fillRect(x, y, w, h);
-        if (c0.high) { g.globalAlpha = 1; g.strokeStyle = ink; g.lineWidth = 1.5; g.strokeRect(x + 0.75, y + 0.75, Math.max(0.5, w - 1.5), Math.max(0.5, h - 1.5)); }
-      }
-      g.globalAlpha = 1;
-    } else if (layer === 'month' && ML) {
-      for (const c0 of S.cells) {
-        if (!c0.eligible || !vis(c0)) continue;
-        const cl = ML.cls.get(cellKey(c0.i, c0.j)); const [x, y, w, h] = rect(c0);
-        if (cl === 'record') { g.fillStyle = ink; g.fillRect(x, y, w, h); }
-        else if (cl === 'top3') { g.fillStyle = ink3; g.globalAlpha = 0.6; g.fillRect(x, y, w, h); g.globalAlpha = 1; }
-        else if (cl === 'active') { g.fillStyle = ink2; const r = Math.max(0.7, Math.min(w, h) / 5); g.beginPath(); g.arc(x + w / 2, y + h / 2, r, 0, 2 * Math.PI); g.fill(); }
-      }
-    } else if (layer === 'det') {
-      const ramp = Array.from({ length: 9 }, (_, i) => cssColor('--det-' + i)); // single hue, not the calendar ramp (floor 3:1 via the tokens)
-      for (const c0 of S.cells) {
-        if (!(c0.det > 0) || !vis(c0)) continue;
-        const kk = countClass(c0.det, detBreaks); if (kk < 0) continue;
-        g.fillStyle = ramp[kk]; g.fillRect(...rect(c0));
-      }
-    }
-    if (paths) { g.lineWidth = 0.8; g.strokeStyle = border; g.stroke(paths.others); g.lineWidth = 1; g.stroke(paths.self); }
+    paintMap(g, { PD, size, k, S, ML, layer, harm, theme, detBreaks, blocks, BL, paths });
   }, [S, ML, PD, paths, theme, size.w, size.h, layer, harm, detBreaks, blocks, BL, k]);
+  // Read by the map image export only (MAP_LIVE above): the view shown now, its size, and whether 1° blocks are drawn.
+  useEffect(() => { MAP_LIVE.cur = view && size.w && size.h ? { country, view, w: size.w, h: size.h, blocks } : null; if (size.w && size.h) MAP_LIVE.size = { w: size.w, h: size.h }; });
+  useEffect(() => () => { MAP_LIVE.cur = null; }, []);
 
   // Linked highlight: places whose record (current series) is the hovered calendar year; everything else dimmed.
   useLayoutEffect(() => {
