@@ -4,7 +4,8 @@ Paste each section into the field of the same name on the Space Apps project pag
 the app's self-check (`node tools-win/selfcheck.mjs`, record ending October 2026), except the raw point counts in
 "The problem", which are counted from the two FIRMS extracts embedded in the app (`data/hotspots/`), and the
 Argentina burned-area comparison, printed by `node scripts/check_argentina_official.mjs` from
-`data/official/argentina_area_burned.json`, and the method tests, printed by `node research/seasonal.mjs` and `node research/spatial.mjs`.
+`data/official/argentina_area_burned.json`, the national-statistics comparison (`node scripts/check_argentina_national.mjs`), and the method tests, printed by
+`node research/seasonal.mjs` and `node research/spatial.mjs`.
 
 Team BlackCoffeeOnly: Yasmine Lounaci and Mouloud Serir.
 
@@ -127,8 +128,13 @@ Clicks from the first screen (Overview). Tabs: Overview, Calendar, Evidence, How
 ### Limits we declare
 
 - Fire detections, not burned area.
-- Argentina has no ground-based check yet: its result rests on MODIS records (the detections, and a MODIS
-  burned-area product that agrees with them). National statistics are not usable for this: the open file starts in 2017.
+- Argentina has no ground-based check: its result rests on MODIS records (the detections, and a MODIS burned-area
+  product that agrees with them). We assembled Argentina's official fire statistics (Programa Nacional de Estadística
+  Forestal, 20 of the 22 years) and they cannot settle it: they add up what each province declares, with different
+  provinces missing in different years, so their 2012–2024 ÷ 2003–2011 ratio moves from 0.75× to 1.37× when a single
+  year is left out (0.85× with all years, 1.37× without 2003). On the one near-complete window (2012–2016 against
+  2009–2011) they show a rise, 1.34×, where our harmonized record shows 0.71×: three years against five, driven by
+  one province. That series neither confirms nor refutes our result (`node scripts/check_argentina_national.mjs`).
 - One pooled ratio per zone leaves a seasonal residual (Canada: March 4.10 against 2.10), disclosed, not corrected in
   the app. We measured the correction (see "What we would do next").
 - Places with a local ratio above 4× (62 in Canada, 27 in Argentina) are not harmonized; cause not investigated.
@@ -141,8 +147,8 @@ Clicks from the first screen (Overview). Tabs: Overview, Calendar, Evidence, How
 
 ### What we would do next
 
-- **First, a ground-based series for Argentina**: national fire statistics rebuilt back to 2003 from the yearly
-  reports, compared the same way as Canada's official area burned.
+- **First, a usable ground-based series for Argentina**: the national statistics we assembled are too uneven
+  (provinces missing by year); a check needs province-level series restricted to provinces that reported every year.
 - **A seasonal correction, measured but not yet in the app.** One VIIRS ÷ MODIS ratio per calendar month, pulled
   toward the single ratio when a month has few fires. Tested on years left out one at a time, it predicts VIIRS
   months better than today's single ratio: median monthly error 16.5% → 11.7% in Canada and 11.7% → 6.9% in
