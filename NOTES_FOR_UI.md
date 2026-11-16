@@ -235,3 +235,14 @@ Figures are untouched: `tools/selfcheck.mjs` gives the same output before and af
 - **Reviewer's remarks left open**: a box over water (Hudson Bay) answers "outside Canada"; an inverted coordinate
   box silently returns to the whole country; calendar labels are clipped at 900 × 700; the Evidence month panel
   title can name the peak month while a "Latest" chip sits under it; no independent series for Argentina.
+
+## 18. Verdict strip at ≥ 1680: the official check is shown twice (owner's remark, 15 November, 22:10; not changed)
+
+- **Screen:** Calendar tab, All of Canada, width ≥ 1680 (the strip with the four-measure ladder).
+- **What:** the ladder row "Area burned, 2012–24 · 1.9×" and the check pill "Matches official area burned 2012–2024
+  (1.9×)" say the same thing side by side. Below 1680 there is no ladder, so the pill is needed there.
+- **Suggestion:** from 1680, keep in "Checks" only the robustness pill ("Still up without 2023: 1.6×") and the "See
+  the evidence" button. The pills themselves must stay: they turn amber and change wording in uncertain zones
+  ("Reverses without 2010", "Trend uncertain"), which is how the app shows that a result is fragile.
+- **Not done tonight:** the strip has a fixed height in three language builds; the change needs `tools/stripfit.mjs`
+  on each of them.

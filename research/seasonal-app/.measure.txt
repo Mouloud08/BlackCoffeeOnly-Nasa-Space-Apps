@@ -1,0 +1,66 @@
+1366x768 dash     canada    docH 768 =vh docW 1366 empty 7% map [19,203,438,379] cal [484,297,736,367] cell [25,21] verdict [18,83,1331,107]
+1366x768 dash     chilecito docH 768 =vh docW 1366 empty 7% map [19,203,438,379] cal [484,297,736,367] cell [25,21] verdict [18,83,1331,107]
+1366x768 evidence canada    docH 768 =vh docW 1366 empty 6% CLIP fb-panel.fb-evpanel 287>275
+1366x768 evidence chilecito docH 768 =vh docW 1366 empty 6% CLIP fb-panel.fb-evpanel 350>350, fb-panel.fb-evpanel 299>275
+1366x768 how      canada    docH 768 =vh docW 1366 empty 12%
+1366x768 how      chilecito docH 768 =vh docW 1366 empty 11%
+1366x768 method   canada    docH 768 docW 1366 empty 2%
+1366x768 method   chilecito docH 768 docW 1366 empty 2%
+1440x900 dash     canada    docH 900 =vh docW 1440 empty 5% map null cal [511,310,776,485] cell [26,29] verdict [19,87,1403,113]
+1440x900 dash     chilecito docH 900 =vh docW 1440 empty 5% map [20,213,461,490] cal [511,310,776,485] cell [26,29] verdict [19,87,1403,113]
+1440x900 evidence canada    docH 900 =vh docW 1440 empty 8%
+1440x900 evidence chilecito docH 900 =vh docW 1440 empty 8% CLIP fb-panel.fb-evpanel 420>420, fb-panel.fb-evpanel 335>330
+1440x900 how      canada    docH 900 =vh docW 1440 empty 12%
+1440x900 how      chilecito docH 900 =vh docW 1440 empty 12%
+1440x900 method   canada    docH 900 docW 1440 empty 2%
+1440x900 method   chilecito docH 900 docW 1440 empty 2%
+1920x1080 dash     canada    docH 1080 =vh docW 1920 empty 4% map [25,277,617,597] cal [676,383,1044,580] cell [36,35] verdict [24,101,1872,160]
+1920x1080 dash     chilecito docH 1080 =vh docW 1920 empty 4% map [25,277,617,597] cal [676,383,1044,580] cell [36,35] verdict [24,101,1872,160]
+1920x1080 evidence canada    docH 1080 =vh docW 1920 empty 7%
+1920x1080 evidence chilecito docH 1080 =vh docW 1920 empty 7% CLIP fb-panel.fb-evpanel 508>508
+1920x1080 how      canada    docH 1080 =vh docW 1920 empty 13%
+1920x1080 how      chilecito docH 1080 =vh docW 1920 empty 13%
+1920x1080 method   canada    docH 1080 docW 1920 empty 2%
+1920x1080 method   chilecito docH 1080 docW 1920 empty 2%
+2560x1440 dash     canada    docH 1440 =vh docW 2560 empty 6% map [32,307,825,904] cal [895,424,1406,888] cell [49,56] verdict [31,112,2498,178]
+2560x1440 dash     chilecito docH 1440 =vh docW 2560 empty 6% map [32,307,825,904] cal [895,424,1406,888] cell [49,56] verdict [31,112,2498,178]
+2560x1440 evidence canada    docH 1440 =vh docW 2560 empty 7%
+2560x1440 evidence chilecito docH 1440 =vh docW 2560 empty 7%
+2560x1440 how      canada    docH 1440 =vh docW 2560 empty 12%
+2560x1440 how      chilecito docH 1440 =vh docW 2560 empty 11%
+2560x1440 method   canada    docH 1440 docW 2560 empty 3%
+2560x1440 method   chilecito docH 1440 docW 2560 empty 3%
+1280x720 dash     canada    docH 720 =vh docW 1280 empty 7% map [18,201,409,334] cal [455,290,781,300] cell [26,16] verdict [17,82,1246,106]
+1280x720 dash     chilecito docH 720 =vh docW 1280 empty 7% map [18,201,409,334] cal [455,290,781,300] cell [26,16] verdict [17,82,1246,106]
+1280x720 evidence canada    docH 720 =vh docW 1280 empty 6% CLIP fb-panel.fb-evpanel 283>254
+1280x720 evidence chilecito docH 720 =vh docW 1280 empty 6% CLIP fb-panel.fb-evpanel 324>324, fb-panel.fb-evpanel 283>254
+1280x720 how      canada    docH 720 =vh docW 1280 empty 12%
+1280x720 how      chilecito docH 720 =vh docW 1280 empty 12%
+1280x720 method   canada    docH 720 docW 1280 empty 2%
+1280x720 method   chilecito docH 720 docW 1280 empty 2%
+768x1024 dash     canada    docH 1024 docW 768 empty 11% map null cal [27,435,702,459] cell [23,27] verdict [12,82,744,208]
+768x1024 dash     chilecito docH 1024 docW 768 empty 11% map null cal [27,435,702,459] cell [23,27] verdict [12,82,744,208]
+768x1024 evidence canada    docH 1024 docW 768 empty 5%
+768x1024 evidence chilecito docH 1024 docW 768 empty 4% CLIP fb-panel.fb-evpanel 310>310
+768x1024 how      canada    docH 1024 docW 768 empty 9%
+768x1024 how      chilecito docH 1024 docW 768 empty 13%
+768x1024 method   canada    docH 1024 docW 768 empty 4%
+768x1024 method   chilecito docH 1024 docW 768 empty 4%
+390x844 dash     canada    docH 844 docW 390 empty 12% map null cal [27,554,324,266] cell [9,14] verdict [12,92,366,247]
+390x844 dash     chilecito docH 844 docW 390 empty 10% map null cal [27,519,324,266] cell [9,14] verdict [12,92,366,212]
+390x844 evidence canada    docH 844 docW 390 empty 10%
+390x844 evidence chilecito docH 844 docW 390 empty 12% CLIP fb-panel.fb-evpanel 403>403
+390x844 how      canada    docH 844 docW 390 empty 13% CLIP fb-step2.is-seen 1004>1004
+390x844 how      chilecito docH 844 docW 390 empty 12% CLIP fb-step2.is-seen 990>990
+390x844 method   canada    docH 844 docW 390 empty 7%
+390x844 method   chilecito docH 844 docW 390 empty 7%
+320x640 dash     canada    docH 640 docW 320 empty 12% map null cal [27,679,254,266] cell [6,14] verdict [12,92,296,308] CLIP fb-calbody.is-settled 439>439
+320x640 dash     chilecito docH 640 docW 320 empty 12% map null cal [27,638,254,266] cell [6,14] verdict [12,92,296,267] CLIP fb-calbody.is-settled 439>439
+320x640 evidence canada    docH 640 docW 320 empty 12%
+320x640 evidence chilecito docH 640 docW 320 empty 12% CLIP fb-panel.fb-evpanel 471>471
+320x640 how      canada    docH 640 docW 320 empty 16% CLIP fb-step2.is-seen 1105>1105
+320x640 how      chilecito docH 640 docW 320 empty 14% CLIP fb-step2.is-seen 1047>1047
+320x640 method   canada    docH 640 docW 320 empty 8%
+320x640 method   chilecito docH 640 docW 320 empty 8%
+ALL HEIGHT/WIDTH CHECKS PASS
+exit 0

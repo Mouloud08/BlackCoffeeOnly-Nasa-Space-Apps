@@ -151,12 +151,15 @@ Clicks from the first screen (Overview). Tabs: Overview, Calendar, Evidence, How
 
 - **First, a usable ground-based series for Argentina**: the national statistics we assembled are too uneven
   (provinces missing by year); a check needs province-level series restricted to provinces that reported every year.
-- **A seasonal correction, measured but not yet in the app.** One VIIRS ÷ MODIS ratio per calendar month, pulled
+- **A seasonal correction, measured, and running in an experimental preview** (not in the validated app:
+  https://mouloud08.github.io/BlackCoffeeOnly-Nasa-Space-Apps/seasonal.html, labelled on every screen; its figures
+  are not the validated ones). One VIIRS ÷ MODIS ratio per calendar month, pulled
   toward the single ratio when a month has few fires. Tested on years left out one at a time, it predicts VIIRS
   months better than today's single ratio: median monthly error 16.5% → 11.7% in Canada and 11.7% → 6.9% in
   Argentina, lower in 12 of 14 and 14 of 14 left-out years; Canada's worst calendar month goes from 1.95× off to
   1.19×. The headline rises do not move (Canada 2.01×, Argentina 0.68×). It brings no clear gain in small zones, so
-  the uncertainty guard stays (`node research/seasonal.mjs`, report in `research/SEASONAL.md`).
+  the uncertainty guard stays (`node research/seasonal.mjs`, report in `research/SEASONAL.md`; the preview's
+  month factors are checked equal to that test by `node research/seasonal-app/check.mjs`).
 - **Two ideas tested and set aside** (`node research/spatial.mjs`, `research/SPATIAL.md`). Ratios that vary place by
   place did not help at the scale of a selected area (error of predicted VIIRS counts in 2° boxes, years left out one
   at a time: 15.5% → 15.2% in Canada, 9.9% → 9.7% in Argentina), so the app keeps one ratio per zone. Adding the small

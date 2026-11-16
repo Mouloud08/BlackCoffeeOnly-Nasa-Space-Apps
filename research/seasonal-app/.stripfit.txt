@@ -1,0 +1,8 @@
+1280 strip heights 106
+1366 strip heights 107
+1440 strip heights 113
+1680 strip heights 151
+1920 strip heights 160
+2560 strip heights 178
+84 checks, 0 failed
+exit 0

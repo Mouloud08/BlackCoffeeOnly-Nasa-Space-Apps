@@ -1,0 +1,190 @@
+# Seasonal preview: check against the research prototype and the validated app
+validated src/metrics.js sha256 779e37853979 (unchanged)
+preview research/seasonal-app/src/metrics.js sha256 36be6771fae1
+research/seasonal.mjs imported (342 lines of its own output captured). Baseline: ALL MATCH (ratio to 1e-9 relative; leave-one-year-out and monthly median errors to 1e-9; same month count)
+
+## All of Canada — grade A
+(a) pooled VIIRS ÷ MODIS 2.1049 validated / 2.1049 preview (identical) | τ 0.166
+| | Jan | Feb | Mar | Apr | May | Jun | Jul | Aug | Sep | Oct | Nov | Dec |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| shrunk ratio (method c) | 2.64 | 3.02 | 3.48 | 2.04 | 1.73 | 2.03 | 2.13 | 2.19 | 2.15 | 1.93 | 2.37 | 2.85 |
+| weight w | 0.93 | 0.63 | 0.75 | 0.95 | 0.98 | 0.94 | 0.94 | 0.97 | 0.99 | 0.88 | 0.95 | 0.93 |
+| factor used (w ≥ 0.5, else pooled) | 2.64 | 3.02 | 3.48 | 2.04 | 1.73 | 2.03 | 2.13 | 2.19 | 2.15 | 1.93 | 2.37 | 2.85 |
+| leave-one-year-out range | 2.61–2.72 | 2.85–3.74 | 3.27–4.13 | 2.01–2.10 | 1.70–1.75 | 1.97–2.08 | 2.06–2.16 | 2.15–2.23 | 2.12–2.17 | 1.83–1.98 | 2.34–2.41 | 2.80–2.94 |
+(* = weight below 0.5: pooled ratio; 12 of 12 months seasonally corrected)
+    = research shrinkParts: max rel. diff of the 12 shrunk ratios 0.0e+0, of the weights 0.0e+0, pooled R and τ² equal, fallback rule applied → MATCH
+(b) rise raw 4.229 / 4.229 (identical) | harmonized validated 2.009 → preview 2.011 (+0.10%) | research c (no fallback) 2.011 | MODIS alone 2.009 → preview − MODIS alone +0.10%
+(c) out-of-sample median monthly error (leave one overlap year out, n months): single ratio 16.5% (165) → month factors c 11.7% | research: 16.5% → 11.7% → MATCH (to 1e-9, same n) | with the preview fallback (w < 0.5 → pooled) 11.7%
+    worst active month out of sample: single Mar 1.95×, c Feb 1.19×, preview Feb 1.19× | research: a Mar 1.95×, c Feb 1.19×
+(e) verdict validated "robust" → preview "robust" | preview trend 2.01 without 2023 1.62, 90% 1.30–2.93 (validated 1.30–2.92)
+(f) calendar cells 2001–2011 changing colour class (harmonized view): 13 of 132 (same breaks) e.g. 2001-02 1→2, 2001-03 2→3, 2001-10 5→4, 2002-02 1→2, 2002-08 3→4, 2003-03 2→3, 2004-02 2→3, 2004-08 6→7
+
+## All of Argentina — grade A
+(a) pooled VIIRS ÷ MODIS 2.1323 validated / 2.1323 preview (identical) | τ 0.114
+| | Jan | Feb | Mar | Apr | May | Jun | Jul | Aug | Sep | Oct | Nov | Dec |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| shrunk ratio (method c) | 2.15 | 2.34 | 2.52 | 2.49 | 2.50 | 2.38 | 2.20 | 1.94 | 1.96 | 2.14 | 2.27 | 2.18 |
+| weight w | 0.69 | 0.95 | 0.94 | 0.90 | 0.99 | 0.96 | 0.98 | 0.99 | 0.98 | 0.97 | 0.85 | 0.70 |
+| factor used (w ≥ 0.5, else pooled) | 2.15 | 2.34 | 2.52 | 2.49 | 2.50 | 2.38 | 2.20 | 1.94 | 1.96 | 2.14 | 2.27 | 2.18 |
+| leave-one-year-out range | 2.09–2.23 | 2.31–2.38 | 2.48–2.56 | 2.46–2.55 | 2.49–2.52 | 2.36–2.41 | 2.19–2.23 | 1.93–1.95 | 1.95–1.98 | 2.11–2.15 | 2.20–2.31 | 2.12–2.28 |
+(* = weight below 0.5: pooled ratio; 12 of 12 months seasonally corrected)
+    = research shrinkParts: max rel. diff of the 12 shrunk ratios 0.0e+0, of the weights 0.0e+0, pooled R and τ² equal, fallback rule applied → MATCH
+(b) rise raw 1.447 / 1.447 (identical) | harmonized validated 0.681 → preview 0.684 (+0.42%) | research c (no fallback) 0.684 | MODIS alone 0.681 → preview − MODIS alone +0.42%
+(c) out-of-sample median monthly error (leave one overlap year out, n months): single ratio 11.7% (167) → month factors c 6.9% | research: 11.7% → 6.9% → MATCH (to 1e-9, same n) | with the preview fallback (w < 0.5 → pooled) 6.9%
+    worst active month out of sample: single Mar 1.20×, c Nov 1.01×, preview Nov 1.01× | research: a Mar 1.20×, c Nov 1.01×
+(e) verdict validated "robust" → preview "robust" | preview trend 0.68 without 2020 0.63, 90% 0.57–0.82 (validated 0.57–0.82)
+(f) calendar cells 2001–2011 changing colour class (harmonized view): 13 of 132 (same breaks) e.g. 2001-04 1→2, 2001-06 0→1, 2003-04 4→5, 2003-05 4→5, 2003-08 8→7, 2003-09 8→7, 2006-02 5→6, 2007-04 3→4
+
+## Boreal Québec — grade A
+(a) pooled VIIRS ÷ MODIS 2.1161 validated / 2.1161 preview (identical) | τ 0.154
+| | Jan | Feb | Mar | Apr | May | Jun | Jul | Aug | Sep | Oct | Nov | Dec |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| shrunk ratio (method c) | 2.12 | 2.12 | 2.12 | 2.35 | 1.87 | 2.08 | 2.21 | 2.30 | 1.95 | 2.12 | 2.33 | 2.12 |
+| weight w | 0.00 | 0.00 | 0.00 | 0.08 | 0.76 | 0.63 | 0.92 | 0.73 | 0.22 | 0.05 | 0.08 | 0.00 |
+| factor used (w ≥ 0.5, else pooled) | 2.12* | 2.12* | 2.12* | 2.12* | 1.87 | 2.08 | 2.21 | 2.30 | 2.12* | 2.12* | 2.12* | 2.12* |
+| leave-one-year-out range | 2.04–2.12 | 2.04–2.12 | 2.04–2.12 | 2.04–2.12 | 1.85–2.12 | 1.86–2.12 | 2.12–2.22 | 2.10–2.35 | 1.42–2.12 | 2.12–3.02 | 2.04–2.12 | 2.04–2.12 |
+(* = weight below 0.5: pooled ratio; 4 of 12 months seasonally corrected)
+    = research shrinkParts: max rel. diff of the 12 shrunk ratios 0.0e+0, of the weights 0.0e+0, pooled R and τ² equal, fallback rule applied → MATCH
+(b) rise raw 3.446 / 3.446 (identical) | harmonized validated 1.628 → preview 1.666 (+2.30%) | research c (no fallback) 1.668 | MODIS alone 1.628 → preview − MODIS alone +2.30%
+(c) out-of-sample median monthly error (leave one overlap year out, n months): single ratio 16.9% (20) → month factors c 14.8% | research: 16.9% → 14.8% → MATCH (to 1e-9, same n) | with the preview fallback (w < 0.5 → pooled) 15.2%
+    worst active month out of sample: single Sep 1.41×, c Aug 1.11×, preview Aug 1.11× | research: a Sep 1.41×, c Aug 1.11×
+(e) verdict validated "guarded G2" → preview "guarded G2" | preview trend 1.67 without 2023 0.68, 90% 0.13–4.82 (validated 0.13–4.72)
+(f) calendar cells 2001–2011 changing colour class (harmonized view): 2 of 132 (same breaks) e.g. 2001-07 3→4, 2011-05 3→2
+
+## Chibougamau — grade B
+(a) pooled VIIRS ÷ MODIS 2.1933 validated / 2.1933 preview (identical) | τ 0.000
+| | Jan | Feb | Mar | Apr | May | Jun | Jul | Aug | Sep | Oct | Nov | Dec |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| shrunk ratio (method c) | 2.19 | 2.19 | 2.19 | 2.19 | 2.19 | 2.19 | 2.19 | 2.19 | 2.19 | 2.19 | 2.19 | 2.19 |
+| weight w | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 |
+| factor used (w ≥ 0.5, else pooled) | 2.19* | 2.19* | 2.19* | 2.19* | 2.19* | 2.19* | 2.19* | 2.19* | 2.19* | 2.19* | 2.19* | 2.19* |
+| leave-one-year-out range | 2.12–2.20 | 2.12–2.20 | 2.12–2.20 | 2.12–2.20 | 2.12–2.20 | 2.12–2.20 | 2.12–2.25 | 2.12–2.37 | 2.12–2.20 | 2.12–2.20 | 2.12–2.20 | 2.12–2.20 |
+(* = weight below 0.5: pooled ratio; 0 of 12 months seasonally corrected)
+    = research shrinkParts: max rel. diff of the 12 shrunk ratios 0.0e+0, of the weights 0.0e+0, pooled R and τ² equal, fallback rule applied → MATCH
+(b) rise raw 4.911 / 4.911 (identical) | harmonized validated 2.239 → preview 2.239 (+0.00%) | research c (no fallback) 2.239 | MODIS alone 2.239 → preview − MODIS alone +0.00%
+(c) out-of-sample median monthly error (leave one overlap year out, n months): single ratio 11.7% (10) → month factors c 12.2% | research: 11.7% → 12.2% → MATCH (to 1e-9, same n) | with the preview fallback (w < 0.5 → pooled) 11.7%
+    worst active month out of sample: single —, c —, preview — | research: a —, c —
+(e) verdict validated "guarded G2" → preview "guarded G2" | preview trend 2.24 without 2023 0.60, 90% 0.08–7.90 (validated 0.08–7.90)
+(f) calendar cells 2001–2011 changing colour class (harmonized view): 0 of 132 (same breaks)
+
+## Côte-Nord — grade B
+(a) pooled VIIRS ÷ MODIS 1.9454 validated / 1.9454 preview (identical) | τ 0.276
+| | Jan | Feb | Mar | Apr | May | Jun | Jul | Aug | Sep | Oct | Nov | Dec |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| shrunk ratio (method c) | 1.95 | 1.95 | 1.95 | 2.17 | 1.82 | 1.85 | 2.10 | 1.22 | 1.37 | 3.02 | 2.12 | 1.95 |
+| weight w | 0.00 | 0.00 | 0.00 | 0.07 | 0.24 | 0.96 | 0.96 | 0.64 | 0.34 | 0.35 | 0.08 | 0.00 |
+| factor used (w ≥ 0.5, else pooled) | 1.95* | 1.95* | 1.95* | 1.95* | 1.95* | 1.85 | 2.10 | 1.22 | 1.95* | 1.95* | 1.95* | 1.95* |
+| leave-one-year-out range | 1.76–2.00 | 1.76–2.00 | 1.76–2.00 | 1.76–2.00 | 1.10–2.00 | 1.79–1.93 | 1.96–2.11 | 0.99–1.95 | 0.99–2.00 | 1.76–6.59 | 1.76–2.00 | 1.76–2.00 |
+(* = weight below 0.5: pooled ratio; 3 of 12 months seasonally corrected)
+    = research shrinkParts: max rel. diff of the 12 shrunk ratios 0.0e+0, of the weights 0.0e+0, pooled R and τ² equal, fallback rule applied → MATCH
+(b) rise raw 3.960 / 3.960 (identical) | harmonized validated 2.036 → preview 2.138 (+5.04%) | research c (no fallback) 2.144 | MODIS alone 2.036 → preview − MODIS alone +5.04%
+(c) out-of-sample median monthly error (leave one overlap year out, n months): single ratio 12.8% (12) → month factors c 12.7% | research: 12.8% → 12.7% → MATCH (to 1e-9, same n) | with the preview fallback (w < 0.5 → pooled) 12.7%
+    worst active month out of sample: single Jul 1.18×, c Jul 1.06×, preview Jul 1.06× | research: a Jul 1.18×, c Jul 1.06×
+(e) verdict validated "guarded G2" → preview "guarded G2" | preview trend 2.14 without 2013 0.87, 90% 0.44–6.20 (validated 0.42–5.75)
+(f) calendar cells 2001–2011 changing colour class (harmonized view): 5 of 132 (same breaks) e.g. 2003-08 4→3, 2004-08 1→0, 2005-08 1→0, 2006-06 6→5, 2011-07 1→2
+
+## La Rioja — grade A
+(a) pooled VIIRS ÷ MODIS 2.3284 validated / 2.3284 preview (identical) | τ 0.129
+| | Jan | Feb | Mar | Apr | May | Jun | Jul | Aug | Sep | Oct | Nov | Dec |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| shrunk ratio (method c) | 2.67 | 2.62 | 2.82 | 2.76 | 2.33 | 2.18 | 2.19 | 2.03 | 2.36 | 2.26 | 2.27 | 2.97 |
+| weight w | 0.49 | 0.48 | 0.38 | 0.58 | 0.78 | 0.92 | 0.88 | 0.96 | 0.87 | 0.89 | 0.73 | 0.66 |
+| factor used (w ≥ 0.5, else pooled) | 2.33* | 2.33* | 2.33* | 2.76 | 2.33 | 2.18 | 2.19 | 2.03 | 2.36 | 2.26 | 2.27 | 2.97 |
+| leave-one-year-out range | 2.31–2.84 | 2.30–2.78 | 2.30–2.37 | 2.68–2.87 | 2.26–2.38 | 2.14–2.21 | 2.14–2.24 | 2.01–2.06 | 2.32–2.43 | 2.24–2.34 | 2.24–2.42 | 2.88–3.17 |
+(* = weight below 0.5: pooled ratio; 9 of 12 months seasonally corrected)
+    = research shrinkParts: max rel. diff of the 12 shrunk ratios 0.0e+0, of the weights 0.0e+0, pooled R and τ² equal, fallback rule applied → MATCH
+(b) rise raw 1.783 / 1.783 (identical) | harmonized validated 0.766 → preview 0.791 (+3.20%) | research c (no fallback) 0.782 | MODIS alone 0.766 → preview − MODIS alone +3.20%
+(c) out-of-sample median monthly error (leave one overlap year out, n months): single ratio 15.6% (103) → month factors c 13.5% | research: 15.6% → 13.5% → MATCH (to 1e-9, same n) | with the preview fallback (w < 0.5 → pooled) 13.5%
+    worst active month out of sample: single Mar 1.66×, c Mar 1.37×, preview Mar 1.66× | research: a Mar 1.66×, c Mar 1.37×
+(e) verdict validated "uncertain" → preview "uncertain" | preview trend 0.79 without 2003 0.92, 90% 0.60–1.04 (validated 0.58–1.01)
+(f) calendar cells 2001–2011 changing colour class (harmonized view): 9 of 132 (same breaks) e.g. 2002-12 3→4, 2003-04 3→4, 2003-07 8→7, 2003-08 8→7, 2004-04 1→2, 2005-12 5→6, 2007-04 3→4, 2008-04 3→4
+
+## Córdoba — grade A
+(a) pooled VIIRS ÷ MODIS 1.9535 validated / 1.9535 preview (identical) | τ 0.156
+| | Jan | Feb | Mar | Apr | May | Jun | Jul | Aug | Sep | Oct | Nov | Dec |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| shrunk ratio (method c) | 1.90 | 2.47 | 2.58 | 2.33 | 2.41 | 2.19 | 2.09 | 1.73 | 1.74 | 1.84 | 2.05 | 2.48 |
+| weight w | 0.69 | 0.80 | 0.85 | 0.92 | 0.93 | 0.93 | 0.96 | 0.97 | 0.94 | 0.82 | 0.89 | 0.84 |
+| factor used (w ≥ 0.5, else pooled) | 1.90 | 2.47 | 2.58 | 2.33 | 2.41 | 2.19 | 2.09 | 1.73 | 1.74 | 1.84 | 2.05 | 2.48 |
+| leave-one-year-out range | 1.86–2.02 | 2.38–2.61 | 2.51–2.77 | 2.27–2.37 | 2.38–2.47 | 2.13–2.23 | 2.06–2.12 | 1.71–1.76 | 1.73–1.79 | 1.81–1.94 | 2.01–2.12 | 2.42–2.56 |
+(* = weight below 0.5: pooled ratio; 12 of 12 months seasonally corrected)
+    = research shrinkParts: max rel. diff of the 12 shrunk ratios 0.0e+0, of the weights 0.0e+0, pooled R and τ² equal, fallback rule applied → MATCH
+(b) rise raw 1.079 / 1.079 (identical) | harmonized validated 0.554 → preview 0.557 (+0.46%) | research c (no fallback) 0.557 | MODIS alone 0.554 → preview − MODIS alone +0.46%
+(c) out-of-sample median monthly error (leave one overlap year out, n months): single ratio 16.1% (157) → month factors c 11.5% | research: 16.1% → 11.5% → MATCH (to 1e-9, same n) | with the preview fallback (w < 0.5 → pooled) 11.5%
+    worst active month out of sample: single Mar 1.39×, c Feb 1.06×, preview Feb 1.06× | research: a Mar 1.39×, c Feb 1.06×
+(e) verdict validated "robust" → preview "robust" | preview trend 0.56 without 2003 0.60, 90% 0.44–0.71 (validated 0.44–0.71)
+(f) calendar cells 2001–2011 changing colour class (harmonized view): 27 of 132 (same breaks) e.g. 2001-04 1→2, 2002-02 4→5, 2004-03 5→6, 2004-08 8→7, 2004-09 8→7, 2005-02 4→5, 2005-03 4→5, 2005-04 4→5
+
+## Tucumán — grade A
+(a) pooled VIIRS ÷ MODIS 2.1731 validated / 2.1731 preview (identical) | τ 0.126
+| | Jan | Feb | Mar | Apr | May | Jun | Jul | Aug | Sep | Oct | Nov | Dec |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| shrunk ratio (method c) | 1.91 | 1.99 | 2.44 | 2.60 | 2.80 | 2.66 | 2.26 | 1.96 | 2.15 | 2.34 | 2.41 | 2.23 |
+| weight w | 0.60 | 0.28 | 0.26 | 0.46 | 0.79 | 0.91 | 0.90 | 0.96 | 0.96 | 0.96 | 0.92 | 0.56 |
+| factor used (w ≥ 0.5, else pooled) | 1.91 | 2.17* | 2.17* | 2.17* | 2.80 | 2.66 | 2.26 | 1.96 | 2.15 | 2.34 | 2.41 | 2.23 |
+| leave-one-year-out range | 1.87–1.97 | 2.16–2.19 | 2.16–2.19 | 2.16–2.19 | 2.72–3.03 | 2.62–2.71 | 2.22–2.30 | 1.93–1.98 | 2.13–2.17 | 2.32–2.39 | 2.38–2.44 | 2.16–2.29 |
+(* = weight below 0.5: pooled ratio; 9 of 12 months seasonally corrected)
+    = research shrinkParts: max rel. diff of the 12 shrunk ratios 0.0e+0, of the weights 0.0e+0, pooled R and τ² equal, fallback rule applied → MATCH
+(b) rise raw 1.203 / 1.203 (identical) | harmonized validated 0.554 → preview 0.552 (-0.31%) | research c (no fallback) 0.552 | MODIS alone 0.554 → preview − MODIS alone -0.31%
+(c) out-of-sample median monthly error (leave one overlap year out, n months): single ratio 12.8% (89) → month factors c 11.9% | research: 12.8% → 11.9% → MATCH (to 1e-9, same n) | with the preview fallback (w < 0.5 → pooled) 11.7%
+    worst active month out of sample: single Mar 1.56×, c Mar 1.38×, preview Mar 1.56× | research: a Mar 1.56×, c Mar 1.38×
+(e) verdict validated "robust" → preview "robust" | preview trend 0.55 without 2009 0.57, 90% 0.47–0.64 (validated 0.47–0.64)
+(f) calendar cells 2001–2011 changing colour class (harmonized view): 9 of 132 (same breaks) e.g. 2003-11 5→6, 2004-05 3→4, 2004-06 5→6, 2005-01 4→3, 2007-08 8→7, 2007-10 5→6, 2008-06 5→6, 2010-11 5→6
+
+## Chilecito (bridge on the borrowed wider box {"s":-30,"n":-28,"w":-68.5,"e":-66.5}, as the app) — grade B
+(a) pooled VIIRS ÷ MODIS 2.4392 validated / 2.4392 preview (identical) | τ 0.252
+| | Jan | Feb | Mar | Apr | May | Jun | Jul | Aug | Sep | Oct | Nov | Dec |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| shrunk ratio (method c) | 2.80 | 3.07 | 2.69 | 2.72 | 2.15 | 2.11 | 2.23 | 2.01 | 2.54 | 2.48 | 2.65 | 3.88 |
+| weight w | 0.40 | 0.85 | 0.44 | 0.53 | 0.63 | 0.88 | 0.78 | 0.90 | 0.76 | 0.40 | 0.78 | 0.87 |
+| factor used (w ≥ 0.5, else pooled) | 2.44* | 3.07 | 2.44* | 2.72 | 2.15 | 2.11 | 2.23 | 2.01 | 2.54 | 2.44* | 2.65 | 3.88 |
+| leave-one-year-out range | 2.41–3.77 | 2.98–3.18 | 2.41–3.38 | 2.42–3.09 | 1.97–2.34 | 1.99–2.19 | 2.14–2.37 | 1.95–2.15 | 2.48–2.92 | 2.41–3.43 | 2.57–2.83 | 3.73–4.06 |
+(* = weight below 0.5: pooled ratio; 9 of 12 months seasonally corrected)
+    = research shrinkParts: max rel. diff of the 12 shrunk ratios 0.0e+0, of the weights 0.0e+0, pooled R and τ² equal, fallback rule applied → MATCH
+(b) rise raw 2.894 / 2.894 (identical) | harmonized validated 1.187 → preview 1.256 (+5.80%) | research c (no fallback) 1.247 | MODIS alone 1.178 → preview − MODIS alone +6.65%
+(c) out-of-sample median monthly error (leave one overlap year out, n months): single ratio 29.0% (24) → month factors c 20.2% | research: 29.0% → 20.2% → MATCH (to 1e-9, same n) | with the preview fallback (w < 0.5 → pooled) 20.2%
+    worst active month out of sample: single Aug 1.25×, c Oct 1.21×, preview Oct 1.21× | research: a Aug 1.25×, c Oct 1.21×
+(e) verdict validated "uncertain" → preview "uncertain" | preview trend 1.26 without 2017 0.79, 90% 0.57–2.78 (validated 0.54–2.65)
+(f) calendar cells 2001–2011 changing colour class (harmonized view): 14 of 132 (same breaks) e.g. 2001-12 2→3, 2002-07 4→3, 2002-08 2→1, 2002-12 2→3, 2003-08 2→1, 2003-12 3→4, 2004-06 2→1, 2004-07 2→1
+
+## Key figures (research/SEASONAL.md: Canada 16.5 % → 11.7 %, Argentina 11.7 % → 6.9 %; rises 2.01× and 0.68×)
+PASS All of Canada: 16.5% → 11.7% (preview with fallback 11.7%); rise 2.01× → 2.01×
+PASS All of Argentina: 11.7% → 6.9% (preview with fallback 6.9%); rise 0.68× → 0.68×
+
+## (d) Canada vs official area burned (NFD), 2012–2024 ÷ 2003–2011: official 1.92 | harmonized validated 1.88 → preview 1.88 | raw 3.96 / 3.96 | Spearman harmonized 0.96 → 0.96
+
+## (e) Verdict changes on a grid of 2° boxes (528 boxes with detections, both countries; 3 s)
+   133  not harmonized (grade C) → not harmonized (grade C)
+   125  guarded G1 → guarded G1
+    98  guarded G2 → guarded G2
+    60  robust → robust
+    54  uncertain → uncertain
+    18  guarded G3 → guarded G3
+    14  not harmonized (G4) → not harmonized (G4)
+     7  uncertain (G6) → uncertain (G6)
+     7  guarded G5 → guarded G5
+     3  uncertain (G6) → uncertain
+     3  uncertain → guarded G5
+     2  guarded G5 → uncertain
+     1  guarded G2 → guarded G5
+     1  uncertain → guarded G1
+     1  uncertain → robust
+     1  robust → uncertain
+12 boxes change verdict:
+  canada {"s":42,"n":44,"w":-82,"e":-80}: uncertain (G6) → uncertain | rise 0.80 → 0.82, 90% 0.66–0.97 → 0.68–1.00, without big year 0.86 → 0.88
+  canada {"s":48,"n":50,"w":-104,"e":-102}: uncertain → guarded G5 | rise 1.12 → 0.94, 90% 0.79–1.60 → 0.62–1.48, without big year 0.95 → 0.80
+  canada {"s":50,"n":52,"w":-114,"e":-112}: uncertain (G6) → uncertain | rise 0.73 → 0.81, 90% 0.56–0.97 → 0.61–1.08, without big year 0.82 → 0.90
+  canada {"s":50,"n":52,"w":-66,"e":-64}: guarded G2 → guarded G5 | rise 0.99 → 1.04, 90% 0.28–6.00 → 0.30–6.35, without big year 0.56 → 0.59
+  canada {"s":52,"n":54,"w":-102,"e":-100}: guarded G5 → uncertain | rise 0.98 → 1.07, 90% 0.77–1.26 → 0.84–1.36, without big year 0.90 → 0.97
+  canada {"s":56,"n":58,"w":-130,"e":-128}: uncertain → guarded G1 | rise 0.80 → 0.81, 90% 0.35–3.15 → 0.35–3.28, without big year 1.33 → 1.35
+  argentina {"s":-52,"n":-50,"w":-72,"e":-70}: uncertain (G6) → uncertain | rise 0.72 → 0.86, 90% 0.54–0.98 → 0.65–1.16, without big year 0.77 → 0.80
+  argentina {"s":-42,"n":-40,"w":-64,"e":-62}: guarded G5 → uncertain | rise 0.99 → 1.02, 90% 0.57–1.93 → 0.60–1.90, without big year 1.49 → 0.83
+  argentina {"s":-32,"n":-30,"w":-66,"e":-64}: uncertain → robust | rise 0.64 → 0.63, 90% 0.39–1.03 → 0.40–0.99, without big year 0.79 → 0.77
+  argentina {"s":-30,"n":-28,"w":-62,"e":-60}: robust → uncertain | rise 0.77 → 0.80, 90% 0.62–0.97 → 0.63–1.00, without big year 0.71 → 0.73
+  argentina {"s":-28,"n":-26,"w":-68,"e":-66}: uncertain → guarded G5 | rise 0.95 → 1.02, 90% 0.72–1.33 → 0.76–1.42, without big year 0.88 → 0.94
+  argentina {"s":-26,"n":-24,"w":-68,"e":-66}: uncertain → guarded G5 | rise 0.95 → 1.07, 90% 0.79–1.16 → 0.88–1.30, without big year 0.90 → 1.01
+
+Preset verdict changes: none
+
+CHECK PASSED: the preview's month factors and out-of-sample errors equal research/seasonal.mjs (1e-9); pooled ratio and raw figures unchanged
+exit 0

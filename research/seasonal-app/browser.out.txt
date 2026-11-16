@@ -1,0 +1,19 @@
+banner: "Experimental preview · seasonal correction · not the validated figuresOpen the validated appValidated app" → file:///C:/Users/moulo/Downloads/firebridge-v6.2-preview-source/dist/firebridge.html#z=canada&c=canada&b=41.5%2C83%2C-141.5%2C-52.5&v=harmonized&tab=overview&anim=0
+(1) 64 screens loaded (8 tab/steps × 4 zones × 2 sizes)
+PASS no page error, no console error; banner visible on every screen; title and validated link OK
+PASS canada raw             validated hero "4.2×" ratio 2.10 | preview hero "4.2×" ratio 2.10
+PASS canada harmonized      validated hero "2.0×" ratio 2.10 | preview hero "2.0×" ratio 2.10
+PASS argentina raw          validated hero "1.4×" ratio 2.13 | preview hero "1.4×" ratio 2.13
+PASS argentina harmonized   validated hero "0.7×" ratio 2.13 | preview hero "0.7×" ratio 2.13
+PASS larioja raw            validated hero "÷2.3" ratio 2.33 | preview hero "÷2.3" ratio 2.33
+PASS larioja harmonized     validated hero "÷2.3" ratio 2.33 | preview hero "÷2.3" ratio 2.33
+PASS boreal raw             validated hero "÷2.1" ratio 2.12 | preview hero "÷2.1" ratio 2.12
+PASS boreal harmonized      validated hero "÷2.1" ratio 2.12 | preview hero "÷2.1" ratio 2.12
+Method paragraph (canada): Experimental preview: seasonal correction. In this build each MODIS month before February 2012 is multiplied by the factor of its calendar month, not by one yearly ratio. A month’s own ratio is shrunk toward the yearly 2.10 (empirical Bayes: weight w = τ² ÷ (τ² + s²), s² = that month’s year-to-year variance, τ² = the real spread between months); a month with w below 0.5 keeps 2.10. Tested out of sample in research/seasonal.mjs (each overlap year hidden in turn): median monthly error 16.5% → 11.7% in Canada and 11.7% → 6.9% in Argentina, lower in 12 of 14 and 14 of 14 held-out years; no clear gain in small zones. It assumes the 2012–2025 monthly ratios also held in 2001–2011. Here, same test: 16.5% with one ratio, 11.7% with the factors below (165 months). Not the validated figures.
+Method paragraph (larioja): Experimental preview: seasonal correction. In this build each MODIS month before February 2012 is multiplied by the factor of its calendar month, not by one yearly ratio. A month’s own ratio is shrunk toward the yearly 2.33 (empirical Bayes: weight w = τ² ÷ (τ² + s²), s² = that month’s year-to-year variance, τ² = the real spread between months); a month with w below 0.5 keeps 2.33. Tested out of sample in research/seasonal.mjs (each overlap year hidden in turn): median monthly error 16.5% → 11.7% in Canada and 11.7% → 6.9% in Argentina, lower in 12 of 14 and 14 of 14 held-out years; no clear gain in small zones. It assumes the 2012–2025 monthly ratios also held in 2001–2011. Here, same test: 15.6% with one ratio, 13.5% with the factors below (103 months). Not the validated figures.
+canada 2005-03: seam "MODIS × month factor (2.10 over a year)" | readout "March 2005: 667 fire detections, 1.2 times a typical March. Estimated from the older satellite (MODIS × 3.48 in March)."
+argentina 2005-03: seam "MODIS × month factor (2.13 over a year)" | readout "March 2005: 11,955 fire detections, 2.5 times a typical March. Estimated from the older satellite (MODIS × 2.52 in March)."
+larioja 2005-03: seam "MODIS × month factor (2.33 over a year)" | readout "March 2005: 51 fire detections, 1.2 times a typical March. yearly ratio fits poorly"
+screenshots → C:/Users/moulo/Downloads/firebridge-v6.2-preview-source/research/seasonal-app/shots
+BROWSER CHECK PASSED
+exit 0
