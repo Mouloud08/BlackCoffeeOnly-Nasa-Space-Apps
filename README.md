@@ -31,7 +31,7 @@ fire).
 | Zone | VIIRS ÷ MODIS | Records simply joined | Harmonized | Independent check of the trend |
 |---|---|---|---|---|
 | All of Canada | 2.10 | 4.23× | **2.01×** | Official area burned 1.92×, harmonized 1.88× (same years, 2012–2024) |
-| All of Argentina | 2.13 | 1.45× | **0.68×** (fell) | None yet: the result rests on the MODIS record alone |
+| All of Argentina | 2.13 | 1.45× | **0.68×** (fell) | No ground-based series yet. A MODIS burned-area record with no sensor change in 2012 also shows a decline (a consistency check: `node scripts/check_argentina_official.mjs`) |
 
 In Argentina the sensor change turns a fall into an apparent rise. In Canada the rise holds, but joining the records
 doubles it.
@@ -111,9 +111,11 @@ The unit everywhere is the **cell-day**: a ~1 km cell with at least one detectio
 - Detections, not burned area. A cell-day says a fire was seen, not how much burned.
 - One VIIRS ÷ MODIS ratio per zone, pooled over whole years. It leaves a seasonal residual (in Canada the March ratio
   is 4.10 against 2.10 pooled); disclosed in the Method tab, not corrected.
-- Argentina has no independent check yet: its result rests on the MODIS record alone. Next step: an independent
-  series (for example annual burned area from the MODIS MCD64A1 product, or national fire statistics, 2003–2024),
-  compared the same way as Canada's official area burned.
+- Argentina has no ground-based check yet. A satellite burned-area record with no sensor change in 2012 (Global
+  Wildfire Information System, from the MODIS MCD64A1 product) shows a decline too and ranks the years like the
+  harmonized record; it is also MODIS-based, so it is a consistency check, not an agency series like Canada's
+  (`node scripts/check_argentina_official.mjs` prints the figures; data in `data/official/`). Next step: national
+  fire statistics rebuilt back to 2003 (the open file starts in 2017).
 - Trends in small zones are often decided by one or two extreme years; the app then says "uncertain" and prints the
   sensor factor instead of a rise. Quality thresholds are heuristics calibrated on Québec.
 - Places with a local ratio above 4× (62 in Canada, 27 in Argentina) are not harmonized; causes not investigated.

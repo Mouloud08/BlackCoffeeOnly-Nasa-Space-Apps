@@ -2,7 +2,9 @@
 
 Paste each section into the field of the same name on the Space Apps project page. Every figure below comes from
 the app's self-check (`node tools-win/selfcheck.mjs`, record ending October 2026), except the raw point counts in
-"The problem", which are counted from the two FIRMS extracts embedded in the app (`data/hotspots/`).
+"The problem", which are counted from the two FIRMS extracts embedded in the app (`data/hotspots/`), and the
+Argentina burned-area comparison, printed by `node scripts/check_argentina_official.mjs` from
+`data/official/argentina_area_burned.json`.
 
 Team BlackCoffeeOnly: Yasmine Lounaci and Mouloud Serir.
 
@@ -107,6 +109,12 @@ Clicks from the first screen (Overview). Tabs: Overview, Calendar, Evidence, How
 - **The trend against an independent source** (a check of the trend, not of the correction). Canada's National
   Forestry Database, independent of both sensors, mean year 2012–2024 against 2003–2011: official area burned 1.92×,
   harmonized 1.88×, records simply joined 3.96×.
+- **Argentina: a consistency check, not a ground check.** A satellite burned-area record with no sensor change in
+  2012 (Global Wildfire Information System, from NASA's MODIS MCD64A1 product) shows 0.78× as much area burned per
+  year in 2012–2024 as in 2003–2011; on the same years our harmonized detections give 0.69× and the records simply
+  joined 1.46×. Year by year, burned area ranks like the harmonized record (rank correlation 0.79) far more than like
+  the joined one (0.32). That product is also MODIS-based: it supports reading the post-2012 rise as a sensor effect,
+  but it is not an agency series like Canada's.
 - **The trend without its biggest year.** Canada 2.01×, still 1.62× without 2023 (90% resampled range 1.30–2.92);
   Argentina 0.68×, 0.62× without 2020 (0.57–0.82). Both robust.
 - **False records from the seam?** Share of 0.5° places whose busiest year is 2012 or later, against chance (2,000
@@ -118,7 +126,8 @@ Clicks from the first screen (Overview). Tabs: Overview, Calendar, Evidence, How
 ### Limits we declare
 
 - Fire detections, not burned area.
-- Argentina has no independent check yet: its result rests on the MODIS record alone.
+- Argentina has no ground-based check yet: its result rests on MODIS records (the detections, and a MODIS
+  burned-area product that agrees with them). National statistics are not usable for this: the open file starts in 2017.
 - One pooled ratio per zone leaves a seasonal residual (Canada: March 4.10 against 2.10), disclosed, not corrected.
 - Places with a local ratio above 4× (62 in Canada, 27 in Argentina) are not harmonized; cause not investigated.
 - 4.1% (Canada) and 5.5% (Argentina) of VIIRS cell-days fall where MODIS saw nothing that month: a ratio cannot put those back.
@@ -130,8 +139,8 @@ Clicks from the first screen (Overview). Tabs: Overview, Calendar, Evidence, How
 
 ### What we would do next
 
-- **First, an independent series for Argentina** (annual burned area from the MODIS MCD64A1 product, or national fire
-  statistics, 2003–2024), compared the same way as Canada's official area burned.
+- **First, a ground-based series for Argentina**: national fire statistics rebuilt back to 2003 from the yearly
+  reports, compared the same way as Canada's official area burned.
 - Any country (FIRMS covers the world); a seasonal ratio; hotspot points for any box and date; monthly updates
   carried through NOAA-20 and NOAA-21.
 
@@ -160,6 +169,9 @@ Other data:
 
 - **Canadian National Forestry Database** (Canadian Council of Forest Ministers, through Environment and Climate
   Change Canada): area burned by year, the independent check of Canada's trend.
+- **Global Wildfire Information System** (European Commission Joint Research Centre / Copernicus), yearly burned
+  area for Argentina, 2002–2025, from NASA's MODIS MCD64A1 product, as redistributed by Our World in Data (CC BY 4.0):
+  the consistency check of Argentina's trend (not used inside the app; `scripts/check_argentina_official.mjs`).
 - **Natural Earth** country outlines (1:50m): the map and the mask that removes detections in neighbouring countries.
 
 FireBridge is a hackathon prototype. It is not a NASA product and is not endorsed by NASA.
@@ -178,6 +190,9 @@ FireBridge is a hackathon prototype. It is not a NASA product and is not endorse
 - Environment and Climate Change Canada, "Forest management and disturbances" indicator; data: CCFM National Forestry
   Database, "Area burned by forest fires by region, Canada" —
   canada.ca/en/environment-climate-change/services/environmental-indicators/forest-management-disturbances.html
+- Global Wildfire Information System (GWIS), "Global Yearly Burned Area by Land Cover Type", country profiles —
+  gwis.jrc.ec.europa.eu/apps/country.profile/downloads; values taken from Our World in Data, "Annual area burnt by
+  wildfires" — ourworldindata.org/grapher/annual-area-burnt-by-wildfires-gwis (accessed 15 November 2026)
 - Natural Earth, free vector map data — naturalearthdata.com
 - Space Apps Challenge 2026, "Harmonization of MODIS and VIIRS Hot Spots" (challenge author: CONAE, Argentina).
 
