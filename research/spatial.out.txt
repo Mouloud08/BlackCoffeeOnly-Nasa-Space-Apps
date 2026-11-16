@@ -1,0 +1,119 @@
+# FireBridge research: place-aware and floor-aware harmonization (research/spatial.mjs)
+Record ends 2026-10 | last complete year 2025 | overlap years 2012–2025 (January 2012 is a MODIS month)
+
+## 1. Baseline reproduced with src/metrics.js (reference = tools-win/selfcheck.mjs output)
+canada:
+  country ratio r                             2.10                  self-check 2.10  MATCH
+  leave-one-year-out median error             3%                    self-check 3%  MATCH
+  hold-out (2012–18 → 2019–25) median error   7%                    self-check 7%  MATCH
+  local ratio p5 / p50 / p95 (eligible places)1.60 / 2.02 / 3.53    self-check 1.60 / 2.02 / 3.53  MATCH
+  eligible places with local ratio > 4        62                    self-check 62  MATCH
+  detection floor (floorShare)                4.1%                  self-check 4.1%  MATCH
+argentina:
+  country ratio r                             2.13                  self-check 2.13  MATCH
+  leave-one-year-out median error             3%                    self-check 3%  MATCH
+  hold-out (2012–18 → 2019–25) median error   5%                    self-check 5%  MATCH
+  local ratio p5 / p50 / p95 (eligible places)1.44 / 1.97 / 3.16    self-check 1.44 / 1.97 / 3.16  MATCH
+  eligible places with local ratio > 4        27                    self-check 27  MATCH
+  detection floor (floorShare)                5.5%                  self-check 5.5%  MATCH
+Baseline reproduction: ALL MATCH
+
+## 2. canada: 4545 places with a detection 2003–2025, 467 2° boxes
+Shrinkage strength k (MODIS cell-days) chosen by inner leave-one-year-out, per held-out year: 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 300, 1000, 1000 | all years: 1000
+2° boxes under 300 cell-days (zone ratio → country ratio): 252 of 467 | places whose shrunk ratio is capped at 4×: 64 (all years)
+Country ratio (all years) 2.105 | on months with MODIS > 0 2.021 | ratio by MODIS cell-days in the place-month: 1 → 2.07, 2–3 → 2.08, 4–9 → 1.85, 10–29 → 1.88, 30–99 → 2.04, ≥100 → 2.05
+Floor by overlap year (VIIRS cell-days in place-months where MODIS saw nothing, and ÷ all VIIRS): 2012 5,231 (8.0%), 2013 6,233 (5.5%), 2014 6,668 (4.0%), 2015 6,381 (5.5%), 2016 5,153 (11.3%), 2017 6,360 (4.6%), 2018 5,572 (5.6%), 2019 5,083 (8.2%), 2020 5,007 (23.1%), 2021 5,723 (4.2%), 2022 5,040 (8.6%), 2023 6,490 (1.3%), 2024 5,622 (2.5%), 2025 5,579 (2.1%) | in cell-days 5,007–6,668 a year, median 5,601 | range 1.3%–23.1% | lowest in 2023, highest in 2020 (country VIIRS that year: 510,715 vs 21,664)
+Harness check: variant a, country-annual leave-one-year-out median error 3% (app: 3%); country rise with variant a 2.01; my floor share (NOAA-20 in outage months included) 4.0%
+2° boxes with any detection: 467 | app verdicts (computeZone + guard.js): {"uncertain":271,"rise":23,"n/h":168,"decline":5} | reconstruction with the app ratio differs in 0 boxes
+
+### Out-of-sample error (leave one overlap year out; WAPE = Σ|pred − VIIRS| ÷ Σ VIIRS; rel = median |pred − VIIRS| ÷ VIIRS over units with VIIRS ≥ 30; abs = median |pred − VIIRS| in cell-days over active units)
+| variant | place-year WAPE / rel / abs | place-month WAPE / abs | 2° box-year WAPE / rel | 2° box-month WAPE / rel | country-year rel | country-month rel |
+|---|---|---|---|---|---|---|
+| a country ratio | 26.6% / 27.6% / 4.0 | 33.7% / 2.1 | 19.1% / 22.7% | 25.1% / 29.5% | 3.0% | 16.8% |
+| b 2° zone ratio (today) | 24.6% / 24.0% / 3.8 | 32.0% / 2.0 | 15.5% / 19.0% | 22.3% / 25.6% | 2.8% | 12.8% |
+| b0 zone ratio on MODIS > 0 months, no floor | 23.4% / 23.7% / 3.7 | 30.0% / 2.0 | 15.4% / 22.2% | 21.1% / 25.5% | 5.2% | 21.6% |
+| c local ratio shrunk to zone | 24.4% / 23.9% / 3.8 | 31.8% / 2.0 | 15.2% / 18.9% | 22.1% / 25.3% | 2.6% | 13.3% |
+| d1 zone ratio + place floor | 22.4% / 21.6% / 3.4 | 29.0% / 1.8 | 14.1% / 15.5% | 20.1% / 22.0% | 3.8% | 9.3% |
+| d2 zone ratio + zone floor | 23.1% / 22.8% / 3.8 | 29.1% / 1.9 | 14.1% / 15.3% | 20.1% / 22.0% | 3.8% | 9.4% |
+| e ratio by activity level | 25.6% / 26.5% / 3.9 | 32.5% / 2.1 | 18.2% / 21.3% | 24.1% / 28.1% | 3.6% | 17.6% |
+| f activity ratio + place floor | 25.0% / 24.5% / 3.7 | 31.5% / 2.1 | 18.0% / 19.5% | 23.4% / 24.7% | 5.8% | 12.1% |
+(units: place-year 26281 active, 7141 with VIIRS ≥ 30; 2° box-year 4299 / 2186; country-month 167)
+
+### Detection floor, overfitting, failure strata (out of sample unless noted)
+| variant | held-out years where it beats b (place-year / box-year, of 14) | VIIRS in place-months predicted 0 | floor recovered (Σ pred ÷ Σ VIIRS where MODIS = 0) | WAPE where MODIS = 0 | WAPE where MODIS = 1–2 | in-sample → out-of-sample place-year WAPE | box-year | sparse places (2536, < 50 MODIS cell-days 2012–2025) | the map's > 4× places (62) | off-season months (JFMAND) |
+|---|---|---|---|---|---|---|---|---|---|---|
+| a country ratio | 2 / 2 | 4.0% | 0% | 100% | 94% | 26.5% → 26.6% | 19.0% → 19.1% | 69% | 58% | 67% |
+| b 2° zone ratio (today) | — | 4.0% | 0% | 100% | 96% | 21.8% → 24.6% | 11.3% → 15.5% | 68% | 37% | 67% |
+| b0 zone ratio on MODIS > 0 months, no floor | 12 / 4 | 4.0% | 0% | 100% | 91% | 21.1% → 23.4% | 11.7% → 15.4% | 67% | 39% | 62% |
+| c local ratio shrunk to zone | 10 / 10 | 4.0% | 0% | 100% | 95% | 18.6% → 24.4% | 9.9% → 15.2% | 68% | 36% | 67% |
+| d1 zone ratio + place floor | 14 / 13 | 0.6% | 100% | 130% | 91% | 19.9% → 22.4% | 10.3% → 14.1% | 67% | 31% | 71% |
+| d2 zone ratio + zone floor | 5 / 13 | 0.1% | 100% | 154% | 91% | 20.8% → 23.1% | 10.3% → 14.1% | 87% | 36% | 76% |
+| e ratio by activity level | 2 / 3 | 4.0% | 0% | 100% | 93% | 25.6% → 25.6% | 18.1% → 18.2% | 67% | 59% | 64% |
+| f activity ratio + place floor | 3 / 3 | 0.6% | 100% | 130% | 93% | 24.7% → 25.0% | 17.8% → 18.0% | 68% | 51% | 73% |
+
+### Consequences (all-years fit applied to 2003–2011)
+| variant | pre-2012 total (cell-days, 2003–2011) | vs zone ratio (b) | of which in place-months where MODIS saw nothing | country rise 2012–2025 ÷ 2003–2011 | official-area check 2012–2024 (NFD 1.92) | 2° box verdicts rise / decline / uncertain / not harmonized | boxes whose verdict changes vs the app |
+|---|---|---|---|---|---|---|---|
+| a country ratio | 646,894 | +4.4% | 0 (0.0%) | 2.01 | 1.88 | 19 / 7 / 273 / 168 | 8 (uncertain→rise 1, rise→uncertain 5, uncertain→decline 2) |
+| b 2° zone ratio (today) | 619,683 | +0.0% | 0 (0.0%) | 2.10 | 1.96 | 23 / 6 / 270 / 168 | 1 (uncertain→decline 1) |
+| b0 zone ratio on MODIS > 0 months, no floor | 585,894 | -5.5% | 0 (0.0%) | 2.22 | 2.08 | 31 / 3 / 265 / 168 | 12 (uncertain→rise 9, decline→uncertain 2, rise→uncertain 1) |
+| c local ratio shrunk to zone | 618,426 | -0.2% | 0 (0.0%) | 2.10 | 1.97 | 23 / 6 / 270 / 168 | 1 (uncertain→decline 1) |
+| d1 zone ratio + place floor | 637,261 | +2.8% | 51,367 (8.1%) | 2.04 | 1.91 | 21 / 6 / 272 / 168 | 5 (rise→uncertain 3, uncertain→decline 1, uncertain→rise 1) |
+| d2 zone ratio + zone floor | 637,447 | +2.9% | 51,553 (8.1%) | 2.04 | 1.91 | 21 / 6 / 272 / 168 | 5 (rise→uncertain 3, uncertain→decline 1, uncertain→rise 1) |
+| e ratio by activity level | 614,185 | -0.9% | 0 (0.0%) | 2.12 | 1.98 | 24 / 6 / 269 / 168 | 6 (uncertain→rise 3, rise→uncertain 2, uncertain→decline 1) |
+| f activity ratio + place floor | 665,552 | +7.4% | 51,367 (7.7%) | 1.95 | 1.83 | 19 / 10 / 270 / 168 | 13 (uncertain→rise 2, rise→uncertain 6, uncertain→decline 5) |
+(app today, for reference: 2° box verdicts 23 / 5 / 271 / 168)
+
+## 2. argentina: 1201 places with a detection 2003–2025, 102 2° boxes
+Shrinkage strength k (MODIS cell-days) chosen by inner leave-one-year-out, per held-out year: 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100 | all years: 100
+2° boxes under 300 cell-days (zone ratio → country ratio): 35 of 102 | places whose shrunk ratio is capped at 4×: 43 (all years)
+Country ratio (all years) 2.132 | on months with MODIS > 0 2.016 | ratio by MODIS cell-days in the place-month: 1 → 3.19, 2–3 → 2.30, 4–9 → 2.09, 10–29 → 2.06, 30–99 → 1.93, ≥100 → 1.89
+Floor by overlap year (VIIRS cell-days in place-months where MODIS saw nothing, and ÷ all VIIRS): 2012 4,892 (4.8%), 2013 5,708 (4.8%), 2014 5,742 (8.6%), 2015 5,580 (6.6%), 2016 5,422 (5.7%), 2017 5,295 (5.2%), 2018 6,328 (6.3%), 2019 6,156 (6.9%), 2020 6,459 (2.8%), 2021 6,435 (6.0%), 2022 6,286 (4.2%), 2023 6,053 (7.1%), 2024 5,707 (6.6%), 2025 6,366 (6.9%) | in cell-days 4,892–6,459 a year, median 5,898 | range 2.8%–8.6% | lowest in 2020, highest in 2014 (country VIIRS that year: 228,262 vs 66,966)
+Harness check: variant a, country-annual leave-one-year-out median error 3% (app: 3%); country rise with variant a 0.68; my floor share (NOAA-20 in outage months included) 5.5%
+2° boxes with any detection: 102 | app verdicts (computeZone + guard.js): {"n/h":12,"uncertain":57,"rise":6,"decline":27} | reconstruction with the app ratio differs in 0 boxes
+
+### Out-of-sample error (leave one overlap year out; WAPE = Σ|pred − VIIRS| ÷ Σ VIIRS; rel = median |pred − VIIRS| ÷ VIIRS over units with VIIRS ≥ 30; abs = median |pred − VIIRS| in cell-days over active units)
+| variant | place-year WAPE / rel / abs | place-month WAPE / abs | 2° box-year WAPE / rel | 2° box-month WAPE / rel | country-year rel | country-month rel |
+|---|---|---|---|---|---|---|
+| a country ratio | 26.1% / 24.6% / 7.5 | 40.5% / 2.5 | 17.8% / 21.2% | 25.0% / 24.8% | 2.7% | 11.7% |
+| b 2° zone ratio (today) | 21.9% / 19.7% / 7.0 | 37.9% / 2.5 | 9.9% / 13.2% | 20.0% / 20.6% | 2.7% | 9.5% |
+| b0 zone ratio on MODIS > 0 months, no floor | 21.2% / 20.1% / 7.0 | 35.9% / 2.2 | 10.7% / 17.9% | 19.4% / 21.8% | 5.5% | 11.7% |
+| c local ratio shrunk to zone | 17.5% / 15.9% / 6.5 | 35.1% / 2.4 | 9.7% / 12.2% | 19.5% / 20.0% | 3.7% | 11.1% |
+| d1 zone ratio + place floor | 20.1% / 17.7% / 6.3 | 34.3% / 2.0 | 9.1% / 10.4% | 18.3% / 18.4% | 2.4% | 6.9% |
+| d2 zone ratio + zone floor | 21.4% / 18.7% / 7.8 | 34.3% / 2.0 | 9.1% / 10.3% | 18.2% / 18.1% | 2.4% | 6.1% |
+| e ratio by activity level | 25.8% / 22.6% / 7.4 | 39.0% / 2.9 | 18.1% / 20.5% | 23.7% / 23.4% | 4.7% | 11.8% |
+| f activity ratio + place floor | 25.6% / 21.1% / 8.7 | 37.4% / 2.5 | 18.3% / 23.8% | 23.6% / 21.7% | 4.1% | 8.2% |
+(units: place-year 13607 active, 5953 with VIIRS ≥ 30; 2° box-year 1340 / 1034; country-month 167)
+
+### Detection floor, overfitting, failure strata (out of sample unless noted)
+| variant | held-out years where it beats b (place-year / box-year, of 14) | VIIRS in place-months predicted 0 | floor recovered (Σ pred ÷ Σ VIIRS where MODIS = 0) | WAPE where MODIS = 0 | WAPE where MODIS = 1–2 | in-sample → out-of-sample place-year WAPE | box-year | sparse places (486, < 50 MODIS cell-days 2012–2025) | the map's > 4× places (27) | off-season months (M) |
+|---|---|---|---|---|---|---|---|---|---|---|
+| a country ratio | 0 / 0 | 5.5% | 0% | 100% | 76% | 26.0% → 26.1% | 17.7% → 17.8% | 78% | 81% | 49% |
+| b 2° zone ratio (today) | — | 5.5% | 0% | 100% | 77% | 21.4% → 21.9% | 9.0% → 9.9% | 83% | 83% | 50% |
+| b0 zone ratio on MODIS > 0 months, no floor | 11 / 4 | 5.5% | 0% | 100% | 73% | 20.9% → 21.2% | 10.1% → 10.7% | 79% | 76% | 48% |
+| c local ratio shrunk to zone | 14 / 10 | 5.5% | 0% | 100% | 74% | 15.9% → 17.5% | 8.6% → 9.7% | 78% | 74% | 47% |
+| d1 zone ratio + place floor | 14 / 12 | 0.4% | 98% | 111% | 73% | 19.5% → 20.1% | 8.2% → 9.1% | 80% | 66% | 51% |
+| d2 zone ratio + zone floor | 5 / 13 | 0.0% | 100% | 130% | 73% | 21.0% → 21.4% | 8.3% → 9.1% | 141% | 76% | 53% |
+| e ratio by activity level | 0 / 0 | 5.5% | 0% | 100% | 80% | 25.6% → 25.8% | 17.8% → 18.1% | 79% | 80% | 51% |
+| f activity ratio + place floor | 0 / 0 | 0.4% | 98% | 111% | 80% | 25.2% → 25.6% | 18.0% → 18.3% | 87% | 63% | 54% |
+
+### Consequences (all-years fit applied to 2003–2011)
+| variant | pre-2012 total (cell-days, 2003–2011) | vs zone ratio (b) | of which in place-months where MODIS saw nothing | country rise 2012–2025 ÷ 2003–2011 | 2° box verdicts rise / decline / uncertain / not harmonized | boxes whose verdict changes vs the app |
+|---|---|---|---|---|---|---|
+| a country ratio | 1,432,678 | +1.7% | 0 (0.0%) | 0.68 | 4 / 23 / 63 / 12 | 8 (rise→uncertain 2, decline→uncertain 5, uncertain→decline 1) |
+| b 2° zone ratio (today) | 1,409,323 | +0.0% | 0 (0.0%) | 0.69 | 5 / 28 / 57 / 12 | 2 (uncertain→decline 1, rise→uncertain 1) |
+| b0 zone ratio on MODIS > 0 months, no floor | 1,335,791 | -5.2% | 0 (0.0%) | 0.73 | 5 / 22 / 63 / 12 | 6 (decline→uncertain 5, rise→uncertain 1) |
+| c local ratio shrunk to zone | 1,382,120 | -1.9% | 0 (0.0%) | 0.71 | 5 / 28 / 57 / 12 | 2 (rise→uncertain 1, uncertain→decline 1) |
+| d1 zone ratio + place floor | 1,378,439 | -2.2% | 42,648 (3.1%) | 0.71 | 4 / 28 / 58 / 12 | 3 (rise→uncertain 2, uncertain→decline 1) |
+| d2 zone ratio + zone floor | 1,381,627 | -2.0% | 45,836 (3.3%) | 0.71 | 3 / 29 / 58 / 12 | 5 (rise→uncertain 3, uncertain→decline 2) |
+| e ratio by activity level | 1,338,897 | -5.0% | 0 (0.0%) | 0.73 | 3 / 25 / 62 / 12 | 9 (rise→uncertain 3, uncertain→decline 2, decline→uncertain 4) |
+| f activity ratio + place floor | 1,381,545 | -2.0% | 42,648 (3.1%) | 0.71 | 2 / 31 / 57 / 12 | 12 (rise→uncertain 4, uncertain→decline 6, decline→uncertain 2) |
+(app today, for reference: 2° box verdicts 6 / 27 / 57 / 12)
+
+## 3. Summary
+canada: best place-year WAPE d1 zone ratio + place floor 22.4% vs zone ratio 24.6% (8.9% less error) | best place-month WAPE d1 zone ratio + place floor 29.0% vs 32.0% | best 2° box-year WAPE d2 zone ratio + zone floor 14.1% vs 15.5% | floor: the place floor (d1) predicts 100% of the VIIRS cell-days in place-months where MODIS saw nothing, with 130% error there; it adds 8.1% of the 2003–2011 total in place-months where MODIS saw nothing | rise b 2.10 → c 2.10, d1 2.04, f 1.95
+argentina: best place-year WAPE c local ratio shrunk to zone 17.5% vs zone ratio 21.9% (20.2% less error) | best place-month WAPE d2 zone ratio + zone floor 34.3% vs 37.9% | best 2° box-year WAPE d2 zone ratio + zone floor 9.1% vs 9.9% | floor: the place floor (d1) predicts 98% of the VIIRS cell-days in place-months where MODIS saw nothing, with 111% error there; it adds 3.1% of the 2003–2011 total in place-months where MODIS saw nothing | rise b 0.69 → c 0.71, d1 0.71, f 0.71
+
+## 4. Proposed project-page sentences (numbers above)
+"Next step, already tested out of sample: adding a detection floor (the small fires VIIRS sees where MODIS saw nothing, estimated for each 0.5° place and calendar month) to the zone ratio lowered the error of predicted VIIRS counts in 2° boxes from 15.5% to 14.1% in Canada and from 9.9% to 9.1% in Argentina (leave-one-year-out; better in 13 and 12 of 14 years) and barely moved the national figures (Canada 2.01× → 2.04×, official area burned 1.92×; Argentina 0.68× → 0.71×). It is not in the app because it adds fire to months where MODIS recorded none (8.1% of Canada's 2003–2011 total): an assumption about the past, not a measurement."
+"Ratios that vary place by place (each 0.5° place shrunk toward its zone) did not help at the 2° scale (15.5% → 15.2% in Canada, 9.9% → 9.7% in Argentina), so the app keeps one ratio per zone."

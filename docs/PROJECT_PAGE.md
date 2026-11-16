@@ -4,7 +4,7 @@ Paste each section into the field of the same name on the Space Apps project pag
 the app's self-check (`node tools-win/selfcheck.mjs`, record ending October 2026), except the raw point counts in
 "The problem", which are counted from the two FIRMS extracts embedded in the app (`data/hotspots/`), and the
 Argentina burned-area comparison, printed by `node scripts/check_argentina_official.mjs` from
-`data/official/argentina_area_burned.json`, and the seasonal-correction test, printed by `node research/seasonal.mjs`.
+`data/official/argentina_area_burned.json`, and the method tests, printed by `node research/seasonal.mjs` and `node research/spatial.mjs`.
 
 Team BlackCoffeeOnly: Yasmine Lounaci and Mouloud Serir.
 
@@ -149,6 +149,12 @@ Clicks from the first screen (Overview). Tabs: Overview, Calendar, Evidence, How
   Argentina, lower in 12 of 14 and 14 of 14 left-out years; Canada's worst calendar month goes from 1.95× off to
   1.19×. The headline rises do not move (Canada 2.01×, Argentina 0.68×). It brings no clear gain in small zones, so
   the uncertainty guard stays (`node research/seasonal.mjs`, report in `research/SEASONAL.md`).
+- **Two ideas tested and set aside** (`node research/spatial.mjs`, `research/SPATIAL.md`). Ratios that vary place by
+  place did not help at the scale of a selected area (error of predicted VIIRS counts in 2° boxes, years left out one
+  at a time: 15.5% → 15.2% in Canada, 9.9% → 9.7% in Argentina), so the app keeps one ratio per zone. Adding the small
+  fires VIIRS sees where MODIS saw nothing helps a little (15.5% → 14.1%, 9.9% → 9.1%) but puts fire in months where
+  MODIS recorded none (8.1% of Canada's 2003–2011 total): an assumption about the past, not a measurement, so it
+  stays out.
 - Any country (FIRMS covers the world); hotspot points for any box and date; monthly updates
   carried through NOAA-20 and NOAA-21.
 
