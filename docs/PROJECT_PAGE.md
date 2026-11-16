@@ -29,6 +29,8 @@ https://mouloud08.github.io/BlackCoffeeOnly-Nasa-Space-Apps/demo.mp4 (30 seconds
 ## Link to Final Project
 
 - Live app: https://mouloud08.github.io/BlackCoffeeOnly-Nasa-Space-Apps/
+- Also in French and Spanish (same data, same figures): https://mouloud08.github.io/BlackCoffeeOnly-Nasa-Space-Apps/fr.html
+  and https://mouloud08.github.io/BlackCoffeeOnly-Nasa-Space-Apps/es.html
 - Code, data and the offline file: https://github.com/Mouloud08/BlackCoffeeOnly-Nasa-Space-Apps
 
 ## Detailed Project Description

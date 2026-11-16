@@ -17,6 +17,9 @@ team BlackCoffeeOnly (Yasmine Lounaci and Mouloud Serir). A hackathon prototype:
 ## Try it
 
 - **Live:** https://mouloud08.github.io/BlackCoffeeOnly-Nasa-Space-Apps/
+- **En français:** https://mouloud08.github.io/BlackCoffeeOnly-Nasa-Space-Apps/fr.html · **En español:**
+  https://mouloud08.github.io/BlackCoffeeOnly-Nasa-Space-Apps/es.html (same data and figures; the language is also
+  in the ⋯ menu; exported files stay in English). Offline: `dist/firebridge.fr.html`, `dist/firebridge.es.html`.
 - **Offline:** download [`dist/firebridge.html`](dist/firebridge.html) and open it in a browser. One file: fonts, data
   and map outlines are embedded, and the page is not allowed to make any network request (`connect-src 'none'`).
 - **Demo (30 s):** https://mouloud08.github.io/BlackCoffeeOnly-Nasa-Space-Apps/demo.mp4
