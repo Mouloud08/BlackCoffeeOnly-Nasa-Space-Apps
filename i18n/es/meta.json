@@ -1,0 +1,15 @@
+{
+  "_help": "Translate the values of the top-level keys. _en holds the English originals: they are the exact patterns replaced in the built HTML; do not edit _en.",
+  "htmlLang": "es",
+  "title": "FireBridge · ¿El aumento de la actividad de fuego es real o es el satélite?",
+  "description": "FireBridge pone en una misma escala las detecciones de fuego de MODIS y VIIRS de la NASA, 2001–2026, para cualquier zona de Canadá o de la Argentina. Cada cifra se calcula en el navegador a partir de los mosaicos mensuales de 0,5° de NASA FIRMS. Prototipo sin conexión.",
+  "noscript": "FireBridge necesita JavaScript.",
+  "kicker": "¿El aumento es real o es el satélite?",
+  "_en": {
+    "htmlLang": "en",
+    "title": "FireBridge · Is the rise in fire activity real, or is it the satellite?",
+    "description": "FireBridge joins NASA MODIS and VIIRS fire detections on one scale, 2001–2025, for any box in Canada or Argentina. Every figure is computed in the browser from NASA FIRMS 0.5° monthly tiles. Offline prototype.",
+    "noscript": "FireBridge needs JavaScript.",
+    "kicker": "Is the rise real — or the satellite?"
+  }
+}

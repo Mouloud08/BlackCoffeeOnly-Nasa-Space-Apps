@@ -2,7 +2,7 @@
 export const LANG = 'en';
 // The language builds offered in the ⋯ menu (a build-time flag). The "Language" row is shown only when this lists more
 // than one language: remove a code here if its build is not ready.
-export const LANGS = ['en'];
+export const LANGS = ['en', 'fr', 'es'];
 
 // Address of the same page in another language, keeping the query and the hash (the current view).
 // Offline files side by side: firebridge.html ↔ firebridge.fr.html ↔ firebridge.es.html. Anything else (hosted:

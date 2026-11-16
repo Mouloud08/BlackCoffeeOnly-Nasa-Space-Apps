@@ -1,0 +1,182 @@
+/* Atelier Terrain — generated from tokens.json */
+:root, [data-theme="dark"] {
+  color-scheme: dark;
+  --ground: oklch(0.16 0.006 250);
+  --surface: oklch(0.19 0.007 250);
+  --sunken: oklch(0.175 0.006 250);
+  --quiet: oklch(0.235 0.008 250);
+  --active: oklch(0.25 0.008 250);
+  --raised: oklch(0.27 0.009 250);
+  --ink: oklch(0.94 0.006 250);
+  --ink-2: oklch(0.78 0.008 250);
+  --ink-3: oklch(0.68 0.008 250);
+  --ink-disabled: oklch(0.62 0.006 250);
+  --line: oklch(0.27 0.008 250);
+  --rule: oklch(0.235 0.007 250);
+  --control: oklch(0.4 0.009 250);
+  --tile-line: oklch(0.6 0.009 250);
+  --edge: rgba(255,255,255,0.075);
+  --accent: oklch(0.7 0.11 250);
+  --btn: var(--ink);
+  --on-btn: var(--surface);
+  --focus: var(--ink);
+  --zone-outline: #ffffff;
+  --seq-0: #7f1e6c;
+  --seq-1: #a02a63;
+  --seq-2: #c03a51;
+  --seq-3: #db503b;
+  --seq-4: #ef6c23;
+  --seq-5: #fa9008;
+  --seq-6: #fbb81d;
+  --seq-7: #f4e156;
+  --seq-8: #fcffa4;
+  --civ-0: #3b496c;
+  --civ-1: #545a6d;
+  --civ-2: #6a6c71;
+  --civ-3: #7f7e78;
+  --civ-4: #979177;
+  --civ-5: #b0a571;
+  --civ-6: #cbb965;
+  --civ-7: #e6d051;
+  --civ-8: #fee838;
+  --gray-0: #45484b;
+  --gray-1: #595b5e;
+  --gray-2: #6d7073;
+  --gray-3: #828588;
+  --gray-4: #979a9d;
+  --gray-5: #adb0b4;
+  --gray-6: #c4c7ca;
+  --gray-7: #dbdee1;
+  --gray-8: #f2f5f9;
+  --div-m3: #8dccf9;
+  --div-m2: #4b99d7;
+  --div-m1: #2d5e8b;
+  --div-0: oklch(0.4 0.006 250);
+  --div-p1: #8c482f;
+  --div-p2: #db703b;
+  --div-p3: #fdbc6f;
+  --sensor-modis: #56b4e9;
+  --sensor-viirs: #e69f00;
+  --series-harmonized: var(--ink);
+  --median: var(--ink-2);
+  --witness-aqua: var(--ink-2);
+  --band-uncertainty: rgba(232,235,239,0.18);
+  --cell-zero: var(--sunken);
+  --cell-ring: rgba(255,255,255,0.07);
+  --map-water: var(--ground);
+  --map-land: oklch(0.215 0.007 250);
+  --map-border: oklch(0.34 0.009 250);
+  --shadow-overlay: 0 8px 24px -8px rgba(0,0,0,0.6);
+}
+[data-theme="light"] {
+  color-scheme: light;
+  --ground: oklch(0.968 0.005 250);
+  --surface: oklch(0.997 0.0015 250);
+  --sunken: oklch(0.958 0.005 250);
+  --quiet: oklch(0.96 0.005 250);
+  --active: oklch(0.935 0.006 250);
+  --raised: oklch(1 0 250);
+  --ink: oklch(0.21 0.011 250);
+  --ink-2: oklch(0.48 0.012 250);
+  --ink-3: oklch(0.53 0.012 250);
+  --ink-disabled: oklch(0.53 0.008 250);
+  --line: oklch(0.91 0.006 250);
+  --rule: oklch(0.94 0.005 250);
+  --control: oklch(0.82 0.008 250);
+  --tile-line: oklch(0.56 0.01 250);
+  --edge: rgba(40,48,60,0.1);
+  --accent: oklch(0.49 0.11 250);
+  --btn: var(--ink);
+  --on-btn: var(--surface);
+  --focus: var(--ink);
+  --zone-outline: oklch(0.21 0.011 250);
+  --seq-0: #fca50a;
+  --seq-1: #f57b17;
+  --seq-2: #e25734;
+  --seq-3: #c63d4d;
+  --seq-4: #a32c61;
+  --seq-5: #7f1e6c;
+  --seq-6: #5a116e;
+  --seq-7: #340a5f;
+  --seq-8: #10092d;
+  --civ-0: #ead34c;
+  --civ-1: #cbb965;
+  --civ-2: #aba072;
+  --civ-3: #8f8a78;
+  --civ-4: #737475;
+  --civ-5: #5a5f6e;
+  --civ-6: #3d4a6c;
+  --civ-7: #143670;
+  --civ-8: #00224e;
+  --gray-0: #ced1d5;
+  --gray-1: #b4b7ba;
+  --gray-2: #9a9da0;
+  --gray-3: #818487;
+  --gray-4: #696c6f;
+  --gray-5: #525558;
+  --gray-6: #3c3f42;
+  --gray-7: #272a2c;
+  --gray-8: #141619;
+  --div-m3: #154d8c;
+  --div-m2: #3f7fb8;
+  --div-m1: #88b8da;
+  --div-0: #e6e8ea;
+  --div-p1: #e2b293;
+  --div-p2: #d2643c;
+  --div-p3: #a1281b;
+  --sensor-modis: #0072b2;
+  --sensor-viirs: #d55e00;
+  --series-harmonized: var(--ink);
+  --median: var(--ink-2);
+  --witness-aqua: var(--ink-2);
+  --band-uncertainty: rgba(21,25,29,0.14);
+  --cell-zero: var(--sunken);
+  --cell-ring: rgba(40,48,60,0.08);
+  --map-water: var(--ground);
+  --map-land: oklch(0.93 0.005 250);
+  --map-border: oklch(0.8 0.008 250);
+  --shadow-overlay: 0 8px 24px -10px rgba(40,48,60,0.25);
+}
+:root {
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --radius-cell: 3px;
+  --radius-control: 8px;
+  --radius-overlay: 10px;
+  --radius-panel: 16px;
+  --radius-pill: 999px;
+  --duration-toggle: 450ms;
+  --duration-standard: 280ms;
+  --duration-state: 160ms;
+  --ease-standard: cubic-bezier(.2, .75, .25, 1);
+  --layout-topbar: 48px;
+  --layout-panel: 360px;
+  --layout-upper: 332px;
+  --layout-calendar: 340px;
+  --layout-cell-h: 16px;
+  --font-sans: 'Radio Canada', ui-sans-serif, system-ui, 'Segoe UI', sans-serif;
+  --font-display: 'Atelier Texte', 'Radio Canada', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'DM Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+}
+.product-name { font-family: var(--font-display); font-size: 20px; line-height: 24px; font-weight: 600; letter-spacing: -0.006em; }
+.hook { font-family: var(--font-display); font-size: 38px; line-height: 44px; font-weight: 600; letter-spacing: -0.022em; }
+.hook-sm { font-family: var(--font-display); font-size: 27px; line-height: 33px; font-weight: 600; letter-spacing: -0.018em; }
+.page-title { font-family: var(--font-display); font-size: 28px; line-height: 34px; font-weight: 600; letter-spacing: -0.012em; }
+.section-title { font-family: var(--font-display); font-size: 20px; line-height: 26px; font-weight: 600; letter-spacing: -0.006em; }
+.answer-number { font-family: var(--font-sans); font-size: 60px; line-height: 64px; font-weight: 600; letter-spacing: -0.018em; }
+.verdict { font-family: var(--font-sans); font-size: 21px; line-height: 28px; font-weight: 500; letter-spacing: -0.006em; }
+.metric { font-family: var(--font-sans); font-size: 15px; line-height: 20px; font-weight: 600; }
+.axis { font-family: var(--font-sans); font-size: 12px; line-height: 14px; font-weight: 400; letter-spacing: 0.005em; }
+.body { font-family: var(--font-sans); font-size: 15px; line-height: 22px; font-weight: 400; }
+.body-sm { font-family: var(--font-sans); font-size: 14px; line-height: 20px; font-weight: 400; }
+.label { font-family: var(--font-sans); font-size: 13px; line-height: 18px; font-weight: 500; letter-spacing: 0.005em; }
+.caption { font-family: var(--font-sans); font-size: 12px; line-height: 16px; font-weight: 400; letter-spacing: 0.005em; }
+.mono { font-family: var(--font-mono); font-size: 12.5px; line-height: 18px; font-weight: 400; }
+@font-face { font-family: 'Atelier Texte'; src: url('fonts/atelier-texte.woff2') format('woff2'); font-weight: 200 800; font-style: normal; font-display: swap; }
+@font-face { font-family: 'DM Mono'; src: url('fonts/dm-mono-400.woff2') format('woff2'); font-weight: 400; font-style: normal; font-display: swap; }
+@font-face { font-family: 'DM Mono'; src: url('fonts/dm-mono-500.woff2') format('woff2'); font-weight: 500; font-style: normal; font-display: swap; }
